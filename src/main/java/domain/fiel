@@ -1,0 +1,6 @@
+This is the core layer of your application, containing only the most fundamental classes and logic. This layer should be entirely independent of any specific implementation details or frameworks.
+What to include:
+
+Entities: Basic classes representing real-world objects in your application, such as UserAccount, Stock, Portfolio, and Transaction.
+Value Objects: Simple objects like dates, prices, and amounts that hold values used by multiple entities.
+Basic Business Logic: Simple methods that are directly related to the entity, like calculating the total value of a portfolio.
