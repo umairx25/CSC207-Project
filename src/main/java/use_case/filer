@@ -1,0 +1,7 @@
+Purpose:
+
+This layer defines business logic and application-specific functions. Each use case represents a single action or task that the application performs, like trading stocks or managing portfolios.
+What to include:
+
+Use Case Classes: Classes that execute a specific business operation, like buying or selling stocks.
+Input and Output: Often, you’ll define interfaces to communicate data between use cases and the UI layer.
