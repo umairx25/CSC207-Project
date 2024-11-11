@@ -86,7 +86,7 @@ public class MainFrame extends JFrame {
 
         // Right Panel setup with embedded gradient
         JPanel rightPanel = getRightPanel();
-        ImageIcon logoIcon = new ImageIcon("images/stock flow_logo.png");
+        ImageIcon logoIcon = new ImageIcon("images/stock_flow_logo.png");
         Image scaledLogoImage = logoIcon.getImage().getScaledInstance(400, 400, Image.SCALE_SMOOTH);
         logoIcon = new ImageIcon(scaledLogoImage);
         JLabel logoLabel = new JLabel(logoIcon);
