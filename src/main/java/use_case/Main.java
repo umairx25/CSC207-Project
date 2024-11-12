@@ -7,7 +7,6 @@ import ui.MainFrame;
 
 public class Main {
 
-    // Sample login/signup use case
     public static void main(String[] args) throws Exception {
         Dotenv dotenv = Dotenv.load();
         new MainFrame();
