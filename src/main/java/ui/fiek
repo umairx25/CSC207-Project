@@ -1,8 +1,0 @@
-Purpose:
-
-This is the presentation layer where all the Java Swing UI components live. It handles displaying data to users and taking input from them.
-What to include:
-
-UI Components: Frames, panels, buttons, labels, and other Swing elements that represent the interface.
-Event Handling: Code to handle user interactions (e.g., clicking buttons to trade stocks).
-Connecting with Controllers: UI elements interact with controllers to trigger business logic.
