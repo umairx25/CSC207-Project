@@ -1,8 +1,0 @@
-Purpose:
-
-This layer handles external dependencies like APIs, databases, or any third-party service. This makes it easy to replace external services without impacting core application logic.
-What to include:
-
-API Integrations: Classes that handle API requests and responses (e.g., getting stock prices).
-Database Connections: Classes for saving and retrieving data if you implement persistent storage.
-Utility Classes: Helper classes for specific tasks, like formatting dates or parsing JSON.
