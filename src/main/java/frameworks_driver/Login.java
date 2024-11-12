@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.firebase.auth.UserRecord;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -25,8 +26,7 @@ public class Login extends NewUser {
         this.password = password;
     }
 
-    public static String login(String email, String password) throws Exception {
-
+    public static String login(String email, String password) {
         OkHttpClient client = new OkHttpClient();
         JSONObject jsonBody = new JSONObject();
         jsonBody.put("email", email);
@@ -41,22 +41,40 @@ public class Login extends NewUser {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("The email password combination is incorrect. Please try again.");
+                // Return null or empty string if the login attempt fails
+                return null;
             }
 
+            assert response.body() != null;
             String responseBody = response.body().string();
             JSONObject jsonResponse = new JSONObject(responseBody);
-            return jsonResponse.getString("idToken");
+            return jsonResponse.getString("idToken");  // Only return the idToken if successful
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Return null or empty string if there is an exception
+            return null;
         }
     }
 
-    public static FirebaseToken verify_login(String idToken) throws FirebaseAuthException {
+
+    public static boolean verify_login(String idToken) {
         try {
-            return FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseAuth.getInstance().verifyIdToken(idToken);
+            return true;
         }
         catch (FirebaseAuthException e) {
-            throw new FirebaseAuthException(e);
+            return false;
         }
     }
 
+    public static boolean preexisting_email(String email) {
+        try {
+            UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmail(email);
+            return true;
+        }
+
+        catch (FirebaseAuthException e) {
+            return false;
+        }
+    }
 }

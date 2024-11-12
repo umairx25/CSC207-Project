@@ -33,7 +33,7 @@ public class NewUser {
         this.username = username;
     }
 
-    public void signup(Firestore db) throws FirebaseAuthException {
+    public static void signup(String email, String password, String username, Firestore db) throws FirebaseAuthException {
 
         try {
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
