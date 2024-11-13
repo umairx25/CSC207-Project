@@ -1,7 +1,0 @@
-Purpose:
-
-This layer acts as a bridge between the use cases and the UI layer. It adapts data to be displayed in the UI and handles inputs from the UI to the use cases.
-What to include:
-
-Controllers: Receive input from the UI (e.g., user actions like “buy” or “sell”) and trigger the appropriate use case.
-Presenters: Format the output of use cases to prepare it for display in the UI.
