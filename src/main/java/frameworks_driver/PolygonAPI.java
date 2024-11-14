@@ -17,12 +17,12 @@ public class PolygonAPI {
 
     public static void main(String[] args) {
         //Test for getAggregateData
-        String ticker = "AAPL";
-        String multiplier = "1";
-        String timespan = "day";
-        String from = "2023-01-01";
-        String to = "2023-12-31";
-        String jsonResponse = getAggregateData(ticker, multiplier, timespan, from, to);
+//        String ticker = "AAPL";
+//        String multiplier = "1";
+//        String timespan = "day";
+//        String from = "2023-01-01";
+//        String to = "2023-12-31";
+//        String jsonResponse = getAggregateData(ticker, multiplier, timespan, from, to);
 
         //Test for getSMAData
 //        String stockTicker = "AAPL"; String timespan = "day";
@@ -31,8 +31,8 @@ public class PolygonAPI {
 //        String jsonResponse = getSMAData(stockTicker, timespan, from, to, window);
 
         //Test for getCompanyOverview
-//        String ticker = "AAPL";
-//        String jsonResponse = getCompanyOverview(ticker);
+        String ticker = "AAPL";
+        String jsonResponse = getCompanyOverview(ticker);
 
         //Test for getRSIData
 //        String stockTicker = "AAPL"; String timespan = "day";
@@ -45,8 +45,8 @@ public class PolygonAPI {
 //        String jsonResponse = getAllStockTypes();
 
         //Test for searchCompany
-//        String jsonResponse = searchCompany("","XNAS" ); //searching with the exchange's MIC code ( for NASDAQ in this case)
-//        String jsonResponse = searchCompany("APPL", ""); //searching with just the ticker
+//        String jsonResponse = searchCompany("", "XNYS", ""); //searching with the exchange's MIC code ( for NASDAQ in this case)
+//        String jsonResponse = searchCompany("AAPL", "", ""); //searching with just the ticker
 
         System.out.println("Response: " +  formatJson(jsonResponse));
     }
@@ -84,13 +84,21 @@ public class PolygonAPI {
     }
 
     //Ticker Information
-    public static String searchCompany(String ticker, String exchange) {
+    //if limit is left empty the api will default it to 100
+    //you can search by either the ticker or exchange name (mic codes only) not both
+    public static String searchCompany(String ticker, String exchange, String limit) {
         String baseURL = "https://api.polygon.io/v3/reference/tickers";
         String urlString = "";
-        if (Objects.equals(ticker, "")) {
+        if (Objects.equals(ticker, "") && !Objects.equals(exchange, "")) {
             urlString = baseURL + "?market=stocks&exchange=" + exchange + "&apiKey=" + API_KEY;
-        } else if (Objects.equals(exchange, "")) {
+            if (!Objects.equals(limit, "")) {
+                urlString = baseURL + "?market=stocks&exchange=" + exchange + "&limit=" + limit + "&apiKey=" + API_KEY;
+            }
+        } else if (Objects.equals(exchange, "") && !Objects.equals(ticker, "")) {
             urlString = baseURL + "?ticker=" + ticker + "&market=stocks&apiKey=" + API_KEY;
+            if (!Objects.equals(limit, "")) {
+                urlString = baseURL + "?ticker=" + ticker + "&market=stocks" + "&limit=" + limit + "&apiKey=" + API_KEY;
+            }
         } else {
             throw new IllegalArgumentException("You must enter either a ticker or an exchange, but not both!");
         }
