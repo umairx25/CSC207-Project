@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="CSC207-Project" />
         <module name="homework-5" />
+        <module name="practice" />
       </profile>
     </annotationProcessing>
   </component>

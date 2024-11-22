@@ -1,9 +1,8 @@
 package use_case;
 
-import com.google.firebase.cloud.FirestoreClient;
 import frameworks_driver.Login;
 import io.github.cdimascio.dotenv.Dotenv;
-import ui.MainFrame;
+import view.MainFrame;
 
 public class Main {
 
