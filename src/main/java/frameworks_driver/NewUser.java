@@ -34,8 +34,12 @@ public class NewUser {
     }
 
     public static void signup(String email, String password, String username, Firestore db) throws FirebaseAuthException {
-
         try {
+            // Validate email format
+            if (email == null || !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+                throw new IllegalArgumentException("Invalid email format");
+            }
+
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                     .setEmail(email)
                     .setDisplayName(username)
@@ -46,25 +50,27 @@ public class NewUser {
             UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
             System.out.println("Successfully created new user: " + userRecord.getUid());
             initialize_database(email, username, db);
-        }
-        catch (FirebaseAuthException e) {
+        } catch (FirebaseAuthException e) {
             throw new FirebaseAuthException(e);
         } catch (IOException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
+
     public static void initialize_firebase(String file) throws IOException {
+        if (FirebaseApp.getApps().isEmpty()) { // Check if no FirebaseApp instances exist
+            FileInputStream serviceAccount = new FileInputStream(file);
 
-        FileInputStream serviceAccount = new FileInputStream(file);
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setProjectId(dotenv.get("PROJECT_ID"))
+                    .build();
 
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setProjectId(dotenv.get("PROJECT_ID"))
-                .build();
-
-        FirebaseApp.initializeApp(options);
+            FirebaseApp.initializeApp(options);
+        }
     }
+
 
     public static void initialize_database(String email, String username, Firestore db) throws IOException, ExecutionException, InterruptedException {
         DocumentReference docRef = db.collection("users").document(email);

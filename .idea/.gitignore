@@ -12,3 +12,6 @@
 # Ignore environment and configuration files
 .env
 firebase_info.json
+
+# Ignore compiled files and build directories
+target/
