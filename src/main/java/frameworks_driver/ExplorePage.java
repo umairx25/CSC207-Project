@@ -37,11 +37,11 @@ public class ExplorePage extends JPanel {
         // Empty space for future graph
         JPanel graphPanel = new JPanel();
         graphPanel.setPreferredSize(new Dimension(400, 150));
-        graphPanel.setBorder(BorderFactory.createTitledBorder("Graph Placeholder"));
+        graphPanel.setBorder(BorderFactory.createTitledBorder(""));
         statsPanel.add(graphPanel);
 
         // Labels for company stats
-        JLabel descriptionLabel = new JLabel("Description: ");
+        JLabel descriptionLabel = new JLabel("");
         JLabel exchangeLabel = new JLabel("Primary Exchange: ");
         JLabel marketCapLabel = new JLabel("Market Cap: ");
         JLabel openLabel = new JLabel("Open: ");
@@ -64,7 +64,7 @@ public class ExplorePage extends JPanel {
 
         // Combine the left list and right stats panel
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, statsPanel);
-        splitPane.setDividerLocation(300); // Adjust divider location as needed
+        splitPane.setDividerLocation(200); // Adjust divider location as needed
 
         // Add components to the main layout
         add(searchPanel, BorderLayout.NORTH);
@@ -102,6 +102,7 @@ public class ExplorePage extends JPanel {
                 try {
                     updateStatsPanel(selectedCompany, statsPanel, descriptionLabel, exchangeLabel,
                             marketCapLabel, openLabel, highLabel, lowLabel, webpageLabel, locationLabel, volumeLabel);
+                    graphPanel.setBorder(BorderFactory.createTitledBorder(PolygonAPI.getTickerName(selectedCompany)));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -114,7 +115,6 @@ public class ExplorePage extends JPanel {
                                   JLabel location, JLabel volume) throws Exception {
         // Fetch details from the PolygonAPI
         String description = PolygonAPI.getDesc(company);
-//        System.out.println(PolygonAPI.getDesc(company)); //TESTING
         String primaryExchange = PolygonAPI.getPrimaryExchange(company);
         String marketCapValue = PolygonAPI.getMarketCap(company);
         String openingPrice = PolygonAPI.getOpen(company);
@@ -125,7 +125,7 @@ public class ExplorePage extends JPanel {
         String avgVolume = PolygonAPI.calculateAverageVolume(company);
 
         // Update labels
-        desc.setText("Description: " + description);
+        desc.setText("<html><div style='width:800px; padding-bottom:10px;'>" + description + "</div></html>");// Wrapping text
         exchange.setText("Primary Exchange: " + primaryExchange);
         marketCap.setText("Market Cap: " + marketCapValue);
         open.setText("Open: " + openingPrice);
@@ -143,7 +143,7 @@ public class ExplorePage extends JPanel {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Explore Page");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 600);
 
         ExplorePage explorePage = new ExplorePage();
 
