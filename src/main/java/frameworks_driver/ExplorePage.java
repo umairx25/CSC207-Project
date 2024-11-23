@@ -1,6 +1,7 @@
 package frameworks_driver;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,15 +42,26 @@ public class ExplorePage extends JPanel {
         statsPanel.add(graphPanel);
 
         // Labels for company stats
-        JLabel descriptionLabel = new JLabel("");
+        Font labelFont = new Font("Courier New", Font.PLAIN, 14); // Bold, size 14
+
+        JLabel descriptionLabel = new JLabel("Description: ");
+        descriptionLabel.setFont(labelFont);
         JLabel exchangeLabel = new JLabel("Primary Exchange: ");
+        exchangeLabel.setFont(labelFont);
         JLabel marketCapLabel = new JLabel("Market Cap: ");
+        marketCapLabel.setFont(labelFont);
         JLabel openLabel = new JLabel("Open: ");
+        openLabel.setFont(labelFont);
         JLabel highLabel = new JLabel("High: ");
+        highLabel.setFont(labelFont);
         JLabel lowLabel = new JLabel("Low: ");
+        lowLabel.setFont(labelFont);
         JLabel webpageLabel = new JLabel("Webpage: ");
+        webpageLabel.setFont(labelFont);
         JLabel locationLabel = new JLabel("Location: ");
+        locationLabel.setFont(labelFont);
         JLabel volumeLabel = new JLabel("Average Volume: ");
+        volumeLabel.setFont(labelFont);
 
         // Add stat labels to the stats panel
         statsPanel.add(descriptionLabel);
@@ -58,9 +70,10 @@ public class ExplorePage extends JPanel {
         statsPanel.add(openLabel);
         statsPanel.add(highLabel);
         statsPanel.add(lowLabel);
-        statsPanel.add(webpageLabel);
-        statsPanel.add(locationLabel);
         statsPanel.add(volumeLabel);
+        statsPanel.add(locationLabel);
+        statsPanel.add(webpageLabel);
+
 
         // Combine the left list and right stats panel
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, statsPanel);
@@ -102,7 +115,11 @@ public class ExplorePage extends JPanel {
                 try {
                     updateStatsPanel(selectedCompany, statsPanel, descriptionLabel, exchangeLabel,
                             marketCapLabel, openLabel, highLabel, lowLabel, webpageLabel, locationLabel, volumeLabel);
-                    graphPanel.setBorder(BorderFactory.createTitledBorder(PolygonAPI.getTickerName(selectedCompany)));
+
+                    Font titleFont = new Font("Arial", Font.BOLD, 16);
+                    TitledBorder graphTitle = BorderFactory.createTitledBorder(PolygonAPI.getTickerName(selectedCompany));
+                    graphTitle.setTitleFont(titleFont);
+                    graphPanel.setBorder(graphTitle);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -131,9 +148,10 @@ public class ExplorePage extends JPanel {
         open.setText("Open: " + openingPrice);
         high.setText("High: " + highPrice);
         low.setText("Low: " + lowPrice);
-        webpage.setText("Webpage: " + webpageUrl);
-        location.setText("Location: " + companyLocation);
         volume.setText("Average Volume: " + avgVolume);
+        location.setText("Location: " + companyLocation);
+        webpage.setText("Webpage: " + webpageUrl);
+
 
         // Refresh stats panel
         statsPanel.revalidate();
