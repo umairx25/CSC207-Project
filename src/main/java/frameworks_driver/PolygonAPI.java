@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,10 +79,6 @@ public class PolygonAPI {
         String urlString = baseURL + ticker + "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
         return HTTPRequest(urlString);
     }
-    public static String getIntradayData(String ticker, int multiplier, String day) {
-        String timespan = "day";
-        return getAggregateData(ticker, multiplier, timespan, day, day);
-    }
     public static List<Double> getHistoricalClosingData(String ticker, int multiplier, String timespan, String from, String to) {
         String urlString = "https://api.polygon.io/v2/aggs/ticker/" + ticker + "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
         List<Double> prices = new ArrayList<>();
@@ -150,7 +147,10 @@ public class PolygonAPI {
             tickers.add(company.getString("ticker"));
         }
 
-        return tickers;
+        //remove duplicates
+        LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
+
+        return new ArrayList<>(cleanSet);
     }
 
 
@@ -165,8 +165,9 @@ public class PolygonAPI {
         int multiplier = 1;
         String timespan = "day";
 
-            String urlString = "https://api.polygon.io/v2/aggs/ticker/" + ticker +
-                    "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
+        //clean this
+        String urlString = "https://api.polygon.io/v2/aggs/ticker/" + ticker +
+                "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
 
         String result = HTTPRequest(urlString);
         JSONObject jsonResponse = new JSONObject(result);
@@ -198,11 +199,11 @@ public class PolygonAPI {
         String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
         return HTTPRequest(urlString);
     }
-    public static String getAllStockTypes() {
-        String baseURL = "https://api.polygon.io/v3/reference/tickers/types?asset_class=stocks&locale=us&apiKey=";
-        String urlString = baseURL + API_KEY;
-        return HTTPRequest(urlString);
-    }
+//    public static String getAllStockTypes() {
+//        String baseURL = "https://api.polygon.io/v3/reference/tickers/types?asset_class=stocks&locale=us&apiKey=";
+//        String urlString = baseURL + API_KEY;
+//        return HTTPRequest(urlString);
+//    }
 
     public static List<String> getAllExchanges() {
         List<String> exchanges = new ArrayList<>();
@@ -222,14 +223,13 @@ public class PolygonAPI {
         return exchanges;
     }
 
-    public static String getRelatedCompanies(String ticker) {
-        String baseURL ="https://api.polygon.io/v1/related-companies/";
-        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
-        return HTTPRequest(urlString);
-    }
+//    public static String getRelatedCompanies(String ticker) {
+//        String baseURL ="https://api.polygon.io/v1/related-companies/";
+//        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
+//        return HTTPRequest(urlString);
+//    }
     public static String getMarketCap(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v3/reference/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
 
@@ -241,9 +241,15 @@ public class PolygonAPI {
         }
     }
 
+
+    public static String getTickerSnapshot(String ticker)   {
+        String baseURL = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/";
+        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
+        return HTTPRequest(urlString);
+    }
+
     public static String getOpen(String ticker) {
-        String urlString = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getTickerSnapshot(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject tickerObject = jsonObject.getJSONObject("ticker");
         JSONObject dayObject = tickerObject.getJSONObject("day");
@@ -252,12 +258,11 @@ public class PolygonAPI {
         if (open != 0) {
             return formatNumber(open);
         } else {
-            return "Stock exchange has not yet opened.";
+            return "Stock has not yet opened.";
         }
     }
     public static List<String> getHighLow(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getTickerSnapshot(ticker);
         JSONObject jsonObject = new JSONObject(result);
 
         JSONObject tickerObject;
@@ -280,8 +285,7 @@ public class PolygonAPI {
         return highLow;
     }
     public static String getPrimaryExchange(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v3/reference/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
 
@@ -292,15 +296,13 @@ public class PolygonAPI {
         }
     }
     public static String getTickerName(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v3/reference/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
         return resultsObject.getString("name");
     }
     public static String getDesc(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v3/reference/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
 
@@ -311,8 +313,7 @@ public class PolygonAPI {
         }
     }
     public static String getWebpage(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v3/reference/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
 
@@ -323,8 +324,7 @@ public class PolygonAPI {
         }
     }
     public static String getLocation(String ticker) throws Exception {
-        String urlString = "https://api.polygon.io/v3/reference/tickers/" + ticker + "?apiKey=" + API_KEY;
-        String result = HTTPRequest(urlString);
+        String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
 
