@@ -1,0 +1,154 @@
+package frameworks_driver;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+public class ExplorePage extends JPanel {
+
+    public ExplorePage() {
+        setLayout(new BorderLayout());
+
+        // Set Nimbus Look and Feel
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Top search bar
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        JTextField searchField = new JTextField();
+        JButton searchButton = new JButton("Search");
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+        // Scrollable list for company names
+        DefaultListModel<String> companyListModel = new DefaultListModel<>();
+        JList<String> companyList = new JList<>(companyListModel);
+        JScrollPane scrollPane = new JScrollPane(companyList);
+
+        // Stats panel
+        JPanel statsPanel = new JPanel();
+        statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
+
+        // Empty space for future graph
+        JPanel graphPanel = new JPanel();
+        graphPanel.setPreferredSize(new Dimension(400, 150));
+        graphPanel.setBorder(BorderFactory.createTitledBorder("Graph Placeholder"));
+        statsPanel.add(graphPanel);
+
+        // Labels for company stats
+        JLabel descriptionLabel = new JLabel("Description: ");
+        JLabel exchangeLabel = new JLabel("Primary Exchange: ");
+        JLabel marketCapLabel = new JLabel("Market Cap: ");
+        JLabel openLabel = new JLabel("Open: ");
+        JLabel highLabel = new JLabel("High: ");
+        JLabel lowLabel = new JLabel("Low: ");
+        JLabel webpageLabel = new JLabel("Webpage: ");
+        JLabel locationLabel = new JLabel("Location: ");
+        JLabel volumeLabel = new JLabel("Average Volume: ");
+
+        // Add stat labels to the stats panel
+        statsPanel.add(descriptionLabel);
+        statsPanel.add(exchangeLabel);
+        statsPanel.add(marketCapLabel);
+        statsPanel.add(openLabel);
+        statsPanel.add(highLabel);
+        statsPanel.add(lowLabel);
+        statsPanel.add(webpageLabel);
+        statsPanel.add(locationLabel);
+        statsPanel.add(volumeLabel);
+
+        // Combine the left list and right stats panel
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, statsPanel);
+        splitPane.setDividerLocation(300); // Adjust divider location as needed
+
+        // Add components to the main layout
+        add(searchPanel, BorderLayout.NORTH);
+        add(splitPane, BorderLayout.CENTER);
+
+        // Gather the full list of exchanges
+        List<String> exchanges = PolygonAPI.getAllExchanges();
+
+        // Search button functionality
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String query = searchField.getText();
+                if (!query.isEmpty()) {
+                    String results;
+                    if (!exchanges.contains(query)) {
+                        results = PolygonAPI.searchCompany(query, "", "");
+                    } else {
+                        results = PolygonAPI.searchCompany("", query, "1000");
+                    }
+                     //reason exchange search doesn't work
+                    List<String> companiesList = PolygonAPI.extractCompanyTickers(results); // Fetch search results
+                    companyListModel.clear();
+                    for (String company : companiesList) {
+                        companyListModel.addElement(company);
+                    }
+                }
+            }
+        });
+
+        // List selection listener to display stats
+        companyList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && !companyList.isSelectionEmpty()) {
+                String selectedCompany = companyList.getSelectedValue();
+                try {
+                    updateStatsPanel(selectedCompany, statsPanel, descriptionLabel, exchangeLabel,
+                            marketCapLabel, openLabel, highLabel, lowLabel, webpageLabel, locationLabel, volumeLabel);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+    }
+
+    private void updateStatsPanel(String company, JPanel statsPanel, JLabel desc, JLabel exchange,
+                                  JLabel marketCap, JLabel open, JLabel high, JLabel low, JLabel webpage,
+                                  JLabel location, JLabel volume) throws Exception {
+        // Fetch details from the PolygonAPI
+        String description = PolygonAPI.getDesc(company);
+//        System.out.println(PolygonAPI.getDesc(company)); //TESTING
+        String primaryExchange = PolygonAPI.getPrimaryExchange(company);
+        String marketCapValue = PolygonAPI.getMarketCap(company);
+        String openingPrice = PolygonAPI.getOpen(company);
+        String highPrice = PolygonAPI.getHighLow(company).get(0);
+        String lowPrice = PolygonAPI.getHighLow(company).get(1);
+        String webpageUrl = PolygonAPI.getWebpage(company);
+        String companyLocation = PolygonAPI.getLocation(company);
+        String avgVolume = PolygonAPI.calculateAverageVolume(company);
+
+        // Update labels
+        desc.setText("Description: " + description);
+        exchange.setText("Primary Exchange: " + primaryExchange);
+        marketCap.setText("Market Cap: " + marketCapValue);
+        open.setText("Open: " + openingPrice);
+        high.setText("High: " + highPrice);
+        low.setText("Low: " + lowPrice);
+        webpage.setText("Webpage: " + webpageUrl);
+        location.setText("Location: " + companyLocation);
+        volume.setText("Average Volume: " + avgVolume);
+
+        // Refresh stats panel
+        statsPanel.revalidate();
+        statsPanel.repaint();
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Explore Page");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+
+        ExplorePage explorePage = new ExplorePage();
+
+        frame.add(explorePage);
+        frame.setVisible(true);
+    }
+}
+
