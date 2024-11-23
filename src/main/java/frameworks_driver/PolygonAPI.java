@@ -190,7 +190,7 @@ public class PolygonAPI {
             JSONObject dataPoint = resultsArray.getJSONObject(i);
             totalVolume += dataPoint.getDouble("v"); // Volume
         }
-        return String.valueOf(totalVolume / resultsArray.length());
+        return formatNumber(totalVolume / resultsArray.length());
     }
 
     public static String getCompanyOverview(String ticker) {
@@ -235,19 +235,12 @@ public class PolygonAPI {
 
         try {
             double marketCap = resultsObject.getDouble("market_cap");
-            return String.valueOf(marketCap);
+            return formatNumber(marketCap);
         } catch (Exception e) {
             return "N/A";
         }
     }
-//    public static double getOpen(String ticker) throws Exception {
-//        String urlString = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/" + ticker + "?apiKey=" + API_KEY;
-//        String result = HTTPRequest(urlString);
-//        JSONObject jsonObject = new JSONObject(result);
-//        JSONObject tickerObject = jsonObject.getJSONObject("ticker");
-//        JSONObject dayObject = tickerObject.getJSONObject("day");
-//        return dayObject.getDouble("o");
-//    }
+
     public static String getOpen(String ticker) {
         String urlString = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/" + ticker + "?apiKey=" + API_KEY;
         String result = HTTPRequest(urlString);
@@ -257,7 +250,7 @@ public class PolygonAPI {
 
         double open = dayObject.getDouble("o");
         if (open != 0) {
-            return String.valueOf(open);
+            return formatNumber(open);
         } else {
             return "Stock exchange has not yet opened.";
         }
@@ -282,8 +275,8 @@ public class PolygonAPI {
         }
 
         List<String> highLow = new ArrayList<>();
-        highLow.add(String.valueOf(dayObject.getDouble("h")));
-        highLow.add(String.valueOf(dayObject.getDouble("l")));
+        highLow.add(formatNumber(dayObject.getDouble("h")));
+        highLow.add(formatNumber(dayObject.getDouble("l")));
         return highLow;
     }
     public static String getPrimaryExchange(String ticker) throws Exception {
@@ -380,4 +373,18 @@ public class PolygonAPI {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(gson.fromJson(json, Object.class));
     }
+
+    //Utility method to round numbers
+    public static String formatNumber(double value) {
+        if (value >= 1_000_000_000_000.0) {
+            return String.format("%.1fT", value / 1_000_000_000_000.0);
+        } else if (value >= 1_000_000_000.0) {
+            return String.format("%.1fB", value / 1_000_000_000.0);
+        } else if (value >= 1_000_000.0) {
+            return String.format("%.2fM", value / 1_000_000.0);
+        } else {
+            return String.format("%.2f", value);
+        }
+    }
+
 }
