@@ -49,7 +49,7 @@ public class GenerativeAi {
                 message.addProperty("content", prompt);
 
                 JsonObject payload = new JsonObject();
-                payload.add("model", new Gson().toJsonTree("gpt-4"));
+                payload.add("model", new Gson().toJsonTree("gpt-4o-mini"));
                 payload.add("messages", new Gson().toJsonTree(new JsonObject[]{message}));
                 payload.addProperty("temperature", 0.7);
 

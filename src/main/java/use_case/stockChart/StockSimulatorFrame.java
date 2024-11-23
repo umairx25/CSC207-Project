@@ -1,5 +1,5 @@
 // src/ui/StockSimulatorFrame.java
-package view;
+package use_case.stockChart;
 
 import javax.swing.*;
 import java.awt.*;

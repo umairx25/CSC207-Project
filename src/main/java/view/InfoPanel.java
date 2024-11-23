@@ -1,25 +1,26 @@
-package view;// InfoPanel.java (no changes needed from previous implementation)
+package view;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class InfoPanel extends JPanel {
 
-    public InfoPanel(String email) {
-        setBackground(Color.WHITE);
+    public InfoPanel(PanelNavigator navigator, String email) {
         setLayout(new GridBagLayout());
+        setBackground(Color.WHITE);
 
         JLabel emailLabel = new JLabel("Email: " + email);
+        emailLabel.setFont(FontManager.SEGOE_FONT_16);
 
-        Font font = new Font("Segoe UI", Font.PLAIN, 18);
-        emailLabel.setFont(font);
+        add(emailLabel, GridBagHelper.labelGBC());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        JButton logoutButton = new JButton("Logout");
+        UIHelper.styleButton(logoutButton);
+        add(logoutButton, GridBagHelper.loginButtonGBC());
 
-        add(emailLabel, gbc);
-        gbc.gridy++;
-
+        logoutButton.addActionListener(e -> {
+            // Navigate back to login panel
+            navigator.navigateTo("login");
+        });
     }
 }
