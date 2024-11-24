@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class GenerativeAi {
+public class GenerativeAi implements AiClient {
 
     static final Dotenv dotenv = Dotenv.load();
     private static final String API_KEY = dotenv.get("GPT_API_KEY");
