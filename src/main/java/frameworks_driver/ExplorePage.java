@@ -92,12 +92,16 @@ public class ExplorePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String query = searchField.getText().trim(); // Trim spaces
                 if (!query.isEmpty()) {
-                    query = query.toUpperCase(); // Convert to uppercase for tickers
+                    String inputType = PolygonAPI.identifyInputType(query);
                     String results;
-                    if (!exchanges.contains(query)) {
+                    if (inputType.equals("Ticker")) {
                         results = PolygonAPI.searchCompany(query, "", "");
+                    } else if (inputType.equals("Exchange")) {
+                        results = PolygonAPI.searchCompany("", query, "");
+                    } else if (inputType.equals("Keyword")) {
+                        results = PolygonAPI.searchCompany("", "", query);
                     } else {
-                        results = PolygonAPI.searchCompany("", query, "1000");
+                        throw new IllegalArgumentException("Invalid input type!");
                     }
 
                     List<String> companiesList = PolygonAPI.extractCompanyTickers(results); // Fetch search results
@@ -108,6 +112,7 @@ public class ExplorePage extends JPanel {
                 }
             }
         });
+
 
 
         // List selection listener to display stats

@@ -1,6 +1,7 @@
 package frameworks_driver;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -68,6 +69,9 @@ public class PolygonAPI {
 //        String jsonResponse = searchCompany("AAPL", "", ""); //searching with just the ticker
 //
 //        System.out.println("Response: " +  formatJson(jsonResponse));
+        String jsonResponse = getTickerSnapshot("AAXN");
+        System.out.println("Response: " +  formatJson(jsonResponse));
+
     }
 
     //Aggregate Data
@@ -114,40 +118,102 @@ public class PolygonAPI {
 
     //Ticker Information
     //if limit is left empty the api will default it to 100
-    //you can search by either the ticker or exchange name (mic codes only) not both
-    public static String searchCompany(String ticker, String exchange, String limit) {
+    //you can search by either the ticker or exchange name (mic codes only) or keyword but only one at a time!
+    public static String searchCompany(String ticker, String exchange, String keyword) {
         String baseURL = "https://api.polygon.io/v3/reference/tickers";
-        String urlString = "";
-        if (Objects.equals(ticker, "") && !Objects.equals(exchange, "")) {
-            urlString = baseURL + "?market=stocks&exchange=" + exchange + "&apiKey=" + API_KEY;
-            if (!Objects.equals(limit, "")) {
-                urlString = baseURL + "?market=stocks&exchange=" + exchange + "&limit=" + limit + "&apiKey=" + API_KEY;
-            }
-        } else if (Objects.equals(exchange, "") && !Objects.equals(ticker, "")) {
-            urlString = baseURL + "?ticker=" + ticker + "&market=stocks&apiKey=" + API_KEY;
-            if (!Objects.equals(limit, "")) {
-                urlString = baseURL + "?ticker=" + ticker + "&market=stocks" + "&limit=" + limit + "&apiKey=" + API_KEY;
-            }
+        String limit = "1000";
+        String urlString;
+
+        if (!Objects.equals(ticker, "") && Objects.equals(exchange, "") && Objects.equals(keyword, "")) {
+            urlString = baseURL + "?ticker=" + ticker + "&market=stocks&limit=" + limit + "&apiKey=" + API_KEY;
+        } else if (Objects.equals(ticker, "") && !Objects.equals(exchange, "") && Objects.equals(keyword, "")) {
+            urlString = baseURL + "?market=stocks&exchange=" + exchange + "&limit=" + limit + "&apiKey=" + API_KEY;
+        } else if (Objects.equals(ticker, "") && Objects.equals(exchange, "") && !Objects.equals(keyword, "")) {
+            urlString = baseURL + "?market=stocks&search=" + keyword + "&limit=" + limit + "&apiKey=" + API_KEY;
         } else {
-            throw new IllegalArgumentException("You must enter either a ticker or an exchange, but not both!");
+            throw new IllegalArgumentException("You must enter either a ticker, an exchange, or a keyword, but not more than one!");
         }
+
         return HTTPRequest(urlString);
     }
     //Search Company returns a long JSONObject, this collects all the tickers
+//    public static List<String> extractCompanyTickers(String jsonData) {
+//        List<String> tickers = new ArrayList<>();
+//
+//        // Parse the JSON data
+//        JSONObject jsonObject = new JSONObject(jsonData);
+//        JSONArray results = jsonObject.getJSONArray("results");
+//
+//        // Iterate through the array and collect tickers
+//        for (int i = 0; i < results.length(); i++) {
+//            JSONObject company = results.getJSONObject(i);
+//            String ticker = company.getString("ticker");
+//
+//            String snapshot;
+//            try {
+//                snapshot = getTickerSnapshot(ticker);
+//            } catch (Exception e) {
+////                System.out.println("Error occurred: " + e.getMessage());
+//                snapshot = "null"; // Catch other types of exceptions
+//            }
+//
+//            if (!snapshot.equals("null")) {
+//                tickers.add(ticker);
+//            }
+//        }
+//
+//        //remove duplicates
+//        LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
+//
+//        return new ArrayList<>(cleanSet);
+//    }
+
+    //testing this rn
+//    public static List<String> extractCompanyTickers(String jsonData) {
+//        List<String> tickers = new ArrayList<>();
+//
+//        // Parse the JSON data
+//        JSONObject jsonObject = new JSONObject(jsonData);
+//        JSONArray results = jsonObject.getJSONArray("results");
+//
+//        // Iterate through the array and collect tickers
+//        for (int i = 0; i < results.length(); i++) {
+//            JSONObject company = results.getJSONObject(i);
+//            String ticker = company.getString("ticker");
+//
+//            // Fetch the snapshot for the ticker using HTTPRequest
+//            String snapshot = getTickerSnapshot(ticker);  // Replace with your actual URL
+//
+//            // Check if the snapshot response is empty or not valid
+//            if (snapshot.contains("GET request failed")) {
+//                // Handle the failed request (e.g., log an error, skip this ticker, etc.)
+////                System.out.println("Error fetching snapshot for ticker " + ticker);
+//                continue;  // Skip this ticker and move to the next one
+//            }
+//
+//            // If the snapshot was valid, add the ticker to the list
+//            tickers.add(ticker);
+//        }
+//
+//        // Remove duplicates by using a LinkedHashSet
+//        LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
+//
+//        return new ArrayList<>(cleanSet);
+//    }
+
     public static List<String> extractCompanyTickers(String jsonData) {
         List<String> tickers = new ArrayList<>();
 
-        // Parse the JSON data
         JSONObject jsonObject = new JSONObject(jsonData);
         JSONArray results = jsonObject.getJSONArray("results");
 
-        // Iterate through the array and collect tickers
         for (int i = 0; i < results.length(); i++) {
             JSONObject company = results.getJSONObject(i);
-            tickers.add(company.getString("ticker"));
+            String ticker = company.getString("ticker");
+            tickers.add(ticker);
         }
 
-        //remove duplicates
+        // Remove duplicates
         LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
 
         return new ArrayList<>(cleanSet);
@@ -165,11 +231,7 @@ public class PolygonAPI {
         int multiplier = 1;
         String timespan = "day";
 
-        //clean this
-        String urlString = "https://api.polygon.io/v2/aggs/ticker/" + ticker +
-                "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
-
-        String result = HTTPRequest(urlString);
+        String result = getAggregateData(ticker, multiplier, timespan, from, to);
         JSONObject jsonResponse = new JSONObject(result);
 
         if (jsonResponse.has("results")) {
@@ -194,17 +256,6 @@ public class PolygonAPI {
         return formatNumber(totalVolume / resultsArray.length());
     }
 
-    public static String getCompanyOverview(String ticker) {
-        String baseURL = "https://api.polygon.io/v3/reference/tickers/";
-        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
-        return HTTPRequest(urlString);
-    }
-//    public static String getAllStockTypes() {
-//        String baseURL = "https://api.polygon.io/v3/reference/tickers/types?asset_class=stocks&locale=us&apiKey=";
-//        String urlString = baseURL + API_KEY;
-//        return HTTPRequest(urlString);
-//    }
-
     public static List<String> getAllExchanges() {
         List<String> exchanges = new ArrayList<>();
         String urlString = "https://api.polygon.io/v3/reference/exchanges?asset_class=stocks&apiKey=tRolQKcnnsS0ASS2_TFAZfjEjqHclpxU";
@@ -214,9 +265,9 @@ public class PolygonAPI {
         JSONArray results = jsonObject.getJSONArray("results");
 
         for (int i = 0; i < results.length(); i++) {
-            JSONObject company = results.getJSONObject(i);
-            if (company.has("mic")) { // Check if the "mic" key exists
-                 exchanges.add(company.getString("mic"));
+            JSONObject exchange = results.getJSONObject(i);
+            if (exchange.has("mic")) { // Check if the "mic" key exists
+                 exchanges.add(exchange.getString("mic"));
             }
         }
 
@@ -228,20 +279,8 @@ public class PolygonAPI {
 //        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
 //        return HTTPRequest(urlString);
 //    }
-    public static String getMarketCap(String ticker) throws Exception {
-        String result = getCompanyOverview(ticker);
-        JSONObject jsonObject = new JSONObject(result);
-        JSONObject resultsObject = jsonObject.getJSONObject("results");
 
-        try {
-            double marketCap = resultsObject.getDouble("market_cap");
-            return formatNumber(marketCap);
-        } catch (Exception e) {
-            return "N/A";
-        }
-    }
-
-
+    //All the methods that use ticker snapshot endpoint
     public static String getTickerSnapshot(String ticker)   {
         String baseURL = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/";
         String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
@@ -284,6 +323,14 @@ public class PolygonAPI {
         highLow.add(formatNumber(dayObject.getDouble("l")));
         return highLow;
     }
+
+    //All the methods that use company overview endpoint
+    public static String getCompanyOverview(String ticker) {
+        String baseURL = "https://api.polygon.io/v3/reference/tickers/";
+        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
+        return HTTPRequest(urlString);
+    }
+
     public static String getPrimaryExchange(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -295,6 +342,20 @@ public class PolygonAPI {
             return "N/A";
         }
     }
+
+    public static String getMarketCap(String ticker) throws Exception {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+
+        try {
+            double marketCap = resultsObject.getDouble("market_cap");
+            return formatNumber(marketCap);
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
     public static String getTickerName(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -385,6 +446,20 @@ public class PolygonAPI {
         } else {
             return String.format("%.2f", value);
         }
+    }
+
+    public static String identifyInputType(String input) {
+        // Regex pattern for tickers (alphanumeric, periods, 1-5 characters)
+         String tickerPattern = "^[A-Za-z0-9.]{1,5}$";
+         // List of known exchanges
+         List<String> exchanges = PolygonAPI.getAllExchanges();
+         if (input.matches(tickerPattern)) {
+             return "Ticker";
+         } else if (exchanges.contains(input.toUpperCase())) {
+             return "Exchange";
+         } else {
+             return "Keyword";
+         }
     }
 
 }
