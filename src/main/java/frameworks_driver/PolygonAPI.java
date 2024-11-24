@@ -4,17 +4,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,6 +20,7 @@ import org.json.JSONObject;
 public class PolygonAPI {
     static final Dotenv dotenv = Dotenv.load();
     private static final String API_KEY = dotenv.get("POLYGON_API_KEY");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static void main(String[] args) throws Exception {
         //Test for getAggregateData
@@ -96,25 +95,6 @@ public class PolygonAPI {
         return prices;
     }
 
-
-    //Indicators
-    //window: used to calculate the simple moving average (SMA). i.e. a window size of 10 with daily aggregates would result in a 10 day moving average.
-    public static String getSMAData(String ticker, String timespan, String from, String to, int window) {
-        String baseURL = "https://api.polygon.io/v1/indicators/sma/";
-        String urlString = baseURL + ticker + "?timespan=" + timespan + "&from=" + from + "&to=" + to + "&window=" + window + "&limit=5000&apiKey=" + API_KEY;
-        return HTTPRequest(urlString);
-    }
-    public static String getEMAData(String ticker, String timespan, String from, String to, int window) {
-        String baseURL = "https://api.polygon.io/v1/indicators/ema/";
-        String urlString = baseURL + ticker + "?timespan=" + timespan + "&from=" + from + "&to=" + to + "&window=" + window + "&apiKey=" + API_KEY;
-        return HTTPRequest(urlString);
-    }
-    public static String getRSIData(String ticker, String timespan, String from, String to, int window) {
-        String baseURL = "https://api.polygon.io/v1/indicators/rsi/";
-        String urlString = baseURL + ticker + "?timespan=" + timespan + "&from=" + from + "&to=" + to + "&window=" + window + "&apiKey=" + API_KEY;
-        return HTTPRequest(urlString);
-    }
-
     //Ticker Information
     //if limit is left empty the api will default it to 100
     //you can search by either the ticker or exchange name (mic codes only) or keyword but only one at a time!
@@ -136,38 +116,6 @@ public class PolygonAPI {
         return HTTPRequest(urlString);
     }
 
-    //testing this rn
-//    public static List<String> extractCompanyTickers(String jsonData) {
-//        List<String> tickers = new ArrayList<>();
-//
-//        // Parse the JSON data
-//        JSONObject jsonObject = new JSONObject(jsonData);
-//        JSONArray results = jsonObject.getJSONArray("results");
-//
-//        // Iterate through the array and collect tickers
-//        for (int i = 0; i < results.length(); i++) {
-//            JSONObject company = results.getJSONObject(i);
-//            String ticker = company.getString("ticker");
-//
-//            // Fetch the snapshot for the ticker using HTTPRequest
-//            String snapshot = getTickerSnapshot(ticker);  // Replace with your actual URL
-//
-//            // Check if the snapshot response is empty or not valid
-//            if (snapshot.contains("GET request failed")) {
-//                // Handle the failed request (e.g., log an error, skip this ticker, etc.)
-////                System.out.println("Error fetching snapshot for ticker " + ticker);
-//                continue;  // Skip this ticker and move to the next one
-//            }
-//
-//            // If the snapshot was valid, add the ticker to the list
-//            tickers.add(ticker);
-//        }
-//
-//        // Remove duplicates by using a LinkedHashSet
-//        LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
-//
-//        return new ArrayList<>(cleanSet);
-//    }
 
     public static List<String> extractCompanyTickers(String jsonData) {
         List<String> tickers = new ArrayList<>();
@@ -186,8 +134,6 @@ public class PolygonAPI {
 
         return new ArrayList<>(cleanSet);
     }
-
-
 
     //     Logic for getting average volume data for the last 30 days
     public static JSONArray fetchVolumeData(String ticker)  {
@@ -239,15 +185,9 @@ public class PolygonAPI {
                  exchanges.add(exchange.getString("mic"));
             }
         }
-
         return exchanges;
     }
 
-//    public static String getRelatedCompanies(String ticker) {
-//        String baseURL ="https://api.polygon.io/v1/related-companies/";
-//        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
-//        return HTTPRequest(urlString);
-//    }
 
     //All the methods that use ticker snapshot endpoint
     public static String getTickerSnapshot(String ticker)   {
@@ -269,6 +209,7 @@ public class PolygonAPI {
             return "Stock is currently closed.";
         }
     }
+
     public static List<String> getHighLow(String ticker) throws Exception {
         String result = getTickerSnapshot(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -342,6 +283,7 @@ public class PolygonAPI {
             return "N/A";
         }
     }
+
     public static String getWebpage(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -353,6 +295,7 @@ public class PolygonAPI {
             return "N/A";
         }
     }
+
     public static String getLocation(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -369,6 +312,82 @@ public class PolygonAPI {
             }
         }
     }
+
+    public static LinkedHashMap<Long, Double> getHistoricalData(String ticker, String timespan, String startDate, String endDate) {
+        LinkedHashMap<Long, Double> historicalData = new LinkedHashMap<>();
+        String content = getAggregateData(ticker, 1,timespan, startDate, endDate);
+        JSONObject jsonObject = new JSONObject(content);
+        System.out.println("Fetching historical data for " + ticker);
+
+        if (jsonObject.has("results")) {
+            JSONArray results = jsonObject.getJSONArray("results");
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject dailyData = results.getJSONObject(i);
+                Long date = dailyData.getLong("t");
+                double closePrice = dailyData.getDouble("c");
+                historicalData.put(date, closePrice);
+            }
+        } else {
+            System.out.println("No 'results' found in response. Full response: " + content);
+        }
+        return historicalData;
+    }
+
+
+    @NotNull
+    private static LinkedHashMap<Long, Double> getIndicator(String indicator, String ticker, String timespan, String from, String to, int window) {
+        LinkedHashMap<Long, Double> data = new LinkedHashMap<>();
+
+        String urlString = String.format(
+                "https://api.polygon.io/v1/indicators/%s/%s?timespan=%s&from=%s&to=%s&window=%d&limit=5000&apiKey=%s",
+                indicator, ticker, timespan, from, to, window, API_KEY
+        );
+
+        String content = HTTPRequest(urlString);
+        JSONObject jsonResponse = new JSONObject(content);
+
+        JSONObject result;
+        try {
+            result = jsonResponse.getJSONObject("results");
+        } catch (Exception e) {
+            System.out.println("No 'results' found in response.");
+            result = new JSONObject();
+        }
+
+        JSONArray values = result.getJSONArray("values");
+
+        for (int i = values.length() - 1; i >= 0; i--) {
+            JSONObject obj = values.getJSONObject(i);
+            data.put(obj.getLong("timestamp"), obj.getDouble("value"));
+        }
+        return data;
+    }
+
+    public static Double currPrice(String ticker) {
+        String content = getTickerSnapshot(ticker);
+
+        JSONObject jsonResponse = new JSONObject(content);
+        JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
+        return round(day.getDouble("c"), 4);
+    }
+
+    //convert to a list of strings
+    public static ArrayList<Double> increase(String ticker) {
+        String content = getTickerSnapshot(ticker);
+        ArrayList<Double> increase = new ArrayList<>();
+
+        JSONObject jsonResponse = new JSONObject(content);
+        JSONObject tickerData= jsonResponse.getJSONObject("ticker");
+        increase.add(round(tickerData.getDouble("todaysChangePerc"), 4));
+        increase.add(round(tickerData.getDouble("todaysChange"), 4));
+        return increase;
+    }
+
+    public static Double round(double value, int places) {
+        DecimalFormat df = new DecimalFormat("#." + "#".repeat(places));
+        return Double.parseDouble(df.format(value));
+    }
+
 
     //Sends requests to the server.
     static String HTTPRequest(String urlString) {
@@ -421,7 +440,7 @@ public class PolygonAPI {
         // Regex pattern for tickers (alphanumeric, periods, 1-5 characters)
          String tickerPattern = "^[A-Za-z0-9.]{1,5}$";
          // List of known exchanges
-         List<String> exchanges = PolygonAPI.getAllExchanges();
+         List<String> exchanges = getAllExchanges();
 
          if (exchanges.contains(input.toUpperCase())) {
              return "Exchange";
