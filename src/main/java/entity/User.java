@@ -1,4 +1,8 @@
 package entity;
 
-public class User {
+/**
+ * The representation of a user in our program.
+ */
+public interface User {
+
 }

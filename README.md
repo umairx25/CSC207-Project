@@ -71,7 +71,7 @@ As a team, your task is to fill in the missing code so that the Logout Use Case 
 - The provided `LogoutInteractorTest` test passes.
 
 The "Log Out" button is an instance variable in class `LoggedInVew`. Go find it.
-Also look at the `interface_adapter.change_password.LoggedInViewModel`, which contains any
+Also look at the `interface_adapter2.change_password.LoggedInViewModel`, which contains any
 data showing on the `LoggedInVew`.
 
 * * *

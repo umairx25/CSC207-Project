@@ -1,19 +1,9 @@
 package entity;
 
+import java.util.LinkedHashMap;
+
 public class Stock {
-    private final String ticker;
-    private final String name;
+    private String ticker;
+    private LinkedHashMap<Long, Double> historicalData;
 
-    public Stock(String ticker, String name) {
-        this.ticker = ticker;
-        this.name = name;
-    }
-
-    public String getTicker() {
-        return ticker;
-    }
-
-    public String getName() {
-        return name;
-    }
 }
