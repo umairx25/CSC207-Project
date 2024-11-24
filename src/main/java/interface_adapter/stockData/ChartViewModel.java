@@ -1,26 +1,24 @@
 package interface_adapter.stockData;
 
-import entity.ChartData;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public class ChartViewModel {
-    private ChartData chartData;
-    private String error;
+    private DefaultCategoryDataset dataset;
+    private String errorMessage;
 
-    public void setChartData(ChartData data) {
-        this.chartData = data;
-        this.error = null;
+    public DefaultCategoryDataset getDataset() {
+        return dataset;
     }
 
-    public ChartData getChartData() {
-        return chartData;
+    public void setDataset(DefaultCategoryDataset dataset) {
+        this.dataset = dataset;
     }
 
-    public void setError(String error) {
-        this.error = error;
-        this.chartData = null;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public String getError() {
-        return error;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

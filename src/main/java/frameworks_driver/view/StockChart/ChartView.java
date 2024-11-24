@@ -1,6 +1,5 @@
 package frameworks_driver.view.StockChart;
 
-
 import data_access.StockDataAccess;
 import interface_adapter.stockData.ChartController;
 import interface_adapter.stockData.ChartPresenter;
@@ -26,15 +25,15 @@ public class ChartView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Set up Clean Architecture components
-        ChartDataAccessInterface dataAccess = new StockDataAccess(); // Data Access Implementation
-        viewModel = new ChartViewModel(); // Holds state of the view
-        ChartOutputBoundary presenter = new ChartPresenter(viewModel); // Presenter handles formatting
-        ChartInputBoundary interactor = new ChartInteractor(presenter, dataAccess); // Interactor handles business logic
-        controller = new ChartController(interactor); // Controller connects UI with backend
+        // Backend setup following Clean Architecture
+        ChartDataAccessInterface dataAccess = new StockDataAccess(); // Data Access Layer
+        viewModel = new ChartViewModel(); // Holds state for the view
+        ChartOutputBoundary presenter = new ChartPresenter(viewModel); // Presenter formats the output
+        ChartInputBoundary interactor = new ChartInteractor(presenter, dataAccess); // Interactor handles use case logic
+        controller = new ChartController(interactor); // Controller connects UI to backend
 
-        // Initialize UI components
-        controlPanel = new ControlPanel(e -> handleUserAction(ticker)); // Handles user input events
+        // Frontend setup
+        controlPanel = new ControlPanel(e -> handleUserAction(ticker)); // Handles user input
         chartPanel = new ChartPanelView("Stock Data: " + ticker); // Chart rendering panel
 
         // Add components to the JFrame
@@ -43,31 +42,47 @@ public class ChartView extends JFrame {
     }
 
     /**
-     * Handle user interactions and trigger data fetching through the controller.
+     * Handles user interactions and fetches chart data through the controller.
      */
     private void handleUserAction(String ticker) {
-        // Gather user inputs from the control panel
-        String timeframe = controlPanel.getSelectedTimeframe();
-        boolean includePriceHistory = controlPanel.isPriceHistorySelected();
-        boolean includeSma = controlPanel.isSmaSelected();
-        boolean includeEma = controlPanel.isEmaSelected();
-        boolean includeRsi = controlPanel.isRsiSelected();
+        try {
+            // Map the timeframe to API-compatible values
+            String rawTimeframe = controlPanel.getSelectedTimeframe();
+            String timeframe = mapTimeframe(rawTimeframe);
 
-        // Send user inputs to the controller
-        controller.fetchChartData(ticker, timeframe, includePriceHistory, includeSma, includeEma, includeRsi);
+            boolean includePriceHistory = controlPanel.isPriceHistorySelected();
+            boolean includeSma = controlPanel.isSmaSelected();
+            boolean includeEma = controlPanel.isEmaSelected();
+            boolean includeRsi = controlPanel.isRsiSelected();
 
-        // Update the chart panel with the latest dataset from the ViewModel
-        chartPanel.updateChart(viewModel.getDataset());
+            // Fetch data via the controller
+            controller.fetchChartData(ticker, timeframe, includePriceHistory, includeSma, includeEma, includeRsi);
 
-        // Display any errors from the ViewModel
-        if (viewModel.getErrorMessage() != null) {
-            JOptionPane.showMessageDialog(this, viewModel.getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            // Update the chart panel
+            chartPanel.updateChart(viewModel.getDataset());
+
+            // Display errors if any
+            if (viewModel.getErrorMessage() != null) {
+                JOptionPane.showMessageDialog(this, viewModel.getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private String mapTimeframe(String timeframe) {
+        switch (timeframe) {
+            case "5 Day": return "day";
+            case "Monthly": return "month";
+            case "Yearly": return "year";
+            default: throw new IllegalArgumentException("Invalid timeframe: " + timeframe);
         }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            ChartView view = new ChartView("AAPL"); // Example ticker
+            ChartView view = new ChartView("AAPL"); // Example stock ticker
             view.setVisible(true);
         });
     }
