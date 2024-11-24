@@ -90,15 +90,16 @@ public class ExplorePage extends JPanel {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String query = searchField.getText();
+                String query = searchField.getText().trim(); // Trim spaces
                 if (!query.isEmpty()) {
+                    query = query.toUpperCase(); // Convert to uppercase for tickers
                     String results;
                     if (!exchanges.contains(query)) {
                         results = PolygonAPI.searchCompany(query, "", "");
                     } else {
                         results = PolygonAPI.searchCompany("", query, "1000");
                     }
-                     //reason exchange search doesn't work
+
                     List<String> companiesList = PolygonAPI.extractCompanyTickers(results); // Fetch search results
                     companyListModel.clear();
                     for (String company : companiesList) {
@@ -107,6 +108,7 @@ public class ExplorePage extends JPanel {
                 }
             }
         });
+
 
         // List selection listener to display stats
         companyList.addListSelectionListener(e -> {
