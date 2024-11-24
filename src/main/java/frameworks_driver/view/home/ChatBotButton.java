@@ -3,10 +3,10 @@ package frameworks_driver.view.home;
 import javax.swing.*;
 import java.awt.*;
 
-public class PortfolioButton extends JButton {
+public class ChatBotButton extends JButton {
 
-    public PortfolioButton() {
-        super("Portfolio");
+    public ChatBotButton() {
+        super("Chatbot");
         setPreferredSize(new Dimension(150, 60));
         setFont(new Font("Arial", Font.BOLD, 16));
         setBackground(Color.WHITE); // Set background to white
