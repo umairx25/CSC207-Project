@@ -123,7 +123,7 @@ public class ExplorePage extends JPanel {
                         marketCapLabel, openLabel, highLabel, lowLabel, webpageLabel, locationLabel, volumeLabel);
 
                 Font titleFont = new Font("Arial", Font.BOLD, 16);
-                TitledBorder graphTitle = null;
+                TitledBorder graphTitle;
                 try {
                     graphTitle = BorderFactory.createTitledBorder(PolygonAPI.getTickerName(selectedCompany));
                 } catch (Exception ex) {
@@ -136,36 +136,6 @@ public class ExplorePage extends JPanel {
 
     }
 
-//    private void updateStatsPanel(String company, JPanel statsPanel, JLabel desc, JLabel exchange,
-//                                  JLabel marketCap, JLabel open, JLabel high, JLabel low, JLabel webpage,
-//                                  JLabel location, JLabel volume) throws Exception {
-//        // Fetch details from the PolygonAPI
-//        String description = PolygonAPI.getDesc(company);
-//        String primaryExchange = PolygonAPI.getPrimaryExchange(company);
-//        String marketCapValue = PolygonAPI.getMarketCap(company);
-//        String openingPrice = PolygonAPI.getOpen(company);
-//        String highPrice = PolygonAPI.getHighLow(company).get(0);
-//        String lowPrice = PolygonAPI.getHighLow(company).get(1);
-//        String webpageUrl = PolygonAPI.getWebpage(company);
-//        String companyLocation = PolygonAPI.getLocation(company);
-//        String avgVolume = PolygonAPI.calculateAverageVolume(company);
-//
-//        // Update labels
-//        desc.setText("<html><div style='width:800px; padding-bottom:10px;'>" + description + "</div></html>");// Wrapping text
-//        exchange.setText("Primary Exchange: " + primaryExchange);
-//        marketCap.setText("Market Cap: " + marketCapValue);
-//        open.setText("Open: " + openingPrice);
-//        high.setText("High: " + highPrice);
-//        low.setText("Low: " + lowPrice);
-//        volume.setText("Average Volume: " + avgVolume);
-//        location.setText("Location: " + companyLocation);
-//        webpage.setText("Webpage: " + webpageUrl);
-//
-//
-//        // Refresh stats panel
-//        statsPanel.revalidate();
-//        statsPanel.repaint();
-//    }
     private void updateStatsPanel(String company, JPanel statsPanel, JLabel desc, JLabel exchange,
                                   JLabel marketCap, JLabel open, JLabel high, JLabel low, JLabel webpage,
                                   JLabel location, JLabel volume) {
@@ -200,18 +170,6 @@ public class ExplorePage extends JPanel {
             JOptionPane.showMessageDialog(statsPanel, "This company no longer exists or might have " +
                     "changed its ticker: " + company, "Error", JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Explore Page");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1300, 600);
-
-        ExplorePage explorePage = new ExplorePage();
-
-        frame.add(explorePage);
-        frame.setVisible(true);
     }
 }
 
