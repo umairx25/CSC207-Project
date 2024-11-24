@@ -1,7 +1,6 @@
 package frameworks_driver;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -136,37 +135,6 @@ public class PolygonAPI {
 
         return HTTPRequest(urlString);
     }
-    //Search Company returns a long JSONObject, this collects all the tickers
-//    public static List<String> extractCompanyTickers(String jsonData) {
-//        List<String> tickers = new ArrayList<>();
-//
-//        // Parse the JSON data
-//        JSONObject jsonObject = new JSONObject(jsonData);
-//        JSONArray results = jsonObject.getJSONArray("results");
-//
-//        // Iterate through the array and collect tickers
-//        for (int i = 0; i < results.length(); i++) {
-//            JSONObject company = results.getJSONObject(i);
-//            String ticker = company.getString("ticker");
-//
-//            String snapshot;
-//            try {
-//                snapshot = getTickerSnapshot(ticker);
-//            } catch (Exception e) {
-////                System.out.println("Error occurred: " + e.getMessage());
-//                snapshot = "null"; // Catch other types of exceptions
-//            }
-//
-//            if (!snapshot.equals("null")) {
-//                tickers.add(ticker);
-//            }
-//        }
-//
-//        //remove duplicates
-//        LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
-//
-//        return new ArrayList<>(cleanSet);
-//    }
 
     //testing this rn
 //    public static List<String> extractCompanyTickers(String jsonData) {
@@ -220,7 +188,8 @@ public class PolygonAPI {
     }
 
 
-//     Logic for getting average volume data for the last 30 days
+
+    //     Logic for getting average volume data for the last 30 days
     public static JSONArray fetchVolumeData(String ticker)  {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(30);
@@ -297,7 +266,7 @@ public class PolygonAPI {
         if (open != 0) {
             return formatNumber(open);
         } else {
-            return "Stock has not yet opened.";
+            return "Stock is currently closed.";
         }
     }
     public static List<String> getHighLow(String ticker) throws Exception {
@@ -453,10 +422,11 @@ public class PolygonAPI {
          String tickerPattern = "^[A-Za-z0-9.]{1,5}$";
          // List of known exchanges
          List<String> exchanges = PolygonAPI.getAllExchanges();
-         if (input.matches(tickerPattern)) {
-             return "Ticker";
-         } else if (exchanges.contains(input.toUpperCase())) {
+
+         if (exchanges.contains(input.toUpperCase())) {
              return "Exchange";
+         } else if (input.matches(tickerPattern)) {
+             return "Ticker";
          } else {
              return "Keyword";
          }
