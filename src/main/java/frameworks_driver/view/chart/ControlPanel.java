@@ -1,13 +1,41 @@
 package frameworks_driver.view.chart;
+import interface_adapter.chart.ChartState;
+import interface_adapter.chart.ChartViewModel;
 
 import javax.swing.*;
 
 public class ControlPanel extends JPanel {
 
+    private ChartViewModel chartViewModel;
+
+    public JCheckBox getPriceHistoryCheckbox() {
+        return priceHistoryCheckbox;
+    }
+
     private final JCheckBox priceHistoryCheckbox;
+
+    public SmaCheckbox getSmaCheckbox() {
+        return smaCheckbox;
+    }
+
     private final SmaCheckbox smaCheckbox;
+
+    public EmaCheckbox getEmaCheckbox() {
+        return emaCheckbox;
+    }
+
     private final EmaCheckbox emaCheckbox;
+
+    public RsiCheckbox getRsiCheckbox() {
+        return rsiCheckbox;
+    }
+
     private final RsiCheckbox rsiCheckbox;
+
+    public TimeframeComboBox getTimeframeComboBox() {
+        return timeframeComboBox;
+    }
+
     private final TimeframeComboBox timeframeComboBox;
 
     public ControlPanel() {
@@ -18,9 +46,12 @@ public class ControlPanel extends JPanel {
         smaCheckbox = new SmaCheckbox();
         emaCheckbox = new EmaCheckbox();
         rsiCheckbox = new RsiCheckbox();
-
-        // Initialize the TimeframeComboBox
         timeframeComboBox = new TimeframeComboBox();
+
+        setEMAListener(emaCheckbox);
+        setSMAListener(smaCheckbox);
+        setRSIListener(rsiCheckbox);
+        setTimeframeComboBox(timeframeComboBox);
 
         // Add components to the panel
         add(priceHistoryCheckbox);
@@ -30,21 +61,36 @@ public class ControlPanel extends JPanel {
         add(timeframeComboBox);
     }
 
-    // Getter methods for checkboxes
-    public boolean isPriceHistorySelected() {
-        return priceHistoryCheckbox.isSelected();
+    private void setEMAListener(JCheckBox checkBox){
+        checkBox.addItemListener(e -> {
+            final ChartState currentState = chartViewModel.getState();
+            currentState.setEmaselected(checkBox.isSelected());
+            chartViewModel.setState(currentState);
+        });
     }
 
-    public boolean isSmaSelected() {
-        return smaCheckbox.isSelected();
+    private void setSMAListener(JCheckBox checkBox){
+        checkBox.addItemListener(e -> {
+            final ChartState currentState = chartViewModel.getState();
+            currentState.setEmaselected(checkBox.isSelected());
+            chartViewModel.setState(currentState);
+        });
     }
 
-    public boolean isEmaSelected() {
-        return emaCheckbox.isSelected();
+    private void setRSIListener(JCheckBox checkBox){
+        checkBox.addItemListener(e -> {
+            final ChartState currentState = chartViewModel.getState();
+            currentState.setEmaselected(checkBox.isSelected());
+            chartViewModel.setState(currentState);
+        });
     }
 
-    public boolean isRsiSelected() {
-        return rsiCheckbox.isSelected();
+    private void setTimeframeComboBox(TimeframeComboBox timeframe) {
+        timeframe.addActionListener(e -> {
+            final ChartState currentState = chartViewModel.getState();
+            currentState.setTimePeriod(getSelectedTimeframe());
+            chartViewModel.setState(currentState);
+        });
     }
 
     // Getter for selected timeframe

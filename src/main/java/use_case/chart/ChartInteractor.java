@@ -37,6 +37,8 @@ public class ChartInteractor implements ChartInputBoundary {
                         inputData.getTimespan(), inputData.getStartDate(),
                         inputData.getEndDate(), 10) : new LinkedHashMap<>();
 
+        System.out.println("Interactor: " + smaData);
+
         ChartOutputData outputData = new ChartOutputData(priceHistory, smaData, emaData, rsiData);
         outputBoundary.presentChartData(outputData);
     }
