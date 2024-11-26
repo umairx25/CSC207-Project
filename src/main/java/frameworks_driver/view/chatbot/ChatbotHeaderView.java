@@ -1,38 +1,48 @@
 package frameworks_driver.view.chatbot;
 
 import view.ColourManager;
+import view.FontManager;
+import view.GridBagManager;
+import view.ImageManager;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class ChatbotHeaderView extends JPanel {
     private final JLabel typingIndicator;
 
-    public ChatbotHeaderView(String botName, ImageIcon botIcon, Font botNameFont, Font typingFont, Color backgroundColor) {
+    public ChatbotHeaderView() {
         setLayout(new BorderLayout());
-        setBackground(backgroundColor);
-        setPreferredSize(new Dimension(500, 80));
+        setBackground(ColourManager.DARKER_GRAY);
+        setPreferredSize(new Dimension(GridBagManager.HEADER_SIZE));
 
+        // Initialize the bot's icon
+        ImageIcon botIcon = ImageManager.getImage("chatbot_pfp");
         JLabel iconLabel = new JLabel(botIcon);
-        iconLabel.setBorder(new EmptyBorder(15, 15, 15, 10));
+        iconLabel.setBorder(GridBagManager.ICON_BORDER);
         add(iconLabel, BorderLayout.WEST);
 
-        JPanel nameAndTypingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 30));
+        // Create a panel for the bot name and typing indicator
+        JPanel nameAndTypingPanel = new JPanel(GridBagManager.HEADER_FLOW_LAYOUT);
         nameAndTypingPanel.setOpaque(false);
 
-        JLabel chatbotNameLabel = new JLabel(botName);
-        chatbotNameLabel.setFont(botNameFont);
+        // Bot name
+        JLabel chatbotNameLabel = new JLabel("BullBot");
+        chatbotNameLabel.setFont(FontManager.OUTFIT_BOLD_22);
         chatbotNameLabel.setForeground(ColourManager.WHITE);
 
+        // Typing indicator
         typingIndicator = new JLabel("Typing...");
-        typingIndicator.setFont(typingFont);
+        typingIndicator.setFont(FontManager.ITALIC_SEGOE_FONT_12);
         typingIndicator.setForeground(ColourManager.WHITE);
         typingIndicator.setVisible(false);
+        typingIndicator.setBorder(GridBagManager.TYPING_BORDER);
 
+        // Add components to the name and typing panel
         nameAndTypingPanel.add(chatbotNameLabel);
         nameAndTypingPanel.add(typingIndicator);
 
+        // Add the panel to the center
         add(nameAndTypingPanel, BorderLayout.CENTER);
     }
 

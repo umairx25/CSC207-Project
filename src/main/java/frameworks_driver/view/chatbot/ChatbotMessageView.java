@@ -1,7 +1,9 @@
 package frameworks_driver.view.chatbot;
 
+import org.jetbrains.annotations.NotNull;
 import view.ColourManager;
 import view.FontManager;
+import view.GridBagManager;
 import view.ImageManager;
 
 import javax.swing.*;
@@ -16,7 +18,7 @@ public class ChatbotMessageView extends JPanel {
 
     public ChatbotMessageView() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(ColourManager.WHITE);
 
         messagePanel = new JPanel();
         messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
@@ -43,27 +45,17 @@ public class ChatbotMessageView extends JPanel {
         bubblePanel.setBackground(backgroundColor);
         bubblePanel.setBorder(new CompoundBorder(
                 new LineBorder(borderColor, 1),
-                new EmptyBorder(10, 10, 10, 10)
+                GridBagManager.INPUT_BORDER
         ));
 
-        // Message content
-        JTextArea messageLabel = new JTextArea(message);
-        messageLabel.setLineWrap(true);
-        messageLabel.setWrapStyleWord(true);
-        messageLabel.setEditable(false);
-        messageLabel.setOpaque(false);
-        messageLabel.setFont(FontManager.OUTFIT_REGULAR_12);
-
-        // Dynamically calculate the height based on text content
-        messageLabel.setSize(new Dimension(450, Integer.MAX_VALUE)); // Max width
-        messageLabel.setPreferredSize(new Dimension(450, messageLabel.getPreferredSize().height));
+        JTextArea messageLabel = getjTextArea(message);
         bubblePanel.add(messageLabel, BorderLayout.CENTER);
 
         // Timestamp
         JLabel timestampLabel = new JLabel(new SimpleDateFormat("hh:mm a").format(new Date()));
         timestampLabel.setFont(FontManager.ITALIC_SEGOE_FONT_10);
         timestampLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        timestampLabel.setBorder(new EmptyBorder(5, 0, 0, 0)); // Add 5px padding on top
+        timestampLabel.setBorder(GridBagManager.TIME_STAMP_BORDER);
         bubblePanel.add(timestampLabel, BorderLayout.SOUTH);
 
         // Add profile icon for the receiver
@@ -72,10 +64,10 @@ public class ChatbotMessageView extends JPanel {
             profileIcon.setIcon(ImageManager.getImage("chatbot_pfp"));
             bubbleContainer.add(profileIcon);
         }
-
+        int width = 450;
         // Ensure dynamic height for the bubble panel
-        bubblePanel.setPreferredSize(new Dimension(450, bubblePanel.getPreferredSize().height));
-        bubblePanel.setMaximumSize(new Dimension(450, bubblePanel.getPreferredSize().height));
+        bubblePanel.setPreferredSize(new Dimension(width, bubblePanel.getPreferredSize().height));
+        bubblePanel.setMaximumSize(new Dimension(width, bubblePanel.getPreferredSize().height));
 
         // Add bubble panel to the container
         bubbleContainer.add(bubblePanel);
@@ -86,6 +78,22 @@ public class ChatbotMessageView extends JPanel {
 
         // Scroll to the latest message
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum()));
+    }
+
+    @NotNull
+    private static JTextArea getjTextArea(String message) {
+        JTextArea messageLabel = new JTextArea(message);
+        messageLabel.setLineWrap(true);
+        messageLabel.setWrapStyleWord(true);
+        messageLabel.setEditable(false);
+        messageLabel.setOpaque(false);
+        messageLabel.setFont(FontManager.OUTFIT_REGULAR_12);
+
+        // Dynamically calculate the height based on text content
+        int width = 450;
+        messageLabel.setSize(new Dimension(width, Integer.MAX_VALUE)); // Max width
+        messageLabel.setPreferredSize(new Dimension(width, messageLabel.getPreferredSize().height));
+        return messageLabel;
     }
 
 }

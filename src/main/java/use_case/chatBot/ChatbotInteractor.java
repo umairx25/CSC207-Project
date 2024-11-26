@@ -16,7 +16,7 @@ public class ChatbotInteractor implements ChatbotInputBoundary {
     }
 
     @Override
-    public void processInput(ChatbotInputData inputData) {
+    public String processInput(ChatbotInputData inputData) {
         String prompt = getPrompt(inputData);
 
         try {
@@ -34,6 +34,9 @@ public class ChatbotInteractor implements ChatbotInputBoundary {
             // Send output to presenter
             outputBoundary.presentOutput(outputData);
 
+            // Return the response directly
+            return response;
+
         } catch (Exception e) {
             // Handle errors and send a fallback error message to the presenter
             String errorMessage = switch (e.getClass().getSimpleName()) {
@@ -43,6 +46,7 @@ public class ChatbotInteractor implements ChatbotInputBoundary {
             };
             ChatbotOutputData errorData = new ChatbotOutputData(errorMessage);
             outputBoundary.presentOutput(errorData);
+            return errorMessage; // Return the error message
         }
     }
 

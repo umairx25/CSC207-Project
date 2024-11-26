@@ -5,5 +5,6 @@ package use_case.chatBot;
  * Defines the contract for processing user input.
  */
 public interface ChatbotInputBoundary {
-    void processInput(ChatbotInputData inputData);
+    String processInput(ChatbotInputData inputData);
 }
+

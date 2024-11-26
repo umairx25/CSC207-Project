@@ -10,11 +10,14 @@ public class FontManager {
     public static final Font SEGOE_FONT_12 = new Font("Segoe UI", Font.PLAIN, 12);
     public static final Font SEGOE_FONT_10 = new Font("Segoe UI", Font.PLAIN, 10);
     public static final Font ITALIC_SEGOE_FONT_10 = new Font("Segoe UI", Font.ITALIC, 10);
+    public static final Font ITALIC_SEGOE_FONT_12 = new Font("Segoe UI", Font.ITALIC, 12);
+
     public static final Font SEGOE_BOLD_FONT_24 = new Font("Segoe UI", Font.BOLD, 24);
 
     public static final Font OUTFIT_REGULAR_10 = loadFont("assets/Outfit-Regular.ttf", Font.PLAIN, 10);
     public static final Font OUTFIT_REGULAR_12 = loadFont("assets/Outfit-Regular.ttf", Font.PLAIN, 12);
     public static final Font OUTFIT_BOLD_16 = loadFont("assets/Outfit-Regular.ttf", Font.BOLD, 16);
+    public static final Font OUTFIT_BOLD_22 = loadFont("assets/Outfit-Regular.ttf", Font.BOLD, 22);
 
     private FontManager() {}
 

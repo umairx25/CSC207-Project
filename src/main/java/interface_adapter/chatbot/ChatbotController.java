@@ -16,7 +16,7 @@ public class ChatbotController {
 
     public String handleInput(String userMessage) {
         ChatbotInputData inputData = new ChatbotInputData(userMessage);
-        inputBoundary.processInput(inputData);
-        return userMessage;
+        return inputBoundary.processInput(inputData);
     }
 }
+

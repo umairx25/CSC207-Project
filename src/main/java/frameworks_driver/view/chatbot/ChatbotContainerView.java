@@ -4,9 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import interface_adapter.chatbot.ChatbotController;
 import interface_adapter.chatbot.ChatbotViewModel;
-import view.ColourManager;
-import view.FontManager;
-import view.ImageManager;
 
 /**
  * Main container view for the chatbot UI.
@@ -24,13 +21,7 @@ public class ChatbotContainerView extends JPanel {
         setLayout(new BorderLayout());
 
         // Create and add header panel
-        headerPanel = new ChatbotHeaderView(
-                "BullBot",
-                ImageManager.getImage("chatbot_pfp"),
-                FontManager.OUTFIT_BOLD_16,
-                FontManager.OUTFIT_REGULAR_10,
-                ColourManager.DARKER_GRAY
-        );
+        headerPanel = new ChatbotHeaderView();
         add(headerPanel, BorderLayout.NORTH);
 
         // Create and add message panel
@@ -61,16 +52,33 @@ public class ChatbotContainerView extends JPanel {
         inputPanel.setEnabled(false);
         headerPanel.setTypingIndicatorVisible(true);
 
-        // Send message to backend and handle the response
-        String botResponse = controller.handleInput(userMessage); // Assuming this method returns a response
+        // Background task for handling the response
+        SwingWorker<String, Void> worker = new SwingWorker<>() {
+            @Override
+            protected String doInBackground() {
+                // Process the user's input and get the bot's response
+                return controller.handleInput(userMessage);
+            }
 
-        // Update UI with bot's response
-        messagePanel.addMessage(botResponse, false);
+            @Override
+            protected void done() {
+                try {
+                    // Get the bot's response
+                    String botResponse = get();
 
-        // Re-enable input and hide typing indicator
-        inputPanel.setEnabled(true);
-        headerPanel.setTypingIndicatorVisible(false);
+                } catch (Exception e) {
+                    // Handle errors (e.g., logging)
+                    messagePanel.addMessage("Error: Could not process response.", false);
+                } finally {
+                    // Re-enable input and hide typing indicator
+                    inputPanel.setEnabled(true);
+                    headerPanel.setTypingIndicatorVisible(false);
+                }
+            }
+        };
+
+        // Start the background task
+        worker.execute();
     }
-
 
 }
