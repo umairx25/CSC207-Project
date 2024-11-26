@@ -16,8 +16,6 @@ public class ChatbotPresenter implements ChatbotOutputBoundary {
 
     @Override
     public void presentOutput(ChatbotOutputData outputData) {
-        // Format the response (if necessary) and update the view model
-        String formattedResponse = outputData.getResponse(); // Apply any formatting here
-        viewModel.setResponse(formattedResponse);
+        viewModel.updateResponse(outputData.getResponse());
     }
 }

@@ -1,36 +1,39 @@
 package frameworks_driver.view.chatbot;
 
+import view.ColourManager;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import view.FontManager;
-import view.GridBagHelper;
 
 public class ChatbotHeaderView extends JPanel {
     private final JLabel typingIndicator;
 
-    public ChatbotHeaderView(String botName, ImageIcon botIcon) {
-        setLayout(new GridBagLayout());
-        setBackground(Color.DARK_GRAY);
+    public ChatbotHeaderView(String botName, ImageIcon botIcon, Font botNameFont, Font typingFont, Color backgroundColor) {
+        setLayout(new BorderLayout());
+        setBackground(backgroundColor);
+        setPreferredSize(new Dimension(500, 80));
 
-        // Bot icon
         JLabel iconLabel = new JLabel(botIcon);
-        GridBagConstraints iconGBC = GridBagHelper.createGBC(0, 0, new Insets(10, 10, 10, 10), GridBagConstraints.WEST, GridBagConstraints.NONE);
-        add(iconLabel, iconGBC);
+        iconLabel.setBorder(new EmptyBorder(15, 15, 15, 10));
+        add(iconLabel, BorderLayout.WEST);
 
-        // Bot name
+        JPanel nameAndTypingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 30));
+        nameAndTypingPanel.setOpaque(false);
+
         JLabel chatbotNameLabel = new JLabel(botName);
-        chatbotNameLabel.setFont(FontManager.OUTFIT_BOLD_16);
-        chatbotNameLabel.setForeground(Color.WHITE);
-        GridBagConstraints nameGBC = GridBagHelper.createGBC(1, 0, new Insets(10, 10, 5, 10), GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
-        add(chatbotNameLabel, nameGBC);
+        chatbotNameLabel.setFont(botNameFont);
+        chatbotNameLabel.setForeground(ColourManager.WHITE);
 
-        // Typing indicator
         typingIndicator = new JLabel("Typing...");
-        typingIndicator.setFont(FontManager.OUTFIT_REGULAR_12);
-        typingIndicator.setForeground(Color.LIGHT_GRAY);
+        typingIndicator.setFont(typingFont);
+        typingIndicator.setForeground(ColourManager.WHITE);
         typingIndicator.setVisible(false);
-        GridBagConstraints typingGBC = GridBagHelper.createGBC(1, 1, new Insets(0, 10, 10, 10), GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
-        add(typingIndicator, typingGBC);
+
+        nameAndTypingPanel.add(chatbotNameLabel);
+        nameAndTypingPanel.add(typingIndicator);
+
+        add(nameAndTypingPanel, BorderLayout.CENTER);
     }
 
     public void setTypingIndicatorVisible(boolean isVisible) {

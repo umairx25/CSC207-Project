@@ -1,45 +1,71 @@
 package data_access.chatbot;
 
-import use_case.chatBot.ChatbotDataAccessInterface;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.Gson;
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.*;
+import use_case.chatBot.ChatbotDataAccessInterface;
+
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Implementation of ChatbotDataAccessInterface.
- * Handles communication with external data sources (e.g., APIs).
- */
 public class ChatbotDataAccess implements ChatbotDataAccessInterface {
-    private static final String BASE_URL = "https://api.example.com/chat"; // Replace with actual API URL
-    private static final String API_KEY = "your-api-key-here"; // Replace with your API key
+    static final Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("GPT_API_KEY");
+    private static final String BASE_URL = dotenv.get("GPT_BASE_URL");
 
-    private final OkHttpClient client;
+    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build();
 
-    public ChatbotDataAccess() {
-        this.client = new OkHttpClient();
+    private String cleanResponse(String response) {
+        response = response.replaceAll("\\*\\*", "").replaceAll("_", "")
+                .replaceAll("`", "").replaceAll("```.*?```", "")
+                .replaceAll("(?m)^\\s*[-*]\\s+", "- ")
+                .replaceAll("(?m)^\\s*\\d+\\.\\s+", "1. ")
+                .replaceAll("\n{2,}", "\n\n").trim();
+        return response;
     }
 
     @Override
-    public String fetchResponse(String message) throws Exception {
-        // Create the request payload
-        RequestBody body = RequestBody.create(
-                MediaType.get("application/json"),
-                "{\"message\":\"" + message + "\"}"
-        );
+    public String fetchResponse(String prompt) throws Exception {
+        JsonObject message = new JsonObject();
+        message.addProperty("role", "user");
+        message.addProperty("content", prompt);
 
-        // Build the HTTP request
+        JsonObject payload = new JsonObject();
+        payload.add("model", new Gson().toJsonTree("gpt-4o-mini"));
+        payload.add("messages", new Gson().toJsonTree(new JsonObject[]{message}));
+        payload.addProperty("temperature", 0.7);
+
+        String jsonPayload = new Gson().toJson(payload);
+
         Request request = new Request.Builder()
                 .url(BASE_URL)
-                .addHeader("Authorization", "Bearer " + API_KEY)
                 .addHeader("Content-Type", "application/json")
-                .post(body)
+                .addHeader("Authorization", "Bearer " + API_KEY)
+                .post(RequestBody.create(jsonPayload, MediaType.parse("application/json")))
                 .build();
 
-        // Execute the request and handle the response
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response.code());
             }
-            return response.body().string(); // Parse and return the response
+
+            String responseBody = response.body().string();
+            JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
+
+            String rawText = jsonResponse
+                    .getAsJsonArray("choices")
+                    .get(0).getAsJsonObject()
+                    .getAsJsonObject("message")
+                    .get("content").getAsString();
+
+            return cleanResponse(rawText);
         }
     }
 }

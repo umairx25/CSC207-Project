@@ -1,17 +1,21 @@
 package interface_adapter.chatbot;
 
+import java.util.function.Consumer;
+
 /**
- * View model for the chatbot UI.
- * Stores data to be displayed on the interface.
+ * ViewModel for the chatbot UI.
+ * Stores and provides data to the view.
  */
 public class ChatbotViewModel {
-    private String response;
+    private Consumer<String> responseHandler;
 
-    public String getResponse() {
-        return response;
+    public void setResponseHandler(Consumer<String> responseHandler) {
+        this.responseHandler = responseHandler;
     }
 
-    public void setResponse(String response) {
-        this.response = response;
+    public void updateResponse(String response) {
+        if (responseHandler != null) {
+            responseHandler.accept(response);
+        }
     }
 }

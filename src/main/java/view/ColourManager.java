@@ -19,8 +19,8 @@ public class ColourManager {
     public static final Color MEDIUM_GRAY = new Color(50,50,50);
     public static final Color CORNFLOWER_BLUE = new Color(100, 149, 237);
     public static final Color INNER_BOX_BLUE = new Color(173, 216, 230);
-    public static final Color OUTER_BOX_BLUE = new Color(144, 238, 144);
-    public static final Color INNER_BOX_GREEN = new Color(100, 149, 237);
+    public static final Color OUTER_BOX_BlUE = new Color(100, 149, 237);
+    public static final Color INNER_BOX_GREEN = new Color(144, 238, 144);
     public static final Color OUTER_BOX_GREEN = new Color(34, 139, 34);
     private ColourManager() {
     }

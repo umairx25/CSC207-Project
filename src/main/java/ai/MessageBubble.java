@@ -15,7 +15,7 @@ public class MessageBubble extends JPanel {
         setOpaque(false);
 
         // Set bubble background and border colors based on sender type
-        Color backgroundColor = isSender ? ColourManager.INNER_BOX_BLUE : ColourManager.OUTER_BOX_BLUE;
+        Color backgroundColor = isSender ? ColourManager.INNER_BOX_BLUE : ColourManager.OUTER_BOX_BlUE;
         Color borderColor = isSender ? ColourManager.INNER_BOX_GREEN : ColourManager.OUTER_BOX_GREEN;
 
         // Message bubble panel
