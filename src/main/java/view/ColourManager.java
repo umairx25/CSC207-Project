@@ -17,10 +17,9 @@ public class ColourManager {
     //Chatbot panels
     public static final Color DARKER_GRAY = new Color(32, 31, 29, 255);
     public static final Color MEDIUM_GRAY = new Color(50,50,50);
-    public static final Color CORNFLOWER_BLUE = new Color(100, 149, 237);
     public static final Color INNER_BOX_BLUE = new Color(173, 216, 230);
-    public static final Color OUTER_BOX_BLUE = new Color(144, 238, 144);
-    public static final Color INNER_BOX_GREEN = new Color(100, 149, 237);
+    public static final Color OUTER_BOX_BlUE = new Color(100, 149, 237);
+    public static final Color INNER_BOX_GREEN = new Color(144, 238, 144);
     public static final Color OUTER_BOX_GREEN = new Color(34, 139, 34);
     private ColourManager() {
     }
