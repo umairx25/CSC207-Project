@@ -3,97 +3,89 @@ package interface_adapter.chart;
 import java.util.LinkedHashMap;
 
 public class ChartState {
-    private String title;
-    private LinkedHashMap<Long, Double> priceHistory;
-    private LinkedHashMap<Long, Double> sma;
-    private LinkedHashMap<Long, Double> ema;
-    private LinkedHashMap<Long, Double> rsi;
-
-    public boolean isPriceHistoryselected() {
-        return priceHistoryselected;
-    }
-
-    public boolean isSmaselected() {
-        return smaselected;
-    }
-
-    public boolean isEmaselected() {
-        return emaselected;
-    }
-
-    public boolean isRsiselected() {
-        return rsiselected;
-    }
-
-    private boolean priceHistoryselected;
-
-    public void setSmaselected(boolean smaselected) {
-        this.smaselected = smaselected;
-    }
-
-    public void setPriceHistoryselected(boolean priceHistoryselected) {
-        this.priceHistoryselected = priceHistoryselected;
-    }
-
-    public void setEmaselected(boolean emaselected) {
-        this.emaselected = emaselected;
-    }
-
-    public void setRsiselected(boolean rsiselected) {
-        this.rsiselected = rsiselected;
-    }
-
-    private boolean smaselected;
-    private boolean emaselected;
-    private boolean rsiselected;
-    private String timePeriod;
-
-    // Getters and setters for all fields
-    public String getTitle() {
-        return title;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    private String title;
+    private boolean smaSelected;
+    private boolean emaSelected;
+    private boolean rsiSelected;
+    private boolean priceHistorySelected;
+
     public LinkedHashMap<Long, Double> getPriceHistory() {
         return priceHistory;
-    }
-
-    public void setPriceHistory(LinkedHashMap<Long, Double> priceHistory) {
-        this.priceHistory = priceHistory;
-    }
-
-    public LinkedHashMap<Long, Double> getSma() {
-        return sma;
-    }
-
-    public void setSma(LinkedHashMap<Long, Double> sma) {
-        this.sma = sma;
     }
 
     public LinkedHashMap<Long, Double> getEma() {
         return ema;
     }
 
-    public void setEma(LinkedHashMap<Long, Double> ema) {
-        this.ema = ema;
+    public LinkedHashMap<Long, Double> getSma() {
+        return sma;
     }
 
     public LinkedHashMap<Long, Double> getRsi() {
         return rsi;
     }
 
+    private LinkedHashMap<Long, Double> priceHistory;
+
+    public void setEma(LinkedHashMap<Long, Double> ema) {
+        this.ema = ema;
+    }
+
+    public void setSma(LinkedHashMap<Long, Double> sma) {
+        this.sma = sma;
+    }
+
     public void setRsi(LinkedHashMap<Long, Double> rsi) {
         this.rsi = rsi;
     }
 
-    public String getTimePeriod() {
-        return timePeriod;
+    private LinkedHashMap<Long, Double> ema;
+    private LinkedHashMap<Long, Double> sma;
+    private LinkedHashMap<Long, Double> rsi;
+
+    // Getters and setters for all fields ///////Important
+    public boolean isSmaSelected() {
+        return smaSelected;
     }
 
-    public void setTimePeriod(String timePeriod) {
-        this.timePeriod = timePeriod;
+    public void setSmaSelected(boolean smaSelected) {
+        this.smaSelected = smaSelected;
+    }
+
+    public boolean isEmaSelected() {
+        return emaSelected;
+    }
+
+    public void setEmaSelected(boolean emaSelected) {
+        this.emaSelected = emaSelected;
+    }
+
+    public boolean isRsiSelected() {
+        return rsiSelected;
+    }
+
+    public void setRsiSelected(boolean rsiSelected) {
+        this.rsiSelected = rsiSelected;
+    }
+
+    public boolean isPriceHistorySelected() {
+        return priceHistorySelected;
+    }
+
+    public void setPriceHistorySelected(boolean priceHistorySelected) {
+        this.priceHistorySelected = priceHistorySelected;
+    }
+
+    public void setPriceHistory(LinkedHashMap<Long, Double> priceHistory) {
+        this.priceHistory = priceHistory;
     }
 }
+

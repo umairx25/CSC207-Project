@@ -8,9 +8,10 @@ public class ChartInputData {
     private final boolean includeSMA;
     private final boolean includeEMA;
     private final boolean includeRSI;
+    private final boolean includePrice;
 
     public ChartInputData(String ticker, String timespan, String startDate, String endDate,
-                          boolean includeSMA, boolean includeEMA, boolean includeRSI) {
+                          boolean includeSMA, boolean includeEMA, boolean includeRSI, boolean includePrice) {
         this.ticker = ticker;
         this.timespan = timespan;
         this.startDate = startDate;
@@ -18,6 +19,7 @@ public class ChartInputData {
         this.includeSMA = includeSMA;
         this.includeEMA = includeEMA;
         this.includeRSI = includeRSI;
+        this.includePrice = includePrice;
     }
 
     public String getTicker() {
@@ -36,6 +38,10 @@ public class ChartInputData {
         return endDate;
     }
 
+    public boolean isIncludePrice(){
+        return includePrice;
+    }
+
     public boolean isIncludeSMA() {
         return includeSMA;
     }
@@ -48,3 +54,4 @@ public class ChartInputData {
         return includeRSI;
     }
 }
+

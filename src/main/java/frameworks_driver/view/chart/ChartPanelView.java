@@ -1,5 +1,6 @@
 package frameworks_driver.view.chart;
 
+import interface_adapter.chart.ChartController;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -16,6 +17,7 @@ public class ChartPanelView extends JPanel {
 
     private final ChartPanel chartPanel;
     private JFreeChart chart;
+    private ChartController chartController;
 
     public ChartPanelView(String title) {
         setLayout(new BorderLayout());
@@ -35,6 +37,7 @@ public class ChartPanelView extends JPanel {
                 true, true, false
         );
 
+
         CategoryPlot plot = chart.getCategoryPlot();
         NumberAxis rangeAxis = new NumberAxis("Price");
         plot.setRangeAxis(rangeAxis);
@@ -43,7 +46,4 @@ public class ChartPanelView extends JPanel {
         return chart;
     }
 
-    public void updateChart(DefaultCategoryDataset dataset) {
-        chart.getCategoryPlot().setDataset(dataset);
-    }
 }

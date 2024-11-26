@@ -3,20 +3,19 @@ package interface_adapter.chart;
 import interface_adapter.ViewModel;
 
 import java.util.LinkedHashMap;
-
+//
 /**
- * The ViewModel for the Chart View.
- */
-public class ChartViewModel extends ViewModel<ChartState> {
+// * The ViewModel for the Chart View.
+// */
+
+    public class ChartViewModel extends ViewModel<ChartState> {
 
     public static final String TITLE_LABEL = "Chart Label";
     public static final String PRICE = "Price History";
     public static final String SMA = "Simple Moving Average (SMA)";
     public static final String EMA = "Exponential Moving Average (EMA)";
     public static final String RSI = "Relative Strength Index (RSI)";
-    public static final String DAY = "Day";
-    public static final String MONTH = "Month";
-    public static final String YEAR = "Year";
+
 
     public ChartViewModel() {
         super("chart");
@@ -73,14 +72,5 @@ public class ChartViewModel extends ViewModel<ChartState> {
         firePropertyChanged("rsi");
     }
 
-    /**
-     * Updates the time period of the chart (e.g., Day, Month, Year).
-     *
-     * @param timePeriod The new time period.
-     */
-    public void updateTimePeriod(String timePeriod) {
-        getState().setTimePeriod(timePeriod);
-        firePropertyChanged("timePeriod");
-    }
 
 }

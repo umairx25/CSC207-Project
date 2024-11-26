@@ -56,13 +56,12 @@ public class Builder {
     private final view.ViewManager viewManager = new view.ViewManager(cardPanel, cardLayout, viewManagerModel);
     private final ChartViewModel chartViewModel = new ChartViewModel();
     private final StockDataAccess stockDataAccess = new StockDataAccess();
-    final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(viewManagerModel,
-            chartViewModel);
+    final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(chartViewModel);
     final ChartInputBoundary chartInteractor = new ChartInteractor(
-            stockDataAccess, chartOutputBoundary);
+            stockDataAccess, (ChartPresenter) chartOutputBoundary);
     final ChartController controller = new ChartController(chartInteractor);
     //        chartView.setChartController(controller);
-    ChartView chartView= new ChartView(chartViewModel, controller);
+    ChartView chartView= new ChartView(chartViewModel, controller, chartViewModel.getState());
 
 
     // thought question: is the hard dependency below a problem? Yes, never have hard dpendenices
@@ -95,13 +94,13 @@ public class Builder {
         ChartViewModel chartViewModel = new ChartViewModel();
 
         // Initialize and set the SignupController
-        final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(viewManagerModel,
+        final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(
                 chartViewModel);
         final ChartInputBoundary chartInteractor = new ChartInteractor(
-                stockDataAccess, chartOutputBoundary);
+                stockDataAccess, (ChartPresenter) chartOutputBoundary);
         final ChartController controller = new ChartController(chartInteractor);
 //        chartView.setChartController(controller);
-        ChartView chartView= new ChartView(chartViewModel, controller);
+        ChartView chartView= new ChartView(chartViewModel, controller, chartViewModel.getState());
 
         cardPanel.add(chartView, chartView.getViewName());
 
