@@ -14,16 +14,16 @@ public class FontManager {
 
     public static final Font SEGOE_BOLD_FONT_24 = new Font("Segoe UI", Font.BOLD, 24);
 
-    public static final Font OUTFIT_REGULAR_10 = loadFont("assets/Outfit-Regular.ttf", Font.PLAIN, 10);
-    public static final Font OUTFIT_REGULAR_12 = loadFont("assets/Outfit-Regular.ttf", Font.PLAIN, 12);
-    public static final Font OUTFIT_BOLD_16 = loadFont("assets/Outfit-Regular.ttf", Font.BOLD, 16);
-    public static final Font OUTFIT_BOLD_22 = loadFont("assets/Outfit-Regular.ttf", Font.BOLD, 22);
+    public static final Font OUTFIT_REGULAR_10 = loadFont(Font.PLAIN, 10);
+    public static final Font OUTFIT_REGULAR_12 = loadFont(Font.PLAIN, 12);
+    public static final Font OUTFIT_BOLD_16 = loadFont(Font.BOLD, 16);
+    public static final Font OUTFIT_BOLD_22 = loadFont(Font.BOLD, 22);
 
     private FontManager() {}
 
-    private static Font loadFont(String filePath, int style, int size) {
+    private static Font loadFont(int style, int size) {
         try {
-            return Font.createFont(Font.TRUETYPE_FONT, new File(filePath)).deriveFont(style, size);
+            return Font.createFont(Font.TRUETYPE_FONT, new File("assets/Outfit-Regular.ttf")).deriveFont(style, size);
         } catch (Exception e) {
             // Fall back to a default font if loading fails
             return new Font("SansSerif", style, size);

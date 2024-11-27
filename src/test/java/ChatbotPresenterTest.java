@@ -6,16 +6,25 @@ import use_case.chatBot.ChatbotOutputData;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Unit tests for ChatbotPresenter.
+ */
 class ChatbotPresenterTest {
     private ChatbotPresenter presenter;
     private ChatbotViewModel viewModel;
 
+    /**
+     * Sets up the ViewModel and Presenter for testing.
+     */
     @BeforeEach
     void setUp() {
         viewModel = new ChatbotViewModel();
         presenter = new ChatbotPresenter(viewModel);
     }
 
+    /**
+     * Tests presenting output data to the ViewModel.
+     */
     @Test
     void testPresentOutput() {
         final String[] updatedResponse = {null};

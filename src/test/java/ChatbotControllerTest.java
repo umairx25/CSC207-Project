@@ -6,12 +6,17 @@ import interface_adapter.chatbot.ChatbotController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Unit tests for ChatbotController.
+ */
 class ChatbotControllerTest {
     private ChatbotController controller;
 
+    /**
+     * Sets up a mock ChatbotInputBoundary for testing.
+     */
     @BeforeEach
     void setUp() {
-        // Create a manual mock for ChatbotInputBoundary
         ChatbotInputBoundary mockBoundary = inputData -> {
             if (inputData.message().equals("Hello")) {
                 return "Mocked Response";
@@ -23,12 +28,18 @@ class ChatbotControllerTest {
         controller = new ChatbotController(mockBoundary);
     }
 
+    /**
+     * Tests handling of valid input.
+     */
     @Test
     void testHandleValidInput() {
         String response = controller.handleInput("Hello");
         assertEquals("Mocked Response", response, "Expected 'Mocked Response' for input 'Hello'");
     }
 
+    /**
+     * Tests handling of invalid input.
+     */
     @Test
     void testHandleInvalidInput() {
         String response = controller.handleInput("Unknown");

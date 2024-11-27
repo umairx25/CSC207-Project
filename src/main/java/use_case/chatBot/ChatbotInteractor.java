@@ -7,38 +7,43 @@ import org.jetbrains.annotations.NotNull;
  * Handles processing of user input and generating bot responses.
  */
 public class ChatbotInteractor implements ChatbotInputBoundary {
-    private final ChatbotOutputBoundary outputBoundary; // Presenter for sending results to the UI
-    private final ChatbotDataAccessInterface dataAccess; // Handles data access (API calls, etc.)
+    private final ChatbotOutputBoundary outputBoundary;
+    private final ChatbotDataAccessInterface dataAccess;
 
+    /**
+     * Constructs a ChatbotInteractor with the specified output boundary and data access.
+     *
+     * @param outputBoundary The presenter responsible for sending results to the UI.
+     * @param dataAccess     The data access interface for fetching responses.
+     */
     public ChatbotInteractor(ChatbotOutputBoundary outputBoundary, ChatbotDataAccessInterface dataAccess) {
         this.outputBoundary = outputBoundary;
         this.dataAccess = dataAccess;
     }
 
+    /**
+     * Processes the input data and generates the chatbot's response.
+     *
+     * @param inputData The input data containing the user message.
+     * @return The chatbot's response as a string.
+     */
     @Override
     public String processInput(ChatbotInputData inputData) {
         String prompt = getPrompt(inputData);
 
         try {
-            // Fetch response from the Data Access layer
             String response = dataAccess.fetchResponse(prompt);
 
-            // Process the response
             if ("FALSE".equalsIgnoreCase(response)) {
                 response = "Sorry, either the question is not finance-related or it requires real-time data.";
             }
 
-            // Prepare output data
             ChatbotOutputData outputData = new ChatbotOutputData(response);
-
-            // Send output to presenter
             outputBoundary.presentOutput(outputData);
 
-            // Return the response directly
             return response;
 
         } catch (Exception e) {
-            // Handle errors and send a fallback error message to the presenter
             String errorMessage = switch (e.getClass().getSimpleName()) {
                 case "IOException" -> "Sorry, a network or API error occurred. Please try again later.";
                 case "JsonSyntaxException" -> "Sorry, the response from the AI could not be processed. Please contact support.";
@@ -46,19 +51,23 @@ public class ChatbotInteractor implements ChatbotInputBoundary {
             };
             ChatbotOutputData errorData = new ChatbotOutputData(errorMessage);
             outputBoundary.presentOutput(errorData);
-            return errorMessage; // Return the error message
+            return errorMessage;
         }
     }
 
+    /**
+     * Generates a prompt from the user input for processing.
+     *
+     * @param inputData The user input data.
+     * @return A formatted prompt string.
+     */
     @NotNull
     private static String getPrompt(ChatbotInputData inputData) {
         String userMessage = inputData.message();
-
-        // Logic for evaluating and responding
         return "Analyze the following question and provide the appropriate response:\n"
                 + "Question: \"" + userMessage + "\"\n"
-                + "If it is a greeting or asking who you are respond with something along the lines of that your name is Bullbot and you're here to help with finance questions.\n"
-                + "If the question is not finance-related (Make sure it is an appropriate Finance question) or if it requires real-time data, respond with the word FALSE.\n"
+                + "If it is a greeting or asking who you are, respond with something along the lines of that your name is Bullbot and you're here to help with finance questions.\n"
+                + "If the question is not finance-related or requires real-time data, respond with the word FALSE.\n"
                 + "Else: answer the question efficiently and briefly.";
     }
 }

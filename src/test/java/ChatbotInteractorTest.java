@@ -4,12 +4,17 @@ import use_case.chatBot.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Unit tests for ChatbotInteractor.
+ */
 class ChatbotInteractorTest {
     private ChatbotInteractor interactor;
 
+    /**
+     * Sets up mock dependencies for ChatbotInteractor.
+     */
     @BeforeEach
     void setUp() {
-        // Manual mock for ChatbotOutputBoundary
         ChatbotOutputBoundary mockPresenter = outputData -> {
             if (outputData.response().equals("Mock API Response")) {
                 assertEquals("Mock API Response", outputData.response());
@@ -18,7 +23,6 @@ class ChatbotInteractorTest {
             }
         };
 
-        // Manual mock for ChatbotDataAccessInterface
         ChatbotDataAccessInterface mockDataAccess = message -> {
             if (message.contains("Hello")) {
                 return "Mock API Response";
@@ -30,15 +34,20 @@ class ChatbotInteractorTest {
         interactor = new ChatbotInteractor(mockPresenter, mockDataAccess);
     }
 
+    /**
+     * Tests processing of valid input.
+     */
     @Test
     void testProcessValidInput() {
         String response = interactor.processInput(new ChatbotInputData("Hello"));
         assertEquals("Mock API Response", response, "Expected 'Mock API Response' for valid input");
     }
 
+    /**
+     * Tests processing of invalid input.
+     */
     @Test
     void testProcessInvalidInput() {
-        // Modify expectation to match the actual behavior of the interactor
         String response = interactor.processInput(new ChatbotInputData("Invalid"));
         assertEquals("Sorry, an unexpected error occurred. Try again later.", response,
                 "Expected fallback error message for invalid input");
