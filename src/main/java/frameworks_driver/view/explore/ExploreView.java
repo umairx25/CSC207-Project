@@ -1,4 +1,4 @@
-package view;
+package frameworks_driver.view;
 
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExploreViewModel;
@@ -17,12 +17,22 @@ public class ExploreView extends JPanel {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
 
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // Search bar
         JPanel searchPanel = new JPanel(new BorderLayout());
         JTextField searchField = new JTextField();
         JButton searchButton = new JButton("Search");
+        JButton homeButton = new JButton("Home"); // Added Home button
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        buttonPanel.add(searchButton, BorderLayout.WEST);
+        buttonPanel.add(homeButton, BorderLayout.EAST);
         searchPanel.add(searchField, BorderLayout.CENTER);
-        searchPanel.add(searchButton, BorderLayout.EAST);
+        searchPanel.add(buttonPanel, BorderLayout.EAST);
 
         // Scrollable list
         DefaultListModel<String> companyListModel = new DefaultListModel<>();
@@ -42,6 +52,11 @@ public class ExploreView extends JPanel {
 
         add(searchPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
+
+        // Home button functionality
+        homeButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(statsPanel, "Returning to the home frameworks_driver.view. Backend not yet implemented.");
+        });
 
         // Search button functionality
         searchButton.addActionListener((ActionEvent e) -> {

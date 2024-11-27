@@ -9,10 +9,6 @@ public class CompanyOutputData {
         this.stats = stats;
     }
 
-    public void setStats(Stock stats) {
-        this.stats = stats;
-    }
-
     public Stock getStats() {
         return stats;
     }

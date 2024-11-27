@@ -97,6 +97,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     //Ticker Information
     //if limit is left empty the api will default it to 100
     //you can search by either the ticker or exchange name (mic codes only) or keyword but only one at a time!
+    @Override
     public String searchCompany(String ticker, String exchange, String keyword) {
         String baseURL = "https://api.polygon.io/v3/reference/tickers";
         String limit = "1000";
@@ -115,7 +116,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         return HTTPRequest(urlString);
     }
 
-
+    @Override
     public List<String> extractCompanyTickers(String jsonData) {
         List<String> tickers = new ArrayList<>();
 
@@ -155,6 +156,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         }
     }
 
+    @Override
     public String calculateAverageVolume(String ticker) {
         JSONArray resultsArray = fetchVolumeData(ticker);
 
@@ -170,6 +172,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         return formatNumber(totalVolume / resultsArray.length());
     }
 
+    @Override
     public List<String> getAllExchanges() {
         List<String> exchanges = new ArrayList<>();
         String urlString = "https://api.polygon.io/v3/reference/exchanges?asset_class=stocks&apiKey=tRolQKcnnsS0ASS2_TFAZfjEjqHclpxU";
@@ -195,6 +198,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         return HTTPRequest(urlString);
     }
 
+    @Override
     public String getOpen(String ticker) {
         String result = getTickerSnapshot(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -209,6 +213,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         }
     }
 
+    @Override
     public List<String> getHighLow(String ticker) throws Exception {
         String result = getTickerSnapshot(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -240,6 +245,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         return HTTPRequest(urlString);
     }
 
+    @Override
     public String getPrimaryExchange(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -252,6 +258,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         }
     }
 
+    @Override
     public String getMarketCap(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -265,12 +272,15 @@ public class PolygonDao implements ExploreDataAccessInterface {
         }
     }
 
+    @Override
     public String getTickerName(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
         return resultsObject.getString("name");
     }
+
+    @Override
     public String getDesc(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -283,6 +293,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         }
     }
 
+    @Override
     public String getWebpage(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -295,6 +306,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
         }
     }
 
+    @Override
     public String getLocation(String ticker) throws Exception {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);

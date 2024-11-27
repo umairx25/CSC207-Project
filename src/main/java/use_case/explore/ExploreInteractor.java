@@ -1,8 +1,6 @@
 package use_case.explore;
 
 import entity.Stock;
-import interface_adapter.explore.ExplorePresenter;
-
 import java.util.List;
 
 
@@ -33,7 +31,7 @@ public class ExploreInteractor implements ExploreInputBoundary {
     @Override
     public void getCompanyDetails(CompanyInputData inputData) throws Exception {
         // Fetch company details and construct a Stock entity
-        Stock stock = null; //possible null pointer exception
+        Stock stock;
         try {
             stock = new Stock(
                     inputData.getSelectedCompany(),
@@ -50,6 +48,7 @@ public class ExploreInteractor implements ExploreInputBoundary {
             );
         } catch (Exception e) {
             presenter.presentError(true);
+            return;
         }
         final CompanyOutputData companyOutputData = new CompanyOutputData(stock);
         presenter.presentCompanyDetails(companyOutputData);

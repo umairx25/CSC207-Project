@@ -10,8 +10,4 @@ public class CompanyInputData {
     public String getSelectedCompany() {
         return selectedCompany;
     }
-
-    public void setSelectedCompany(String selectedCompany) {
-        this.selectedCompany = selectedCompany;
-    }
 }

@@ -3,14 +3,14 @@ package use_case.explore;
 import entity.Stock;
 import java.util.List;
 
-public class ExploreOutputData {
-    private List<Stock> companies;
+public class SearchOutputData {
+    private List<String> companies;
 
-    public void setCompanies(List<Stock> companies) {
+    public SearchOutputData(List<String> companies) {
         this.companies = companies;
     }
 
-    public List<Stock> getCompanies() {
+    public List<String> getCompanies() {
         return companies;
     }
 }
