@@ -4,9 +4,8 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import data_access.PolygonDao;
-import view.ExploreView;
-import interface_adapter.ViewManagerModel;
+import data_access.explore.ExploreDataAccess;
+import frameworks_driver.view.explore.ExploreView;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
 import interface_adapter.explore.ExploreViewModel;
@@ -24,7 +23,7 @@ import use_case.explore.ExploreOutputBoundary;
 public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final ExploreViewModel ExploreViewModel = new ExploreViewModel();
-    private final PolygonDao stockDataAccess = new PolygonDao();
+    private final ExploreDataAccess stockDataAccess = new ExploreDataAccess();
     final ExploreOutputBoundary ExploreOutputBoundary = new ExplorePresenter(ExploreViewModel);
     final ExploreInputBoundary ExploreInteractor = new ExploreInteractor(stockDataAccess, (ExplorePresenter) ExploreOutputBoundary);
     final ExploreController controller = new ExploreController(ExploreInteractor);
@@ -33,6 +32,12 @@ public class Builder {
     public Builder() {
         CardLayout cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
+    }
+
+
+    public Builder addExploreView () {
+        cardPanel.add(ExploreView);
+        return this;
     }
 
     /**
@@ -45,7 +50,6 @@ public class Builder {
         Image icon = Toolkit.getDefaultToolkit().getImage("C:\\Users\\shahe\\IdeaProjects\\CSC207-Project\\images\\stock_flow_logo (1).png");
         application.setIconImage(icon);
 
-        cardPanel.add(ExploreView);
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         application.add(cardPanel);

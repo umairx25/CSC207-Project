@@ -15,9 +15,9 @@ public class Main {
         final Builder builder = new Builder();
 
         final JFrame application = builder
+                .addExploreView()
                 .build();
 
-        application.pack();
         application.setVisible(true);
     }
 }
