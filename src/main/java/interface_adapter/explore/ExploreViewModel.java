@@ -16,7 +16,7 @@ public class ExploreViewModel extends ViewModel<ExploreState> {
 
     public ExploreViewModel() {
         super("explore");
-//        setState(new ExploreState());
+        setState(new ExploreState());
     }
 
     public List<String> getSearchOuput() {
