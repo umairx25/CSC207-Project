@@ -47,7 +47,7 @@ public class Builder {
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
         application.setSize(1300, 600);
-        Image icon = Toolkit.getDefaultToolkit().getImage("C:\\Users\\shahe\\IdeaProjects\\CSC207-Project\\images\\stock_flow_logo (1).png");
+        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
