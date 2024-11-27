@@ -26,18 +26,6 @@ public class ChartInputData {
         return ticker;
     }
 
-    public String getTimespan() {
-        return timespan;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
     public boolean isIncludePrice(){
         return includePrice;
     }

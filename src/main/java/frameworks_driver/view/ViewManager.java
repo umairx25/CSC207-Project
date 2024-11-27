@@ -1,4 +1,4 @@
-package view;
+package frameworks_driver.view;
 
 import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;

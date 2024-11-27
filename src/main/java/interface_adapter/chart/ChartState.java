@@ -72,10 +72,6 @@ public class ChartState {
         return rsiSelected;
     }
 
-    public void setRsiSelected(boolean rsiSelected) {
-        this.rsiSelected = rsiSelected;
-    }
-
     public boolean isPriceHistorySelected() {
         return priceHistorySelected;
     }

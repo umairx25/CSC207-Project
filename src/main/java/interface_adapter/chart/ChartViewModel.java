@@ -10,13 +10,6 @@ import java.util.LinkedHashMap;
 
     public class ChartViewModel extends ViewModel<ChartState> {
 
-    public static final String TITLE_LABEL = "Chart Label";
-    public static final String PRICE = "Price History";
-    public static final String SMA = "Simple Moving Average (SMA)";
-    public static final String EMA = "Exponential Moving Average (EMA)";
-    public static final String RSI = "Relative Strength Index (RSI)";
-
-
     public ChartViewModel() {
         super("chart");
         setState(new ChartState());

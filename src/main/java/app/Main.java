@@ -15,7 +15,6 @@ public class Main {
 
         final JFrame application = builder
                 .addChartView()
-//                .addChartUseCase()
                 .build();
 
         application.pack();
