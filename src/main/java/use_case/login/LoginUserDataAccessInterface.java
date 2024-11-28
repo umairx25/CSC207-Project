@@ -1,29 +1,41 @@
 package use_case.login;
 
-public interface LoginUserDataAccessInterface {
+import entity.User;
 
+/**
+ * Interface for user data access operations required by the Login Use Case.
+ */
+public interface LoginUserDataAccessInterface {
     /**
-     * Fetch the authentication token for the given email and password.
+     * Fetches a Firebase authentication token for a user.
      *
-     * @param email The user's email.
-     * @param password The user's password.
-     * @return The authentication token (idToken) if successful, null otherwise.
+     * @param email    the user's email
+     * @param password the user's password
+     * @return the authentication token if successful, or null if login fails
      */
     String fetchToken(String email, String password);
 
     /**
-     * Verify the validity of the authentication token.
+     * Verifies the validity of a Firebase authentication token.
      *
-     * @param idToken The token to be verified.
-     * @return True if the token is valid, false otherwise.
+     * @param idToken the token to verify
+     * @return true if the token is valid, false otherwise
      */
     boolean verifyToken(String idToken);
 
+//    /**
+//     * Checks if a user with the given email exists in Firebase.
+//     *
+//     * @param email the email to check
+//     * @return true if the email exists, false otherwise
+//     */
+//    boolean checkIfEmailExists(String email);
+
     /**
-     * Check if a user with the given email already exists.
+     * Retrieves a user entity based on their email.
      *
-     * @param email The email to check.
-     * @return True if the email exists, false otherwise.
+     * @param email the user's email
+     * @return the User object if the email exists, or null otherwise
      */
-    boolean checkIfEmailExists(String email);
+//    User getUser(String email);
 }

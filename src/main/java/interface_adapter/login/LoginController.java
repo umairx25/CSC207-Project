@@ -3,15 +3,20 @@ package interface_adapter.login;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInputData;
 
-public class LoginController {
-    private final LoginInputBoundary inputBoundary;
+import java.io.IOException;
 
-    public LoginController(LoginInputBoundary inputBoundary) {
-        this.inputBoundary = inputBoundary;
+/**
+ * Controller for the Login Use Case.
+ */
+public class LoginController {
+    private final LoginInputBoundary loginInteractor;
+
+    public LoginController(LoginInputBoundary loginInteractor) {
+        this.loginInteractor = loginInteractor;
     }
 
-    public void handleLogin(String email, String password) {
+    public void execute(String email, String password) throws IOException {
         LoginInputData inputData = new LoginInputData(email, password);
-        inputBoundary.login(inputData);
+        loginInteractor.execute(inputData);
     }
 }

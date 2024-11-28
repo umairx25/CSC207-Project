@@ -1,5 +1,8 @@
 package use_case.login;
 
+/**
+ * Input Boundary for actions related to logging in.
+ */
 public interface LoginInputBoundary {
-    LoginOutputData login(LoginInputData inputData);
+    void execute(LoginInputData loginInputData);
 }

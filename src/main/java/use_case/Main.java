@@ -1,14 +1,14 @@
 package use_case;
 
+import data_access.LoginUserDataAccess;
 import frameworks_driver.Login;
+import frameworks_driver.view.LoginAndSignUp.MainFrame;
 import io.github.cdimascio.dotenv.Dotenv;
-import view.MainFrame;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Dotenv dotenv = Dotenv.load();
+        LoginUserDataAccess.initialize_firebase("config.json");
         new MainFrame();
-        Login.initialize_firebase(dotenv.get("FIREBASE_INFO"));
     }
 }

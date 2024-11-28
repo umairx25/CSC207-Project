@@ -1,26 +1,34 @@
 package use_case.login;
 
+/**
+ * Interactor for the Login Use Case.
+ */
 public class LoginInteractor implements LoginInputBoundary {
-    private final LoginUserDataAccessInterface dataAccess;
+    private final LoginUserDataAccessInterface LoginUserDataAccess;
+    private final LoginOutputBoundary loginPresenter;
 
-    public LoginInteractor(LoginUserDataAccessInterface dataAccess) {
-        this.dataAccess = dataAccess;
+    public LoginInteractor(LoginUserDataAccessInterface userDataAccess, LoginOutputBoundary loginPresenter) {
+        this.LoginUserDataAccess = userDataAccess;
+        this.loginPresenter = loginPresenter;
     }
 
     @Override
-    public LoginOutputData login(LoginInputData inputData) {
-        String token = dataAccess.fetchToken(inputData.getEmail(), inputData.getPassword());
-        if (token == null) {
-            return new LoginOutputData(false, "Login failed.");
-        }
-        return new LoginOutputData(true, token);
-    }
+    public void execute(LoginInputData loginInputData) {
+        String email = loginInputData.getEmail();
+        String password = loginInputData.getPassword();
 
-    public boolean verifyLogin(String idToken) {
-        return dataAccess.verifyToken(idToken);
-    }
+//        if (!LoginUserDataAccess.checkIfEmailExists(email)) {
+//            System.out.println("email does not exist");
+//            loginPresenter.prepareFailView("Email not found.");
+//        } else {
+            String token = LoginUserDataAccess.fetchToken(email, password);
+            if (token != null && LoginUserDataAccess.verifyToken(token)) {
+                System.out.println("logged in");
+                loginPresenter.prepareSuccessView(new LoginOutputData(email, true));
 
-    public boolean checkIfEmailExists(String email) {
-        return dataAccess.checkIfEmailExists(email);
+            } else {
+                System.out.println("credentials are wrong");
+                loginPresenter.prepareFailView("Invalid credentials.");
+            }
     }
 }
