@@ -27,5 +27,12 @@ public class ExploreController {
         }
     }
 
+    /**
+     * Executes the "switch to LoginView" Use Case.
+     */
+    public void switchToHomeView() {
+        exploreInteractor.switchToHomeView();
+    }
+
 }
 

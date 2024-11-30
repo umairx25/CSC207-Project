@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import data_access.explore.ExploreDataAccess;
-import frameworks_driver.view.explore.ExploreView;
+import frameworks_driver.explore.view.ExploreView;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
 import interface_adapter.explore.ExploreViewModel;
@@ -22,12 +22,12 @@ import use_case.explore.ExploreOutputBoundary;
 
 public class Builder {
     private final JPanel cardPanel = new JPanel();
-    private final ExploreViewModel ExploreViewModel = new ExploreViewModel();
+    private final ExploreViewModel exploreViewModel = new ExploreViewModel();
     private final ExploreDataAccess stockDataAccess = new ExploreDataAccess();
-    final ExploreOutputBoundary ExploreOutputBoundary = new ExplorePresenter(ExploreViewModel);
-    final ExploreInputBoundary ExploreInteractor = new ExploreInteractor(stockDataAccess, (ExplorePresenter) ExploreOutputBoundary);
-    final ExploreController controller = new ExploreController(ExploreInteractor);
-    ExploreView ExploreView= new ExploreView(controller, ExploreViewModel);
+    final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+    final ExploreInputBoundary exploreInteractor = new ExploreInteractor(stockDataAccess, exploreOutputBoundary);
+    final ExploreController controller = new ExploreController(exploreInteractor);
+    ExploreView exploreView = new ExploreView(controller, exploreViewModel);
 
     public Builder() {
         CardLayout cardLayout = new CardLayout();
@@ -36,7 +36,7 @@ public class Builder {
 
 
     public Builder addExploreView () {
-        cardPanel.add(ExploreView);
+        cardPanel.add(exploreView);
         return this;
     }
 

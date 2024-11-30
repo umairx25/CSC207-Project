@@ -5,21 +5,35 @@ import use_case.explore.ExploreOutputBoundary;
 import use_case.explore.SearchOutputData;
 
 public class ExplorePresenter implements ExploreOutputBoundary {
-    private final ExploreViewModel viewModel;
+    private final ExploreViewModel exploreViewModel;
+//    private final HomeViewModel homeViewModel;
+//    private final ViewManagerModel viewManagerModel;
 
     public ExplorePresenter(ExploreViewModel viewModel) {
-        this.viewModel = viewModel;
+        this.exploreViewModel = viewModel;
+//        this.homeViewModel = homeViewModel;
+//        this.viewManagerModel = viewManagerModel;
     }
 
+    @Override
     public void presentCompanies(SearchOutputData searchOutputData) {
-        viewModel.setSearchOuput(searchOutputData.getCompanies());
+        exploreViewModel.setSearchOutput(searchOutputData.getCompanies());
     }
 
+    @Override
     public void presentCompanyDetails(CompanyOutputData companyOutputData) {
-        viewModel.setStockInfoOuput(companyOutputData.getStats());
+        exploreViewModel.setStockInfoOutput(companyOutputData.getStats());
     }
 
+    @Override
     public void presentError(boolean errorState) {
-        viewModel.setErrorState(true);
+        exploreViewModel.setErrorState(true);
+    }
+
+    @Override
+    public void switchToHomeView() {
+//        viewManagerModel.setState(homeViewModel.getViewName());
+//        viewManagerModel.firePropertyChanged();
+        System.out.println("not implemented yet");
     }
 }

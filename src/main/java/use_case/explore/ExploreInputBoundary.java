@@ -5,4 +5,10 @@ public interface ExploreInputBoundary {
     void getCompanyDetails(CompanyInputData inputData) throws Exception;
     String identifyInputType(String input);
 
+
+    /**
+     * Executes the switch to login view use case.
+     */
+    void switchToHomeView();
+
 }

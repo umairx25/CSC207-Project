@@ -1,25 +1,25 @@
-package data_access;
+package data_access.explore;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.explore.ExploreDataAccessInterface;
 
 
-public class PolygonDao implements ExploreDataAccessInterface {
+public class ExploreDataAccess implements ExploreDataAccessInterface {
     static final Dotenv dotenv = Dotenv.load();
     private static final String API_KEY = dotenv.get("POLYGON_API_KEY");
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static void main(String[] args) throws Exception {
         //Test for getAggregateData
@@ -68,7 +68,6 @@ public class PolygonDao implements ExploreDataAccessInterface {
 //        System.out.println("Response: " +  formatJson(jsonResponse));
 //        String jsonResponse = getTickerSnapshot("AAXN");
 //        System.out.println("Response: " +  formatJson(jsonResponse));
-
     }
 
     //Aggregate Data
@@ -79,19 +78,6 @@ public class PolygonDao implements ExploreDataAccessInterface {
         String baseURL = "https://api.polygon.io/v2/aggs/ticker/";
         String urlString = baseURL + ticker + "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
         return HTTPRequest(urlString);
-    }
-    public static List<Double> getHistoricalClosingData(String ticker, int multiplier, String timespan, String from, String to) {
-        String urlString = "https://api.polygon.io/v2/aggs/ticker/" + ticker + "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
-        List<Double> prices = new ArrayList<>();
-        String results = HTTPRequest(urlString);
-        JSONObject jsonResponse = new JSONObject(results);
-        JSONArray resultsArray = jsonResponse.getJSONArray("results");
-        for (int i = 0; i < resultsArray.length(); i++) {
-            JSONObject dataPoint = resultsArray.getJSONObject(i);
-            double closePrice = dataPoint.getDouble("c"); // Closing price
-            prices.add(closePrice);
-        }
-        return prices;
     }
 
     //Ticker Information
@@ -214,7 +200,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     }
 
     @Override
-    public List<String> getHighLow(String ticker) throws Exception {
+    public List<String> getHighLow(String ticker) {
         String result = getTickerSnapshot(ticker);
         JSONObject jsonObject = new JSONObject(result);
 
@@ -259,7 +245,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     }
 
     @Override
-    public String getMarketCap(String ticker) throws Exception {
+    public String getMarketCap(String ticker) {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
@@ -273,7 +259,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     }
 
     @Override
-    public String getTickerName(String ticker) throws Exception {
+    public String getTickerName(String ticker) {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
@@ -281,7 +267,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     }
 
     @Override
-    public String getDesc(String ticker) throws Exception {
+    public String getDesc(String ticker) {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
@@ -294,7 +280,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     }
 
     @Override
-    public String getWebpage(String ticker) throws Exception {
+    public String getWebpage(String ticker) {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
@@ -307,7 +293,7 @@ public class PolygonDao implements ExploreDataAccessInterface {
     }
 
     @Override
-    public String getLocation(String ticker) throws Exception {
+    public String getLocation(String ticker) {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
         JSONObject resultsObject = jsonObject.getJSONObject("results");
@@ -323,82 +309,6 @@ public class PolygonDao implements ExploreDataAccessInterface {
             }
         }
     }
-
-    public static LinkedHashMap<Long, Double> getHistoricalData(String ticker, String timespan, String startDate, String endDate) {
-        LinkedHashMap<Long, Double> historicalData = new LinkedHashMap<>();
-        String content = getAggregateData(ticker, 1,timespan, startDate, endDate);
-        JSONObject jsonObject = new JSONObject(content);
-        System.out.println("Fetching historical data for " + ticker);
-
-        if (jsonObject.has("results")) {
-            JSONArray results = jsonObject.getJSONArray("results");
-            for (int i = 0; i < results.length(); i++) {
-                JSONObject dailyData = results.getJSONObject(i);
-                Long date = dailyData.getLong("t");
-                double closePrice = dailyData.getDouble("c");
-                historicalData.put(date, closePrice);
-            }
-        } else {
-            System.out.println("No 'results' found in response. Full response: " + content);
-        }
-        return historicalData;
-    }
-
-
-    @NotNull
-    private static LinkedHashMap<Long, Double> getIndicator(String indicator, String ticker, String timespan, String from, String to, int window) {
-        LinkedHashMap<Long, Double> data = new LinkedHashMap<>();
-
-        String urlString = String.format(
-                "https://api.polygon.io/v1/indicators/%s/%s?timespan=%s&from=%s&to=%s&window=%d&limit=5000&apiKey=%s",
-                indicator, ticker, timespan, from, to, window, API_KEY
-        );
-
-        String content = HTTPRequest(urlString);
-        JSONObject jsonResponse = new JSONObject(content);
-
-        JSONObject result;
-        try {
-            result = jsonResponse.getJSONObject("results");
-        } catch (Exception e) {
-            System.out.println("No 'results' found in response.");
-            result = new JSONObject();
-        }
-
-        JSONArray values = result.getJSONArray("values");
-
-        for (int i = values.length() - 1; i >= 0; i--) {
-            JSONObject obj = values.getJSONObject(i);
-            data.put(obj.getLong("timestamp"), obj.getDouble("value"));
-        }
-        return data;
-    }
-
-    public static Double currPrice(String ticker) {
-        String content = getTickerSnapshot(ticker);
-
-        JSONObject jsonResponse = new JSONObject(content);
-        JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
-        return round(day.getDouble("c"), 4);
-    }
-
-    //convert to a list of strings
-    public static ArrayList<Double> increase(String ticker) {
-        String content = getTickerSnapshot(ticker);
-        ArrayList<Double> increase = new ArrayList<>();
-
-        JSONObject jsonResponse = new JSONObject(content);
-        JSONObject tickerData= jsonResponse.getJSONObject("ticker");
-        increase.add(round(tickerData.getDouble("todaysChangePerc"), 4));
-        increase.add(round(tickerData.getDouble("todaysChange"), 4));
-        return increase;
-    }
-
-    public static Double round(double value, int places) {
-        DecimalFormat df = new DecimalFormat("#." + "#".repeat(places));
-        return Double.parseDouble(df.format(value));
-    }
-
 
     //Sends requests to the server.
     static String HTTPRequest(String urlString) {
@@ -440,6 +350,4 @@ public class PolygonDao implements ExploreDataAccessInterface {
             return String.format("%.2f", value);
         }
     }
-
-
 }

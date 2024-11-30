@@ -1,7 +1,7 @@
 package use_case.explore;
 
 public class CompanyInputData {
-    private String selectedCompany;
+    private final String selectedCompany;
 
     public CompanyInputData(String ticker) {
         this.selectedCompany = ticker;
