@@ -2,7 +2,10 @@ package frameworks_driver.view.explore;
 
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExploreViewModel;
+import frameworks_driver.view.chart.ChartView;
 import entity.Stock;
+import view.ColourManager;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,20 +25,24 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 
 public class ExploreView extends JPanel {
     private final ExploreViewModel viewModel;
+    private final ChartView chartView;
 
-    public ExploreView(ExploreController controller, ExploreViewModel viewModel) {
+
+    public ExploreView(ExploreController controller, ExploreViewModel viewModel, ChartView chartView) {
         this.viewModel = viewModel;
+        this.chartView = chartView;
         setLayout(new BorderLayout());
 
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         // Search bar
         JPanel searchPanel = new JPanel(new BorderLayout());
@@ -56,21 +63,22 @@ public class ExploreView extends JPanel {
 
         //Graph panel
         JPanel graphPanel = new JPanel();
-        graphPanel.setPreferredSize(new Dimension(400, 150));
-        graphPanel.setBorder(BorderFactory.createTitledBorder(""));
+        graphPanel.setBorder(BorderFactory.createLineBorder(ColourManager.DARK_BLUE));
+        graphPanel.add(chartView);
 
         // Stats panel
         JPanel statsPanel = createStatsPanel(graphPanel);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, statsPanel);
         splitPane.setDividerLocation(200);
+        splitPane.setResizeWeight(0.2);
+
 
         add(searchPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
 
         // Home button functionality
         homeButton.addActionListener(e -> {
-//            JOptionPane.showMessageDialog(statsPanel, "Returning to the home view. Backend not yet implemented.");
             controller.switchToHomeView();
         });
 
@@ -96,6 +104,7 @@ public class ExploreView extends JPanel {
                 SwingUtilities.invokeLater(() -> {
                     render(statsPanel, selectedCompany);
                     updateStatsPanel(statsPanel, viewModel.getStockInfoOutput());
+
                 });
             }
         });
@@ -137,7 +146,7 @@ public class ExploreView extends JPanel {
     private void updateStatsPanel(JPanel statsPanel, Stock company) {
         Component[] components = statsPanel.getComponents();
 
-        Font titleFont = new Font("Arial", Font.BOLD, 18);
+        Font titleFont = new Font("Arial", Font.BOLD, 22);
         TitledBorder graphTitle;
 
         try {
@@ -149,6 +158,7 @@ public class ExploreView extends JPanel {
             throw new RuntimeException(ex);
         }
 
+        chartView.inputTicker(company.getTicker()); // update chart
         ((JLabel) components[1]).setText("<html><div style='width:800px; padding-bottom:10px;'>" + company.getDescription() + "</div></html>");
         ((JLabel) components[2]).setText("Primary Exchange: " + company.getPrimaryExchange());
         ((JLabel) components[3]).setText("Market Cap: " + company.getMarketCap());

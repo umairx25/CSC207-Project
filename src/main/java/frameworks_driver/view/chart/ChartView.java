@@ -11,6 +11,7 @@ import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import view.ColourManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Objects;
 
 public class ChartView extends JPanel implements PropertyChangeListener {
 
@@ -37,17 +37,17 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         this.chartController = chartController;
         this.chartState = chartState;
 
-        setSize(900, 900);
         setLayout(new BorderLayout());
 
         // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();
         controlPanel = new ControlPanel();
-        chartPanel = createChartPanel("");
+        chartPanel = createChartPanel();
 
         // Add panels
         add(controlPanel, BorderLayout.WEST);
         add(chartPanel, BorderLayout.CENTER);
+        setBorder(BorderFactory.createLineBorder(ColourManager.DARK_BLUE));
 
         // Initialize checkboxes with the current state
         updateCheckboxes(chartViewModel.getState());
@@ -68,7 +68,8 @@ public class ChartView extends JPanel implements PropertyChangeListener {
 
     public void inputTicker(String ticker) {
         fetchChartData(ticker);
-        lineChart.setTitle(ticker);
+        lineChart.setTitle(ticker + "\n" + chartViewModel.getCurrPrice() + " USD" + "\n" + chartViewModel.getPointIncrease()
+                + " (" + chartViewModel.getPercentIncrease() + "%)");
         updateChartData();
         revalidate();
         repaint();
@@ -113,9 +114,9 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         repaint();
     }
 
-    private ChartPanel createChartPanel(String company) {
+    private ChartPanel createChartPanel() {
         lineChart = ChartFactory.createLineChart(
-                company,
+                "",
                 "Date",
                 "Price",
                 dataset,
@@ -129,7 +130,9 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         rangeAxis.setAutoRangeIncludesZero(false);
         rangeAxis.setTickUnit(new NumberTickUnit(20));
 
-        return new ChartPanel(lineChart);
+        ChartPanel chartPanel = new ChartPanel(lineChart);
+        chartPanel.setPreferredSize(new Dimension(1000,770));
+        return chartPanel;
     }
 
     private void fetchChartData(String ticker) {

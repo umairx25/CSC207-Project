@@ -10,7 +10,7 @@ public class Main {
      * Builds and runs the CA architecture of the application.
      * @param args unused arguments
      */
-    public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) {
         final Builder builder = new Builder();
 
         final JFrame application = builder
@@ -18,7 +18,6 @@ public class Main {
                 .addExploreView()
                 .build();
 
-        application.pack();
         application.setVisible(true);
     }
 }

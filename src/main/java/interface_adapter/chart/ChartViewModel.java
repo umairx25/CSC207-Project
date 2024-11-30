@@ -10,6 +10,11 @@ import java.util.LinkedHashMap;
 
     public class ChartViewModel extends ViewModel<ChartState> {
 
+        private double currPrice;
+        private String pointIncrease;
+        private String percentIncrease;
+
+
     public ChartViewModel() {
         super("chart");
         setState(new ChartState());
@@ -65,5 +70,27 @@ import java.util.LinkedHashMap;
         firePropertyChanged("rsi");
     }
 
+    public void updateCurrPrice(double currPrice) {
+        this.currPrice = currPrice;
+    }
 
+    public void updatePointIncrease(String pointIncrease) {
+        this.pointIncrease = pointIncrease;
+    }
+
+    public void updatePercentIncrease(String percentIncrease) {
+        this.percentIncrease = percentIncrease;
+    }
+
+    public double getCurrPrice() {
+        return currPrice;
+    }
+
+    public String getPointIncrease() {
+        return pointIncrease;
+    }
+
+    public String getPercentIncrease() {
+        return percentIncrease;
+    }
 }

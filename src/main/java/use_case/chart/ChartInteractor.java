@@ -25,7 +25,11 @@ public class ChartInteractor implements ChartInputBoundary {
         LinkedHashMap<Long, Double> SMA = stockDataAccess.getIndicatorData("sma", ticker, 10);
         LinkedHashMap<Long, Double> EMA = stockDataAccess.getIndicatorData("ema", ticker, 10);
         LinkedHashMap<Long, Double>RSI = stockDataAccess.getIndicatorData("rsi", ticker, 10);
-        ChartOutputData outputData = new ChartOutputData(price, SMA, EMA, RSI);
+        double currPrice = stockDataAccess.getCurrentPrice(ticker);
+        double percentIncrease = stockDataAccess.getPriceIncrease(ticker).get(0);
+        double pointIncrease = stockDataAccess.getPriceIncrease(ticker).get(1);
+
+        ChartOutputData outputData = new ChartOutputData(price, SMA, EMA, RSI, currPrice, percentIncrease, pointIncrease);
         chartPresenter.presentChartData(outputData);
     }
 
