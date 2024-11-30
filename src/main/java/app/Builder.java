@@ -1,9 +1,9 @@
 package app;
 
-import java.awt.*;
-
+import java.awt.CardLayout;
 import javax.swing.*;
 
+// Explore
 import data_access.explore.ExploreDataAccess;
 import frameworks_driver.explore.view.ExploreView;
 import interface_adapter.explore.ExploreController;
@@ -12,6 +12,17 @@ import interface_adapter.explore.ExploreViewModel;
 import use_case.explore.ExploreInputBoundary;
 import use_case.explore.ExploreInteractor;
 import use_case.explore.ExploreOutputBoundary;
+
+// Chart
+import data_access.chart.StockDataAccess;
+import frameworks_driver.view.chart.ChartView;
+import interface_adapter.ViewManagerModel;
+import interface_adapter.chart.ChartController;
+import interface_adapter.chart.ChartPresenter;
+import interface_adapter.chart.ChartViewModel;
+import use_case.chart.ChartInputBoundary;
+import use_case.chart.ChartInteractor;
+import use_case.chart.ChartOutputBoundary;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -22,21 +33,48 @@ import use_case.explore.ExploreOutputBoundary;
 
 public class Builder {
     private final JPanel cardPanel = new JPanel();
+    private final CardLayout cardLayout = new CardLayout();
+
+    // Explore
     private final ExploreViewModel exploreViewModel = new ExploreViewModel();
     private final ExploreDataAccess stockDataAccess = new ExploreDataAccess();
     final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
     final ExploreInputBoundary exploreInteractor = new ExploreInteractor(stockDataAccess, exploreOutputBoundary);
     final ExploreController controller = new ExploreController(exploreInteractor);
     ExploreView exploreView = new ExploreView(controller, exploreViewModel);
+  
+    // Chart
+    private final ViewManagerModel viewManagerModel = new ViewManagerModel();
+    private final ChartViewModel chartViewModel = new ChartViewModel();
+    private final StockDataAccess stockDataAccess = new StockDataAccess();
+    final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(chartViewModel);
+    final ChartInputBoundary chartInteractor = new ChartInteractor(stockDataAccess,
+            (ChartPresenter) chartOutputBoundary);
+    final ChartController controller = new ChartController(chartInteractor);
+    ChartView chartView= new ChartView(chartViewModel, controller, chartViewModel.getState());
 
-    public Builder() {
-        CardLayout cardLayout = new CardLayout();
+    public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
     }
 
-
     public Builder addExploreView () {
         cardPanel.add(exploreView);
+        return this;
+
+    public Builder addChartView() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        ChartViewModel chartViewModel = new ChartViewModel();
+
+        // Initialize and set the SignupController
+        final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(
+                chartViewModel);
+        final ChartInputBoundary chartInteractor = new ChartInteractor(
+                stockDataAccess, (ChartPresenter) chartOutputBoundary);
+        final ChartController controller = new ChartController(chartInteractor);
+
+        ChartView chartView= new ChartView(chartViewModel, controller, chartViewModel.getState());
+
+        cardPanel.add(chartView, chartView.getViewName());
+
         return this;
     }
 
@@ -53,9 +91,9 @@ public class Builder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         application.add(cardPanel);
-
-//        viewManagerModel.setState(ExploreView.getViewName());
-//        viewManagerModel.firePropertyChanged();
+      
+        viewManagerModel.setState(chartView.getViewName());
+        viewManagerModel.firePropertyChanged();
 
         return application;
     }
