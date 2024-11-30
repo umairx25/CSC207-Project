@@ -1,4 +1,4 @@
-package frameworks_driver.view.explore;
+package frameworks_driver.view.Explore;
 
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExploreViewModel;
