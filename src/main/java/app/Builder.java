@@ -53,7 +53,7 @@ public class Builder {
     final ExploreController exploreController = new ExploreController(exploreInteractor);
     ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
 
-    public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public Builder() {
         cardPanel.setLayout(cardLayout);
     }
 
@@ -69,11 +69,6 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-//        application.setSize(1300, 800);
-        application.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
-        application.setIconImage(icon);
-
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         application.add(cardPanel);
@@ -81,6 +76,13 @@ public class Builder {
         viewManagerModel.setState(chartView.getViewName());
         viewManagerModel.firePropertyChanged();
 
+        application.pack(); // Sizes the frame so that all its contents are at or above their preferred sizes
+        application.setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximize the frame
+
+        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
+        application.setIconImage(icon);
+
         return application;
     }
+
 }
