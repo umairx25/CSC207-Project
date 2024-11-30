@@ -1,18 +1,27 @@
-package frameworks_driver.explore.view;
+package frameworks_driver.view.explore;
 
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExploreViewModel;
 import entity.Stock;
-
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.JList;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.SwingUtilities;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.net.URI;
 
 
 public class ExploreView extends JPanel {
@@ -44,7 +53,6 @@ public class ExploreView extends JPanel {
         DefaultListModel<String> companyListModel = new DefaultListModel<>();
         JList<String> companyList = new JList<>(companyListModel);
         JScrollPane scrollPane = new JScrollPane(companyList);
-//        scrollPane.getViewport().setBackground(new Color(61, 89, 171));
 
         //Graph panel
         JPanel graphPanel = new JPanel();
@@ -137,9 +145,8 @@ public class ExploreView extends JPanel {
             graphTitle.setTitleFont(titleFont);
             ((JPanel) components[0]).setBorder(graphTitle);
 
-        } catch (Exception e) {
-            System.out.println("Panel update terminated");
-            return; // if company name in Stock object is null, do not continue updating the panel.
+        } catch (ClassCastException ex) {
+            throw new RuntimeException(ex);
         }
 
         ((JLabel) components[1]).setText("<html><div style='width:800px; padding-bottom:10px;'>" + company.getDescription() + "</div></html>");
