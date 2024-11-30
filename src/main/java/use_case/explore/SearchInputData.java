@@ -1,11 +1,10 @@
 package use_case.explore;
 
-
 /**
  * The Input Data for the Search Use Case.
  */
 public class SearchInputData {
-    private String query;
+    private final String query;
 
     public SearchInputData(String input) {
         this.query = input;

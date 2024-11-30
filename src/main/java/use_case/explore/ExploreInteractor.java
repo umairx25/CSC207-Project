@@ -42,10 +42,9 @@ public class ExploreInteractor implements ExploreInputBoundary {
                     dataAccess.getOpen(inputData.getSelectedCompany()),
                     dataAccess.getHighLow(inputData.getSelectedCompany()).get(0),
                     dataAccess.getHighLow(inputData.getSelectedCompany()).get(1),
-                    dataAccess.getWebpage(inputData.getSelectedCompany()),
+                    dataAccess.calculateAverageVolume(inputData.getSelectedCompany()),
                     dataAccess.getLocation(inputData.getSelectedCompany()),
-                    dataAccess.calculateAverageVolume(inputData.getSelectedCompany())
-            );
+                    dataAccess.getWebpage(inputData.getSelectedCompany()));
         } catch (Exception e) {
             presenter.presentError(true);
             return;
@@ -70,5 +69,10 @@ public class ExploreInteractor implements ExploreInputBoundary {
         } else {
             return "Keyword";
         }
+    }
+
+    @Override
+    public void switchToHomeView() {
+        presenter.switchToHomeView();
     }
 }

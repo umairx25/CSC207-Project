@@ -1,4 +1,4 @@
-package frameworks_driver.view;
+package frameworks_driver.explore.view;
 
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExploreViewModel;
@@ -6,8 +6,13 @@ import entity.Stock;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URI;
 
 
 public class ExploreView extends JPanel {
@@ -28,6 +33,7 @@ public class ExploreView extends JPanel {
         JTextField searchField = new JTextField();
         JButton searchButton = new JButton("Search");
         JButton homeButton = new JButton("Home"); // Added Home button
+
         JPanel buttonPanel = new JPanel(new BorderLayout());
         buttonPanel.add(searchButton, BorderLayout.WEST);
         buttonPanel.add(homeButton, BorderLayout.EAST);
@@ -38,6 +44,7 @@ public class ExploreView extends JPanel {
         DefaultListModel<String> companyListModel = new DefaultListModel<>();
         JList<String> companyList = new JList<>(companyListModel);
         JScrollPane scrollPane = new JScrollPane(companyList);
+//        scrollPane.getViewport().setBackground(new Color(61, 89, 171));
 
         //Graph panel
         JPanel graphPanel = new JPanel();
@@ -55,7 +62,8 @@ public class ExploreView extends JPanel {
 
         // Home button functionality
         homeButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(statsPanel, "Returning to the home frameworks_driver.view. Backend not yet implemented.");
+//            JOptionPane.showMessageDialog(statsPanel, "Returning to the home view. Backend not yet implemented.");
+               controller.switchToHomeView();
         });
 
         // Search button functionality
@@ -63,21 +71,24 @@ public class ExploreView extends JPanel {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
                 controller.searchCompanies(query);
-                companyListModel.clear();
-                for (String result : viewModel.getSearchOuput()) {
-                    companyListModel.addElement(result);
-                }
+                SwingUtilities.invokeLater(() -> {
+                    companyListModel.clear();
+                    for (String result : viewModel.getSearchOutput()) {
+                        companyListModel.addElement(result);
+                    }
+                });
             }
         });
 
         // Company selection listener
         companyList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && !companyList.isSelectionEmpty()) {
-                String selectedCompany = companyList.getSelectedValue(); //ticker & update state
-                controller.getCompanyDetails(selectedCompany);//converts ticker to its Stock object
-                render(statsPanel,selectedCompany); //implement
-                updateStatsPanel(statsPanel, viewModel.getStockInfoOuput());
-
+                String selectedCompany = companyList.getSelectedValue();
+                controller.getCompanyDetails(selectedCompany);
+                SwingUtilities.invokeLater(() -> {
+                    render(statsPanel, selectedCompany);
+                    updateStatsPanel(statsPanel, viewModel.getStockInfoOutput());
+                });
             }
         });
     }
@@ -87,8 +98,7 @@ public class ExploreView extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(graphPanel);
 
-        Font labelFont = new Font("Courier New", Font.PLAIN, 14);
-
+        Font labelFont = new Font("Verdana", Font.PLAIN, 14);
         // Labels for company stats
         String[] labelsText = {
                 "Description: ",
@@ -97,9 +107,9 @@ public class ExploreView extends JPanel {
                 "Open: ",
                 "High: ",
                 "Low: ",
-                "Webpage: ",
+                "Average Volume: ",
                 "Location: ",
-                "Average Volume: "
+                "Webpage: "
         };
 
         // Create and add labels
@@ -107,8 +117,6 @@ public class ExploreView extends JPanel {
             panel.add(createLabel(text, labelFont));
         }
         return panel;
-
-
     }
 
     //Helper for createStatsPanel (above)
@@ -121,16 +129,17 @@ public class ExploreView extends JPanel {
     private void updateStatsPanel(JPanel statsPanel, Stock company) {
         Component[] components = statsPanel.getComponents();
 
-        Font titleFont = new Font("Arial", Font.BOLD, 16);
+        Font titleFont = new Font("Arial", Font.BOLD, 18);
         TitledBorder graphTitle;
 
         try {
             graphTitle = BorderFactory.createTitledBorder(company.getName());
             graphTitle.setTitleFont(titleFont);
-            ((JPanel) components[0]).setBorder(graphTitle); //this may be an issue
+            ((JPanel) components[0]).setBorder(graphTitle);
 
-        } catch (ClassCastException ex) { //will check for the issue of casting JPanel (it's supposed to be a JPanel though)
-            throw new RuntimeException(ex);
+        } catch (Exception e) {
+            System.out.println("Panel update terminated");
+            return; // if company name in Stock object is null, do not continue updating the panel.
         }
 
         ((JLabel) components[1]).setText("<html><div style='width:800px; padding-bottom:10px;'>" + company.getDescription() + "</div></html>");

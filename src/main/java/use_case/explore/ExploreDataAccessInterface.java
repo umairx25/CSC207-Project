@@ -1,6 +1,5 @@
 package use_case.explore;
 
-import entity.Stock;
 import java.util.List;
 
 public interface ExploreDataAccessInterface {
