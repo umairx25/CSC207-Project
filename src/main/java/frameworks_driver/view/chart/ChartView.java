@@ -1,6 +1,5 @@
 package frameworks_driver.view.chart;
 
-//import data_access.chart.StockDataAccess;
 import interface_adapter.chart.ChartController;
 import interface_adapter.chart.ChartState;
 import interface_adapter.chart.ChartViewModel;
@@ -19,6 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChartView extends JPanel implements PropertyChangeListener {
 
@@ -31,21 +31,19 @@ public class ChartView extends JPanel implements PropertyChangeListener {
     private JFreeChart lineChart;
     private DefaultCategoryDataset dataset; // Shared dataset for all data series
 
-    public ChartView(ChartViewModel chartViewModel, ChartController chartController, ChartState chartState)
-            throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public ChartView(ChartViewModel chartViewModel, ChartController chartController, ChartState chartState) {
 
         this.chartViewModel = chartViewModel;
         this.chartController = chartController;
         this.chartState = chartState;
 
-        setSize(800, 600);
+        setSize(900, 900);
         setLayout(new BorderLayout());
-        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
         // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();
         controlPanel = new ControlPanel();
-        chartPanel = createChartPanel(controlPanel.getTickerTextField().getText());
+        chartPanel = createChartPanel("");
 
         // Add panels
         add(controlPanel, BorderLayout.WEST);
@@ -59,10 +57,6 @@ public class ChartView extends JPanel implements PropertyChangeListener {
 
         // Register as a property change listener for the ViewModel
         chartViewModel.addPropertyChangeListener(this);
-
-//        System.out.println(this.getTickerName());
-        // Fetch initial chart data
-        fetchChartData(controlPanel.getTickerTextField().getText());
     }
 
     private void addCheckboxListeners() {
@@ -70,52 +64,48 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         controlPanel.getSmaCheckbox().addItemListener(e -> updateChartData());
         controlPanel.getEmaCheckbox().addItemListener(e -> updateChartData());
         controlPanel.getRsiCheckbox().addItemListener(e -> updateChartData());
-        // Correct button behavior
-        controlPanel.getConfirmTickerbutton().addActionListener(e -> {
-            String input = controlPanel.getTickerTextField().getText().trim().toUpperCase();
+    }
 
-            try{
-                fetchChartData(input);
-                lineChart.setTitle(input);
-                updateChartData();
-                revalidate();
-                repaint();
-            }
-
-            catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Please enter a valid ticker name");
-            }
-        });
+    public void inputTicker(String ticker) {
+        fetchChartData(ticker);
+        lineChart.setTitle(ticker);
+        updateChartData();
+        revalidate();
+        repaint();
     }
 
     private void updateChartData() {
         // Clear the dataset before updating
         dataset.clear();
 
-        // Add data based on selected checkboxes
-        if (controlPanel.getPriceHistoryCheckbox().isSelected()) {
-            for (Map.Entry<Long, Double> entry : chartState.getPriceHistory().entrySet()) {
-                dataset.addValue(entry.getValue(), "Price History", entry.getKey());
+        try {
+            // Add data based on selected checkboxes
+            if (controlPanel.getPriceHistoryCheckbox().isSelected()) {
+                for (Map.Entry<Long, Double> entry : chartState.getPriceHistory().entrySet()) {
+                    dataset.addValue(entry.getValue(), "Price History", entry.getKey());
+                }
             }
-        }
 
-        if (controlPanel.getSmaCheckbox().isSelected()) {
-            for (Map.Entry<Long, Double> entry : chartState.getSma().entrySet()) {
-                dataset.addValue(entry.getValue(), "SMA", entry.getKey());
+            if (controlPanel.getSmaCheckbox().isSelected()) {
+                for (Map.Entry<Long, Double> entry : chartState.getSma().entrySet()) {
+                    dataset.addValue(entry.getValue(), "SMA", entry.getKey());
+                }
             }
-        }
 
-        if (controlPanel.getEmaCheckbox().isSelected()) {
-            for (Map.Entry<Long, Double> entry : chartState.getEma().entrySet()) {
-                dataset.addValue(entry.getValue(), "EMA", entry.getKey());
+            if (controlPanel.getEmaCheckbox().isSelected()) {
+                for (Map.Entry<Long, Double> entry : chartState.getEma().entrySet()) {
+                    dataset.addValue(entry.getValue(), "EMA", entry.getKey());
+                }
             }
-        }
 
-        if (controlPanel.getRsiCheckbox().isSelected()) {
-            System.out.println(chartState.getRsi());
-            for (Map.Entry<Long, Double> entry : chartState.getRsi().entrySet()) {
-                dataset.addValue(entry.getValue(), "RSI", entry.getKey());
+            if (controlPanel.getRsiCheckbox().isSelected()) {
+                for (Map.Entry<Long, Double> entry : chartState.getRsi().entrySet()) {
+                    dataset.addValue(entry.getValue(), "RSI", entry.getKey());
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Indicator is null.");
+            return;
         }
 
         // Refresh the chart
@@ -175,7 +165,6 @@ public class ChartView extends JPanel implements PropertyChangeListener {
     }
 
     public String getViewName() {
-        System.out.println(viewName);
         return this.viewName;
     }
 }

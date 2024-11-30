@@ -35,14 +35,6 @@ public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
 
-    // Explore
-    private final ExploreViewModel exploreViewModel = new ExploreViewModel();
-    private final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-    final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
-    final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
-    final ExploreController exploreController = new ExploreController(exploreInteractor);
-    ExploreView exploreView = new ExploreView(exploreController, exploreViewModel);
-
     // Chart
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
     private final ChartViewModel chartViewModel = new ChartViewModel();
@@ -53,29 +45,20 @@ public class Builder {
     final ChartController chartController = new ChartController(chartInteractor);
     ChartView chartView = new ChartView(chartViewModel, chartController, chartViewModel.getState());
 
+    // Explore
+    private final ExploreViewModel exploreViewModel = new ExploreViewModel();
+    private final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
+    final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+    final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
+    final ExploreController exploreController = new ExploreController(exploreInteractor);
+    ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
+
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
     }
 
     public Builder addExploreView() {
         cardPanel.add(exploreView);
-        return this;
-    }
-
-    public Builder addChartView() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        ChartViewModel chartViewModel = new ChartViewModel();
-
-        // Initialize and set the SignupController
-        final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(
-                chartViewModel);
-        final ChartInputBoundary chartInteractor = new ChartInteractor(
-                stockDataAccess, (ChartPresenter) chartOutputBoundary);
-        final ChartController controller = new ChartController(chartInteractor);
-
-        ChartView chartView = new ChartView(chartViewModel, controller, chartViewModel.getState());
-
-        cardPanel.add(chartView, chartView.getViewName());
-
         return this;
     }
 
@@ -86,7 +69,8 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-        application.setSize(1300, 600);
+//        application.setSize(1300, 800);
+        application.setExtendedState(JFrame.MAXIMIZED_BOTH);
         Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);
 
