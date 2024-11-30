@@ -1,4 +1,4 @@
-package frameworks_driver.view.Explore;
+package frameworks_driver.view.explore;
 
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExploreViewModel;
@@ -71,7 +71,7 @@ public class ExploreView extends JPanel {
         // Home button functionality
         homeButton.addActionListener(e -> {
 //            JOptionPane.showMessageDialog(statsPanel, "Returning to the home view. Backend not yet implemented.");
-               controller.switchToHomeView();
+            controller.switchToHomeView();
         });
 
         // Search button functionality
@@ -172,3 +172,4 @@ public class ExploreView extends JPanel {
         }
     }
 }
+
