@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 // Explore
-import data_access.explore.ExploreDataAccess;
+import data_access.ExploreDataAccess;
 import frameworks_driver.view.explore.ExploreView;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
@@ -14,7 +14,7 @@ import use_case.explore.ExploreInteractor;
 import use_case.explore.ExploreOutputBoundary;
 
 // Chart
-import data_access.chart.StockDataAccess;
+import data_access.StockDataAccess;
 import frameworks_driver.view.chart.ChartView;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.chart.ChartController;
@@ -30,10 +30,8 @@ import use_case.chart.ChartOutputBoundary;
  * <p/>
  * This is done by adding each View and then adding related Use Cases.
  */
-
 public class Builder {
     private final JPanel cardPanel = new JPanel();
-    private final CardLayout cardLayout = new CardLayout();
 
     // Chart
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
@@ -54,6 +52,7 @@ public class Builder {
     ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
 
     public Builder() {
+        CardLayout cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
     }
 
@@ -77,7 +76,7 @@ public class Builder {
         viewManagerModel.firePropertyChanged();
 
         application.pack(); // Sizes the frame so that all its contents are at or above their preferred sizes
-        application.setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximize the frame
+        application.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);

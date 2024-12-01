@@ -10,7 +10,7 @@ public class ColourManager {
     public static final Color DARK_GRAY = Color.DARK_GRAY;
     public static final Color WHITE = Color.WHITE;
     public static final Color ERROR_RED = Color.RED;
-    public static final Color INFO_TEXT = new Color(212, 255, 255);
+    public static final Color INFO_TEXT = new Color(120, 239, 239);
     public static final Color GRADIENT_COLOR_PINK = new Color(252, 114, 166, 255);
     public static final Color GRADIENT_COLOR_BLUE = new Color(63, 64, 192, 255);
 
@@ -21,6 +21,8 @@ public class ColourManager {
     public static final Color OUTER_BOX_BlUE = new Color(100, 149, 237);
     public static final Color INNER_BOX_GREEN = new Color(144, 238, 144);
     public static final Color OUTER_BOX_GREEN = new Color(34, 139, 34);
-    private ColourManager() {
-    }
+
+    // Explore Page
+    public static final Color NAVY_BLUE = new Color(14,27,63);
+    public static final Color CREAM = new Color(237, 232, 208);
 }

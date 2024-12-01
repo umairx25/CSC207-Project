@@ -1,5 +1,7 @@
 package frameworks_driver.view.chart;
 
+import view.ColourManager;
+
 import javax.swing.*;
 
 public class ControlPanel extends JPanel {
@@ -10,7 +12,6 @@ public class ControlPanel extends JPanel {
     private final EmaCheckbox emaCheckbox;
     private final RsiCheckbox rsiCheckbox;
 
-
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -19,6 +20,11 @@ public class ControlPanel extends JPanel {
         smaCheckbox = new SmaCheckbox();
         emaCheckbox = new EmaCheckbox();
         rsiCheckbox = new RsiCheckbox();
+
+        priceHistoryCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
+        smaCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
+        emaCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
+        rsiCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
 
         // Add components to the panel
         add(priceHistoryCheckbox);

@@ -1,4 +1,4 @@
-package data_access.chart;
+package data_access;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -43,7 +43,7 @@ public class StockDataAccess implements ChartDataAccessInterface {
 
         JSONObject jsonResponse = new JSONObject(content);
         JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
-        return round(day.getDouble("c"), 4);
+        return round(day.getDouble("c"), 2);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class StockDataAccess implements ChartDataAccessInterface {
 
         JSONObject jsonResponse = new JSONObject(content);
         JSONObject tickerData= jsonResponse.getJSONObject("ticker");
-        increase.add(round(tickerData.getDouble("todaysChangePerc"), 4));
-        increase.add(round(tickerData.getDouble("todaysChange"), 4));
+        increase.add(round(tickerData.getDouble("todaysChangePerc"), 2));
+        increase.add(round(tickerData.getDouble("todaysChange"), 2));
         return increase;
     }
 

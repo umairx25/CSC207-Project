@@ -1,4 +1,4 @@
-package data_access.chatbot;
+package data_access;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

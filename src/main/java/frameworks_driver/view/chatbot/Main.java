@@ -2,7 +2,7 @@
 package frameworks_driver.view.chatbot;
 
 import javax.swing.*;
-import data_access.chatbot.ChatbotDataAccess;
+import data_access.ChatbotDataAccess;
 import use_case.chatBot.ChatbotInteractor;
 import interface_adapter.chatbot.ChatbotPresenter;
 import interface_adapter.chatbot.ChatbotViewModel;

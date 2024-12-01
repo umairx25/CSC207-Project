@@ -22,14 +22,12 @@ import java.util.Map;
 
 public class ChartView extends JPanel implements PropertyChangeListener {
 
-    private final String viewName = "chart view";
     private final ControlPanel controlPanel;
-    private final ChartPanel chartPanel;
     private final ChartViewModel chartViewModel;
     private final ChartController chartController;
     private final ChartState chartState;
     private JFreeChart lineChart;
-    private DefaultCategoryDataset dataset; // Shared dataset for all data series
+    private final DefaultCategoryDataset dataset; // Shared dataset for all data series
 
     public ChartView(ChartViewModel chartViewModel, ChartController chartController, ChartState chartState) {
 
@@ -42,12 +40,12 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();
         controlPanel = new ControlPanel();
-        chartPanel = createChartPanel();
+        controlPanel.setBackground(ColourManager.INNER_BOX_BLUE);
+        ChartPanel chartPanel = createChartPanel();
 
         // Add panels
         add(controlPanel, BorderLayout.WEST);
         add(chartPanel, BorderLayout.CENTER);
-        setBorder(BorderFactory.createLineBorder(ColourManager.DARK_BLUE));
 
         // Initialize checkboxes with the current state
         updateCheckboxes(chartViewModel.getState());
@@ -68,8 +66,8 @@ public class ChartView extends JPanel implements PropertyChangeListener {
 
     public void inputTicker(String ticker) {
         fetchChartData(ticker);
-        lineChart.setTitle(ticker + "\n" + chartViewModel.getCurrPrice() + " USD" + "\n" + chartViewModel.getPointIncrease()
-                + " (" + chartViewModel.getPercentIncrease() + "%)");
+        lineChart.setTitle(ticker + "\n" + chartViewModel.getCurrPrice() + " USD" + "\n" +
+                chartViewModel.getPointIncrease() + " (" + chartViewModel.getPercentIncrease() + "%)");
         updateChartData();
         revalidate();
         repaint();
@@ -127,11 +125,14 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         CategoryPlot plot = lineChart.getCategoryPlot();
         NumberAxis rangeAxis = new NumberAxis("Price");
         plot.setRangeAxis(rangeAxis);
+        plot.setBackgroundPaint(ColourManager.NAVY_BLUE);
+
         rangeAxis.setAutoRangeIncludesZero(false);
         rangeAxis.setTickUnit(new NumberTickUnit(20));
 
         ChartPanel chartPanel = new ChartPanel(lineChart);
-        chartPanel.setPreferredSize(new Dimension(1000,770));
+        lineChart.setBackgroundPaint(ColourManager.INNER_BOX_BLUE);
+        chartPanel.setPreferredSize(new Dimension(1000, 770));
         return chartPanel;
     }
 
@@ -168,6 +169,6 @@ public class ChartView extends JPanel implements PropertyChangeListener {
     }
 
     public String getViewName() {
-        return this.viewName;
+        return "chart view";
     }
 }
