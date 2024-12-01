@@ -1,7 +1,8 @@
 package frameworks_driver.view.login;
 
-import view.FontManager;
-import view.GridBagManager;
+
+import frameworks_driver.view.style_helpers.FontManager;
+import frameworks_driver.view.style_helpers.GridBagManager;
 
 import javax.swing.*;
 import java.awt.*;

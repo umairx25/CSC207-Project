@@ -31,12 +31,6 @@ public class ExploreView extends JPanel {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
 
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         // Search bar
         JPanel searchPanel = new JPanel(new BorderLayout());
         JTextField searchField = new JTextField();

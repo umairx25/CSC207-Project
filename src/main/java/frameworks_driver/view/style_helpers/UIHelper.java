@@ -1,9 +1,7 @@
-package frameworks_driver.view.login;
+package frameworks_driver.view.style_helpers;
 
-
-import frameworks_driver.view.style_helpers.ColourManager;
-import frameworks_driver.view.style_helpers.FontManager;
-import frameworks_driver.view.style_helpers.GridBagManager;
+//import view.ColourManager;
+//import view.FontManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -27,7 +25,7 @@ public class UIHelper {
      */
     public static void addHeading(JPanel panel, String labelText) {
         JLabel label = new JLabel(labelText);
-        GridBagConstraints gbc = GridBagManager.headingGBC();
+        GridBagConstraints gbc = GridBagHelper.headingGBC();
         gbc.gridwidth = 2;
 
         label.setFont(FontManager.SEGOE_BOLD_FONT_24);
@@ -45,7 +43,7 @@ public class UIHelper {
      * @param textField The text field to add.
      */
     public static void addLabeledField(JPanel panel, String labelText, JTextField textField) {
-        GridBagConstraints gbcLabel = GridBagManager.labelGBC();
+        GridBagConstraints gbcLabel = GridBagHelper.labelGBC();
         JLabel label = new JLabel(labelText);
         label.setForeground(ColourManager.WHITE);
         label.setFont(FontManager.SEGOE_FONT_14);
@@ -57,7 +55,7 @@ public class UIHelper {
         textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 30));
 
         addFocusListener(textField);
-        GridBagConstraints gbcField = GridBagManager.inputFieldGBC();
+        GridBagConstraints gbcField = GridBagHelper.inputFieldGBC();
         panel.add(textField, gbcField);
     }
 
@@ -115,30 +113,41 @@ public class UIHelper {
     }
 
     public static void showErrorMessage(JPanel panel, String message, String section) {
-        // Create or reuse a JLabel for the error message
-        JLabel errorMessageLabel = new JLabel(message);
-        errorMessageLabel.setForeground(ColourManager.ERROR_RED);
-        errorMessageLabel.setFont(FontManager.ITALIC_SEGOE_FONT_10);
-
-        // Determine GridBagConstraints for the error message based on the section
-        GridBagConstraints gbc;
-        if (Objects.equals(section, "login")) {
-            gbc = GridBagManager.errorMsgGBC(5, 120); // Example positioning for login error
-        } else {
-            gbc = GridBagManager.errorMsgGBC(11, 30); // Example positioning for signup error
+        // Check if the panel already contains an error message label
+        JLabel errorMessageLabel = null;
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JLabel && ColourManager.ERROR_RED.equals(((JLabel) component).getForeground())) {
+                errorMessageLabel = (JLabel) component;
+                break;
+            }
         }
 
-        // Add the error message to the panel if it's not already added
-        if (panel.getComponentZOrder(errorMessageLabel) == -1) {
+        // If no error message label exists, create one
+        if (errorMessageLabel == null) {
+            errorMessageLabel = new JLabel();
+            errorMessageLabel.setForeground(ColourManager.ERROR_RED);
+            errorMessageLabel.setFont(FontManager.ITALIC_SEGOE_FONT_10);
+
+            // Determine GridBagConstraints for the error message based on the section
+            GridBagConstraints gbc;
+            if (Objects.equals(section, "login")) {
+                gbc = GridBagHelper.errorMsgGBC(5, 120); // Example positioning for login error
+            } else {
+                gbc = GridBagHelper.errorMsgGBC(11, 30); // Example positioning for signup error
+            }
+
+            // Add the error message label to the panel
             panel.add(errorMessageLabel, gbc);
         }
+
+        // Update the text of the error message label
+        errorMessageLabel.setText(message);
 
         // Make the error message visible and update the panel layout
         errorMessageLabel.setVisible(true);
         panel.revalidate();
         panel.repaint();
     }
-
 
 
 }

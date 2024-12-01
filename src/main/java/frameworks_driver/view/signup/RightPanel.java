@@ -1,5 +1,8 @@
-package frameworks_driver.view.login;
+package frameworks_driver.view.signup;
 
+
+
+import frameworks_driver.view.style_helpers.GradientPanel;
 import frameworks_driver.view.style_helpers.ImageManager;
 
 import javax.swing.*;
@@ -12,6 +15,5 @@ public class RightPanel extends GradientPanel {
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(logoLabel, BorderLayout.CENTER);
     }
-
 
 }

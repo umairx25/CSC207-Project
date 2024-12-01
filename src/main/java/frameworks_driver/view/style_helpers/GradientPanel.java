@@ -1,6 +1,4 @@
-package frameworks_driver.view.login;
-
-import frameworks_driver.view.style_helpers.ColourManager;
+package frameworks_driver.view.style_helpers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +53,3 @@ public class GradientPanel extends JPanel {
     }
 
 }
-
-
-
-

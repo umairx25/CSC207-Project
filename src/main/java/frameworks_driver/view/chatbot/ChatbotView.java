@@ -13,23 +13,24 @@ import java.awt.*;
 public class ChatbotView extends JPanel {
 
     public ChatbotView(HomeController controller) {
-        setLayout(new BorderLayout()); // Use BorderLayout for positioning
+        ChatbotDataAccess dataAccess = new ChatbotDataAccess();
+        ChatbotViewModel viewModel = new ChatbotViewModel();
+        ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
+        ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
+        ChatbotController controller2 = new ChatbotController(interactor);
 
-        // Chatbot content
-        JPanel chatbotContent = new JPanel();
-        chatbotContent.setLayout(new BoxLayout(chatbotContent, BoxLayout.Y_AXIS));
-        ChatbotContainerView containerView = new ChatbotContainerView(
-                new ChatbotController(
-                        new ChatbotInteractor(
-                                new ChatbotPresenter(new ChatbotViewModel()),
-                                new ChatbotDataAccess()
-                        )
-                ),
-                new ChatbotViewModel()
-        );
-        chatbotContent.add(containerView);
+        // Initialize frontend components
+        ChatbotContainerView containerView = new ChatbotContainerView(controller2, viewModel);
 
-        add(chatbotContent, BorderLayout.CENTER);
+        // Create main application frame
+        JFrame frame = new JFrame("AI Chat Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 700);
+        frame.setLocationRelativeTo(null);
+        frame.add(containerView);
+
+        // Display the frame
+        frame.setVisible(true);
 
         // Add "Back to Home" button
         JButton backButton = new JButton("Back to Home");

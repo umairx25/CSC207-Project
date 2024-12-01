@@ -22,12 +22,6 @@ public class MainFrame extends JFrame implements PanelNavigator {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
         cardPanel.setPreferredSize(new Dimension(500, 400));

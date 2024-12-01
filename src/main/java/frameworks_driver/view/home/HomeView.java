@@ -91,16 +91,6 @@ public class HomeView extends JFrame {
         gradientPanel.repaint();
     }
 
-    /**
-     * Main method for testing HomeView.
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
-            HomeView homeView = new HomeView("User", 12345.67, controller);
-            controller.setHomeView(homeView); // Set HomeView after creation
-        });
-    }
 }
 
 

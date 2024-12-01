@@ -1,6 +1,6 @@
 package frameworks_driver.view.chart;
 
-//import data_access.chart.StockDataAccess;
+//import data_access.StockDataAccess;
 import interface_adapter.chart.ChartController;
 import interface_adapter.chart.ChartState;
 import interface_adapter.chart.ChartViewModel;
@@ -40,7 +40,6 @@ public class ChartView extends JPanel implements PropertyChangeListener {
 
         setSize(800, 600);
         setLayout(new BorderLayout());
-        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
         // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();
