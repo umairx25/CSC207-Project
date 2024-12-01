@@ -1,16 +1,10 @@
 import data_access.InMemoryPortfolioUserDataAccess;
+import frameworks_driver.view.Portfolio.*;
 import interface_adapter.portfolio.PortfolioController;
 import interface_adapter.portfolio.PortfolioPresenter;
 import interface_adapter.portfolio.PortfolioViewModel;
 import use_case.portfolio.PortfolioDataAccessInterface;
 import use_case.portfolio.PortfolioInteractor;
-import frameworks_driver.view.Portfolio.BuyButton;
-import frameworks_driver.view.Portfolio.CompanyTextField;
-import frameworks_driver.view.Portfolio.HistoryPanel;
-import frameworks_driver.view.Portfolio.PortfolioPanel;
-import frameworks_driver.view.Portfolio.PortfolioView;
-import frameworks_driver.view.Portfolio.QuantityTextField;
-import frameworks_driver.view.Portfolio.SellButton;
 
 import javax.swing.*;
 
@@ -41,6 +35,8 @@ public class PortfolioApplication {
         // Create buttons
         BuyButton buyButton = new BuyButton(portfolioController, companyTextField, quantityTextField);
         SellButton sellButton = new SellButton(portfolioController, companyTextField, quantityTextField);
+        RefreshButton refreshButton = new RefreshButton(portfolioController);
+
 
         // Create panels
         // Initial data for panels
@@ -84,6 +80,7 @@ public class PortfolioApplication {
             quantityTextField,
             buyButton,
             sellButton,
+                refreshButton,
             portfolioPanel,
             historyPanel
         );

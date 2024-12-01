@@ -21,8 +21,9 @@ public class PortfolioController {
         portfolioInteractor.executeTransaction(inputData);
     }
 
-    public void fetchPortfolioInfo() {
+    public void refreshPortfolioData() {
         portfolioInteractor.getPortfolioInfo();
     }
+
 
 }

@@ -20,7 +20,7 @@ public class PortfolioView extends JFrame {
             QuantityTextField quantityTextField,
             BuyButton buyButton,
             SellButton sellButton,
-//            RefreshButton refreshButton,
+            RefreshButton refreshButton,
             PortfolioPanel portfolioPanel,
             HistoryPanel historyPanel
     ) {
@@ -65,7 +65,7 @@ public class PortfolioView extends JFrame {
         transactionPanel.add(quantityTextField);
         transactionPanel.add(buyButton);
         transactionPanel.add(sellButton);
-//        transactionPanel.add(refreshButton);
+        transactionPanel.add(refreshButton);
 
 
         // Main Content Area

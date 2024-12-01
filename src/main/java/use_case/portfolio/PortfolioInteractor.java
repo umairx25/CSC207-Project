@@ -51,4 +51,6 @@ public class PortfolioInteractor implements PortfolioInputBoundary {
                 dataAccess.getTotalGainLossPercentage()
         );
     }
+
+
 }
