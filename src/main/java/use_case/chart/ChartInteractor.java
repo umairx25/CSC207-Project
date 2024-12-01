@@ -1,7 +1,6 @@
 package use_case.chart;
 
-import data_access.chart.StockDataAccess;
-
+import data_access.StockDataAccess;
 import interface_adapter.chart.ChartPresenter;
 
 import java.util.LinkedHashMap;

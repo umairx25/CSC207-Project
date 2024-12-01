@@ -2,6 +2,7 @@ package frameworks_driver.view.login;
 
 import view.ColourManager;
 import view.FontManager;
+import view.GridBagManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,7 +26,7 @@ public class UIHelper {
      */
     public static void addHeading(JPanel panel, String labelText) {
         JLabel label = new JLabel(labelText);
-        GridBagConstraints gbc = GridBagHelper.headingGBC();
+        GridBagConstraints gbc = GridBagManager.headingGBC();
         gbc.gridwidth = 2;
 
         label.setFont(FontManager.SEGOE_BOLD_FONT_24);
@@ -43,7 +44,7 @@ public class UIHelper {
      * @param textField The text field to add.
      */
     public static void addLabeledField(JPanel panel, String labelText, JTextField textField) {
-        GridBagConstraints gbcLabel = GridBagHelper.labelGBC();
+        GridBagConstraints gbcLabel = GridBagManager.labelGBC();
         JLabel label = new JLabel(labelText);
         label.setForeground(ColourManager.WHITE);
         label.setFont(FontManager.SEGOE_FONT_14);
@@ -55,7 +56,7 @@ public class UIHelper {
         textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 30));
 
         addFocusListener(textField);
-        GridBagConstraints gbcField = GridBagHelper.inputFieldGBC();
+        GridBagConstraints gbcField = GridBagManager.inputFieldGBC();
         panel.add(textField, gbcField);
     }
 
@@ -121,9 +122,9 @@ public class UIHelper {
         // Determine GridBagConstraints for the error message based on the section
         GridBagConstraints gbc;
         if (Objects.equals(section, "login")) {
-            gbc = GridBagHelper.errorMsgGBC(5, 120); // Example positioning for login error
+            gbc = GridBagManager.errorMsgGBC(5, 120); // Example positioning for login error
         } else {
-            gbc = GridBagHelper.errorMsgGBC(11, 30); // Example positioning for signup error
+            gbc = GridBagManager.errorMsgGBC(11, 30); // Example positioning for signup error
         }
 
         // Add the error message to the panel if it's not already added

@@ -1,13 +1,7 @@
-package use_case.chatBot;
+package use_case.chatbot;
 
-public class ChatbotInputData {
-    private final String userMessage;
-
-    public ChatbotInputData(String userMessage) {
-        this.userMessage = userMessage;
-    }
-
-    public String getUserMessage() {
-        return userMessage;
-    }
+/**
+ * Data structure for encapsulating chatbot input data.
+ */
+public record ChatbotInputData(String message) {
 }

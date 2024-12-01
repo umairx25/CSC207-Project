@@ -1,4 +1,4 @@
-package frameworks_driver.view.Home;
+package frameworks_driver.view.home;
 
 import interface_adapter.home.HomeController;
 import interface_adapter.home.HomePresenter;

@@ -1,6 +1,6 @@
 package interface_adapter.home;
 
-import frameworks_driver.view.Home.HomeView;
+import frameworks_driver.view.home.HomeView;
 import frameworks_driver.view.chatbot.ChatbotView;
 import use_case.home.HomeInteractor;
 

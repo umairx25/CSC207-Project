@@ -1,14 +1,12 @@
-package frameworks_driver.view.Home;
-
-import frameworks_driver.view.Home.HoverEffectUtility;
+package frameworks_driver.view.home;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ExploreButton extends JButton {
+public class PortfolioButton extends JButton {
 
-    public ExploreButton() {
-        super("Explore");
+    public PortfolioButton() {
+        super("Portfolio");
         setPreferredSize(new Dimension(150, 60));
         setFont(new Font("Arial", Font.BOLD, 16));
         setBackground(Color.WHITE); // Set background to white

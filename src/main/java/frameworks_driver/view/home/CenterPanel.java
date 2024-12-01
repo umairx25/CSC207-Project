@@ -1,8 +1,4 @@
-package frameworks_driver.view.Home;
-
-import frameworks_driver.view.Home.ChatBotButton;
-import frameworks_driver.view.Home.ExploreButton;
-import frameworks_driver.view.Home.PortfolioButton;
+package frameworks_driver.view.home;
 
 import javax.swing.*;
 import java.awt.*;

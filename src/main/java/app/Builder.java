@@ -4,8 +4,9 @@ import java.awt.*;
 import javax.swing.*;
 
 // Explore
-import data_access.explore.ExploreDataAccess;
+import data_access.ExploreDataAccess;
 import frameworks_driver.view.explore.ExploreView;
+import interface_adapter.chart.ChartPresenter;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
 import interface_adapter.explore.ExploreViewModel;
@@ -14,11 +15,10 @@ import use_case.explore.ExploreInteractor;
 import use_case.explore.ExploreOutputBoundary;
 
 // Chart
-import data_access.chart.StockDataAccess;
+import data_access.StockDataAccess;
 import frameworks_driver.view.chart.ChartView;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.chart.ChartController;
-import interface_adapter.chart.ChartPresenter;
 import interface_adapter.chart.ChartViewModel;
 import use_case.chart.ChartInputBoundary;
 import use_case.chart.ChartInteractor;
