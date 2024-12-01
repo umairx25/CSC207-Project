@@ -1,4 +1,4 @@
-package data_access.login;
+package data_access;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;

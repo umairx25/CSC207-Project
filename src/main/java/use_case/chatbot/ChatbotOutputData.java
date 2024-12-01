@@ -1,13 +1,7 @@
-package use_case.chatBot;
+package use_case.chatbot;
 
-public class ChatbotOutputData {
-    private final String responseMessage;
-
-    public ChatbotOutputData(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
-
-    public String getResponseMessage() {
-        return responseMessage;
-    }
+/**
+ * Data structure for encapsulating chatbot output data.
+ */
+public record ChatbotOutputData(String response) {
 }

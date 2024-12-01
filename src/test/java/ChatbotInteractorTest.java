@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.chatBot.*;
+import use_case.chatbot.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

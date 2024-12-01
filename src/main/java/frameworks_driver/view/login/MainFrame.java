@@ -1,7 +1,6 @@
 package frameworks_driver.view.login;
 
-import data_access.login.LoginUserDataAccess;
-import frameworks_driver.view.login.PanelNavigator;
+import data_access.LoginUserDataAccess;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
 import use_case.login.LoginInteractor;

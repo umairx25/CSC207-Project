@@ -1,6 +1,4 @@
-package frameworks_driver.view.Home;
-
-import frameworks_driver.view.Home.LogOutButton;
+package frameworks_driver.view.home;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package frameworks_driver.view.Home;
+package frameworks_driver.view.home;
 
 import javax.swing.*;
 import java.awt.*;

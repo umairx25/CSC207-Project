@@ -5,6 +5,7 @@ import interface_adapter.login.LoginViewModel;
 import interface_adapter.login.LoginState;
 import view.ColourManager;
 import view.FontManager;
+import view.GridBagManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,11 +38,11 @@ public class LoginPanel extends JPanel {
         errorMessageLabel.setForeground(ColourManager.ERROR_RED);
         errorMessageLabel.setFont(FontManager.ITALIC_SEGOE_FONT_10);
         errorMessageLabel.setVisible(false);
-        add(errorMessageLabel, GridBagHelper.errorMsgGBC(5, 120));
+        add(errorMessageLabel, GridBagManager.errorMsgGBC(5, 120));
 
         JButton loginButton = new JButton("Login");
         UIHelper.styleButton(loginButton);
-        add(loginButton, GridBagHelper.loginButtonGBC());
+        add(loginButton, GridBagManager.loginButtonGBC());
 
         loginButton.addActionListener(e -> {
             String email = loginEmailField.getText();
@@ -72,7 +73,7 @@ public class LoginPanel extends JPanel {
         signUpLabel.setFont(FontManager.SEGOE_FONT_10);
         signUpLabel.setForeground(ColourManager.INFO_TEXT);
         signUpLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        add(signUpLabel, GridBagHelper.signUpLabelGBC());
+        add(signUpLabel, GridBagManager.signUpLabelGBC());
 
         signUpLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
