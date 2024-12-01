@@ -1,5 +1,5 @@
-package use_case.chatbot;
+package use_case.chatBot;
 
 public interface ChatbotOutputBoundary {
-    void presentResponse(ChatbotOutputData outputData);
+    void presentResponse(use_case.chatBot.ChatbotOutputData outputData);
 }

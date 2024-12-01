@@ -1,4 +1,4 @@
-package use_case.chatbot;
+package use_case.chatBot;
 
 public class ChatbotInputData {
     private final String userMessage;
