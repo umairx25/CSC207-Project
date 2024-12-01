@@ -1,6 +1,6 @@
 package frameworks_driver.view.chart;
 
-import data_access.chart.StockDataAccess;
+//import data_access.chart.StockDataAccess;
 import interface_adapter.chart.ChartController;
 import interface_adapter.chart.ChartState;
 import interface_adapter.chart.ChartViewModel;
@@ -28,7 +28,7 @@ public class ChartView extends JPanel implements PropertyChangeListener {
     private final ChartViewModel chartViewModel;
     private final ChartController chartController;
     private final ChartState chartState;
-    private final StockDataAccess stockDataAccess = new StockDataAccess();
+    private JFreeChart lineChart;
     private DefaultCategoryDataset dataset; // Shared dataset for all data series
 
     public ChartView(ChartViewModel chartViewModel, ChartController chartController, ChartState chartState)
@@ -45,7 +45,7 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();
         controlPanel = new ControlPanel();
-        chartPanel = createChartPanel(stockDataAccess.getTickerName(controlPanel.getTickerTextField().getText()));
+        chartPanel = createChartPanel(controlPanel.getTickerTextField().getText());
 
         // Add panels
         add(controlPanel, BorderLayout.WEST);
@@ -76,7 +76,10 @@ public class ChartView extends JPanel implements PropertyChangeListener {
 
             try{
                 fetchChartData(input);
-                controlPanel.setTickerTextField(stockDataAccess.getTickerName(input));
+                lineChart.setTitle(input);
+                updateChartData();
+                revalidate();
+                repaint();
             }
 
             catch (Exception ex) {
@@ -121,7 +124,7 @@ public class ChartView extends JPanel implements PropertyChangeListener {
     }
 
     private ChartPanel createChartPanel(String company) {
-        JFreeChart lineChart = ChartFactory.createLineChart(
+        lineChart = ChartFactory.createLineChart(
                 company,
                 "Date",
                 "Price",

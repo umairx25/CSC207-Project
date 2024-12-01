@@ -15,6 +15,7 @@ public class Main {
 
         final JFrame application = builder
                 .addChartView()
+                .addExploreView()
                 .build();
 
         application.pack();
