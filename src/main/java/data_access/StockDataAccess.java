@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import use_case.chart.ChartDataAccessInterface;
 
 public class StockDataAccess implements ChartDataAccessInterface {
-     final Dotenv dotenv = Dotenv.load();
+    final Dotenv dotenv = Dotenv.load();
     private  final String API_KEY = dotenv.get("POLYGON_API_KEY");
 
     //All the methods that use ticker snapshot endpoint
@@ -43,7 +43,7 @@ public class StockDataAccess implements ChartDataAccessInterface {
 
         JSONObject jsonResponse = new JSONObject(content);
         JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
-        return round(day.getDouble("c"), 4);
+        return round(day.getDouble("c"), 2);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class StockDataAccess implements ChartDataAccessInterface {
 
         JSONObject jsonResponse = new JSONObject(content);
         JSONObject tickerData= jsonResponse.getJSONObject("ticker");
-        increase.add(round(tickerData.getDouble("todaysChangePerc"), 4));
-        increase.add(round(tickerData.getDouble("todaysChange"), 4));
+        increase.add(round(tickerData.getDouble("todaysChangePerc"), 2));
+        increase.add(round(tickerData.getDouble("todaysChange"), 2));
         return increase;
     }
 
@@ -138,7 +138,7 @@ public class StockDataAccess implements ChartDataAccessInterface {
     }
 
     //Sends requests to the server.
-     public String HTTPRequest(String urlString) {
+    public String HTTPRequest(String urlString) {
         StringBuilder response = new StringBuilder();
 
         try {

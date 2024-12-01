@@ -29,4 +29,5 @@ public class ChatbotController {
         ChatbotInputData inputData = new ChatbotInputData(userMessage);
         return inputBoundary.processInput(inputData);
     }
+
 }

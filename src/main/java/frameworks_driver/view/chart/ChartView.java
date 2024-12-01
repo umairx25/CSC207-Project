@@ -40,7 +40,6 @@ public class ChartView extends JPanel implements PropertyChangeListener {
 
         setSize(800, 600);
         setLayout(new BorderLayout());
-        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
         // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();

@@ -9,15 +9,19 @@ import javax.swing.*;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import data_access.UserDataAccess;
 import data_access.ExploreDataAccess;
-import frameworks_driver.view.signup.RightPanel;
-import frameworks_driver.view.signup.SignupPanel;
 import frameworks_driver.view.chatbot.ChatbotContainerView;
 import frameworks_driver.view.explore.ExploreView;
+import frameworks_driver.view.home.HomeView;
+import frameworks_driver.view.signup.RightPanel;
+import frameworks_driver.view.signup.SignupPanel;
+import interface_adapter.chart.ChartPresenter;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
 import interface_adapter.explore.ExploreViewModel;
+import interface_adapter.home.HomeController;
+import interface_adapter.home.HomePresenter;
+import interface_adapter.home.HomeViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupState;
@@ -42,8 +46,10 @@ import use_case.chatbot.ChatbotInteractor;
 import interface_adapter.chatbot.ChatbotPresenter;
 import interface_adapter.chatbot.ChatbotViewModel;
 import interface_adapter.chatbot.ChatbotController;
+import use_case.home.HomeInteractor;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import data_access.UserDataAccess;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -123,8 +129,32 @@ public class Builder {
         return this;
     }
 
+//    public Builder addChatbotView() {
+//        // Initialize backend components
+//        ChatbotDataAccess dataAccess = new ChatbotDataAccess();
+//        ChatbotViewModel viewModel = new ChatbotViewModel();
+//        ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
+//        ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
+//        ChatbotController controller = new ChatbotController(interactor);
+//
+//        // Initialize frontend components
+//        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
+//
+//        cardPanel.add(containerView, "Chatbot");
+//
+//        // Create main application frame
+////        JFrame frame = new JFrame("AI Chat Application");
+////        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+////        frame.setSize(500, 700);
+////        frame.setLocationRelativeTo(null);
+////        frame.add(containerView);
+////
+////        // Display the frame
+////        frame.setVisible(true);
+//        return this;
+//    }
+
     public Builder addChatbotView() {
-        // Initialize backend components
         ChatbotDataAccess dataAccess = new ChatbotDataAccess();
         ChatbotViewModel viewModel = new ChatbotViewModel();
         ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
@@ -134,17 +164,15 @@ public class Builder {
         // Initialize frontend components
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
 
-        cardPanel.add(containerView, "Chatbot");
-
         // Create main application frame
-//        JFrame frame = new JFrame("AI Chat Application");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(500, 700);
-//        frame.setLocationRelativeTo(null);
-//        frame.add(containerView);
-//
-//        // Display the frame
-//        frame.setVisible(true);
+        JFrame frame = new JFrame("AI Chat Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 700);
+        frame.setLocationRelativeTo(null);
+        frame.add(containerView);
+
+        // Display the frame
+        frame.setVisible(true);
         return this;
     }
 
@@ -162,17 +190,27 @@ public class Builder {
         return this;
     }
 
+    public Builder addHomeView() {
+        SwingUtilities.invokeLater(() -> {
+            HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
+            HomeView homeView = new HomeView("User", 12345.67, controller);
+            controller.setHomeView(homeView); // Set HomeView after creation
+        });
+        return this;
+    }
+
+
     /**
      * Creates the JFrame for the application and initially sets the SignupView to be displayed.
      *
      * @return the application
      */
-    public JFrame build() throws IOException {
+    public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-        initialize_firebase("config.json");
         application.setSize(1300, 600);
         Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);
+        application.pack();
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

@@ -15,16 +15,17 @@ public class Main {
      */
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         final Builder builder = new Builder();
+        builder.initialize_firebase("config.json");
 
 
         final JFrame application = builder
-//                .addChartView()
-//                .addExploreView()
+                .addChartView()
+                .addExploreView()
                 .addChatbotView()
-//                .addSignupView()
+                .addSignupView()
+                .addHomeView()
                 .build();
 
-        application.pack();
         application.setVisible(true);
     }
 }
