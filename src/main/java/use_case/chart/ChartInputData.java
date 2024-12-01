@@ -26,20 +26,5 @@ public class ChartInputData {
         return ticker;
     }
 
-    public boolean isIncludePrice(){
-        return includePrice;
-    }
-
-    public boolean isIncludeSMA() {
-        return includeSMA;
-    }
-
-    public boolean isIncludeEMA() {
-        return includeEMA;
-    }
-
-    public boolean isIncludeRSI() {
-        return includeRSI;
-    }
 }
 

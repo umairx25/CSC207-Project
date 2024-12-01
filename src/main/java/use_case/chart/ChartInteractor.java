@@ -1,7 +1,8 @@
 package use_case.chart;
 
-import data_access.chart.StockDataAccess;
+import data_access.StockDataAccess;
 
+import entity.ChartInfo;
 import interface_adapter.chart.ChartPresenter;
 
 import java.util.LinkedHashMap;
@@ -25,7 +26,8 @@ public class ChartInteractor implements ChartInputBoundary {
         LinkedHashMap<Long, Double> SMA = stockDataAccess.getIndicatorData("sma", ticker, 10);
         LinkedHashMap<Long, Double> EMA = stockDataAccess.getIndicatorData("ema", ticker, 10);
         LinkedHashMap<Long, Double>RSI = stockDataAccess.getIndicatorData("rsi", ticker, 10);
-        ChartOutputData outputData = new ChartOutputData(price, SMA, EMA, RSI);
+        ChartInfo chartInfo = new ChartInfo(ticker,price,SMA,EMA,RSI);
+        ChartOutputData outputData = new ChartOutputData(chartInfo);
         chartPresenter.presentChartData(outputData);
     }
 

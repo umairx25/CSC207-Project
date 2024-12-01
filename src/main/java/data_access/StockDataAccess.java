@@ -1,4 +1,4 @@
-package data_access.chart;
+package data_access;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

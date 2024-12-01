@@ -1,4 +1,4 @@
-package view;
+package frameworks_driver.view.style_helpers;
 
 import java.awt.Color;
 

@@ -1,15 +1,15 @@
-package entity.chart;
+package entity;
 
 import java.util.LinkedHashMap;
 
-public class Stock {
+public class ChartInfo {
     private String ticker;
     private LinkedHashMap<Long, Double> priceHistory;
     private LinkedHashMap<Long, Double> sma;
     private LinkedHashMap<Long, Double> ema;
     private LinkedHashMap<Long, Double> rsi;
 
-    public Stock(String ticker, LinkedHashMap<Long, Double> priceHistory, LinkedHashMap<Long, Double> sma,
+    public ChartInfo(String ticker, LinkedHashMap<Long, Double> priceHistory, LinkedHashMap<Long, Double> sma,
                  LinkedHashMap<Long, Double> ema, LinkedHashMap<Long, Double> rsi) {
         this.ticker = ticker;
         this.priceHistory = priceHistory;

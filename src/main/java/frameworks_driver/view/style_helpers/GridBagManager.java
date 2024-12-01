@@ -1,6 +1,5 @@
-package view;
+package frameworks_driver.view.style_helpers;
 
-import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
