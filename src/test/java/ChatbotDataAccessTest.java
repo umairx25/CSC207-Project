@@ -1,7 +1,7 @@
 import data_access.ChatbotDataAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.chatBot.ChatbotDataAccessInterface;
+import use_case.chatbot.ChatbotDataAccessInterface;
 
 import static org.junit.jupiter.api.Assertions.*;
 

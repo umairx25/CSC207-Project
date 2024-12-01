@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.chatBot.ChatbotInputBoundary;
-import use_case.chatBot.ChatbotInputData;
+import use_case.chatbot.ChatbotInputBoundary;
 import interface_adapter.chatbot.ChatbotController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

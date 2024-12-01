@@ -18,10 +18,10 @@ public class Main {
 
 
         final JFrame application = builder
-                .addChartView()
-                .addExploreView()
+//                .addChartView()
+//                .addExploreView()
                 .addChatbotView()
-                .addSignupView()
+//                .addSignupView()
                 .build();
 
         application.pack();

@@ -1,7 +1,7 @@
 package interface_adapter.chatbot;
 
-import use_case.chatBot.ChatbotInputBoundary;
-import use_case.chatBot.ChatbotInputData;
+import use_case.chatbot.ChatbotInputBoundary;
+import use_case.chatbot.ChatbotInputData;
 
 /**
  * Controller for the chatbot use case.

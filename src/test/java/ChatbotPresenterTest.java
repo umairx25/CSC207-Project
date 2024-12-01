@@ -2,7 +2,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import interface_adapter.chatbot.ChatbotPresenter;
 import interface_adapter.chatbot.ChatbotViewModel;
-import use_case.chatBot.ChatbotOutputData;
+import use_case.chatbot.ChatbotOutputData;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

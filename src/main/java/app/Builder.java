@@ -38,7 +38,7 @@ import use_case.chart.ChartInputBoundary;
 import use_case.chart.ChartInteractor;
 import use_case.chart.ChartOutputBoundary;
 import data_access.ChatbotDataAccess;
-import use_case.chatBot.ChatbotInteractor;
+import use_case.chatbot.ChatbotInteractor;
 import interface_adapter.chatbot.ChatbotPresenter;
 import interface_adapter.chatbot.ChatbotViewModel;
 import interface_adapter.chatbot.ChatbotController;
