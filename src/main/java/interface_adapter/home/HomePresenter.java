@@ -1,12 +1,22 @@
+// File: HomePresenter.java
 package interface_adapter.home;
 
-import frameworks_driver.view.chatbot.ChatbotView;
+import use_case.home.HomeOutputBoundary;
 
-import javax.swing.*;
+public class HomePresenter implements HomeOutputBoundary {
 
-public class HomePresenter {
+    private final HomeViewModel viewModel;
 
-    public void presentChatbotNavigation() {
-        SwingUtilities.invokeLater(ChatbotView::new);
+    public HomePresenter(HomeViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
+    @Override
+    public void presentChatbotNavigation(boolean isChatbotOpened) {
+        viewModel.setChatbotOpened(isChatbotOpened);
+    }
+
+    public HomeViewModel getViewModel() {
+        return viewModel; // Expose the ViewModel for state checks
     }
 }
