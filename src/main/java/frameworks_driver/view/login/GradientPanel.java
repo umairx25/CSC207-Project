@@ -53,4 +53,9 @@ public class GradientPanel extends JPanel {
         g2d.setPaint(gradientPaint);
         g2d.fillRect(0, 0, width, height); // Fill the panel with the gradient
     }
+
 }
+
+
+
+

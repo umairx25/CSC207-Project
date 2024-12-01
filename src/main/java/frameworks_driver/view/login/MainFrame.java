@@ -69,4 +69,6 @@ public class MainFrame extends JFrame implements PanelNavigator {
         cardPanel.add(infoPanel, "info");
         navigateTo("info");
     }
+
+
 }

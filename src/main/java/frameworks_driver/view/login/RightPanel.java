@@ -12,4 +12,6 @@ public class RightPanel extends GradientPanel {
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(logoLabel, BorderLayout.CENTER);
     }
+
+
 }

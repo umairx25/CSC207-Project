@@ -37,4 +37,6 @@ public class GridBagHelper {
     public static GridBagConstraints signUpLabelGBC() {
         return createGBC(0, GridBagConstraints.RELATIVE, new Insets(5, 35, 10, 10), GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL);
     }
+
+
 }
