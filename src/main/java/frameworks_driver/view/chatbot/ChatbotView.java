@@ -4,22 +4,20 @@ import data_access.chatbot.ChatbotDataAccess;
 import interface_adapter.chatbot.ChatbotController;
 import interface_adapter.chatbot.ChatbotPresenter;
 import interface_adapter.chatbot.ChatbotViewModel;
+import interface_adapter.home.HomeController;
 import use_case.chatBot.ChatbotInteractor;
 
 import javax.swing.*;
+import java.awt.*;
 
-public class ChatbotView {
+public class ChatbotView extends JPanel {
 
-    private JFrame frame; // Store the frame as an instance variable
+    public ChatbotView(HomeController controller) {
+        setLayout(new BorderLayout()); // Use BorderLayout for positioning
 
-    public ChatbotView() {
-        // Initialize the chatbot frame
-        frame = new JFrame("AI Chat Application");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Ensure only this frame closes
-        frame.setSize(500, 700);
-        frame.setLocationRelativeTo(null);
-
-        // Add chatbot container view
+        // Chatbot content
+        JPanel chatbotContent = new JPanel();
+        chatbotContent.setLayout(new BoxLayout(chatbotContent, BoxLayout.Y_AXIS));
         ChatbotContainerView containerView = new ChatbotContainerView(
                 new ChatbotController(
                         new ChatbotInteractor(
@@ -29,15 +27,14 @@ public class ChatbotView {
                 ),
                 new ChatbotViewModel()
         );
+        chatbotContent.add(containerView);
 
-        frame.add(containerView);
-        frame.setVisible(true);
-    }
+        add(chatbotContent, BorderLayout.CENTER);
 
-    public void dispose() {
-        if (frame != null) {
-            frame.dispose(); // Dispose of the JFrame
-            frame = null;    // Set frame to null to avoid reuse
-        }
+        // Add "Back to Home" button
+        JButton backButton = new JButton("Back to Home");
+        backButton.setPreferredSize(new Dimension(150, 40));
+        backButton.addActionListener(e -> controller.updateStateForHome()); // Trigger navigation
+        add(backButton, BorderLayout.SOUTH);
     }
 }
