@@ -7,10 +7,6 @@ public class ChartState {
         this.title = title;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     private String title;
     private boolean smaSelected;
     private boolean emaSelected;
@@ -56,16 +52,8 @@ public class ChartState {
         return smaSelected;
     }
 
-    public void setSmaSelected(boolean smaSelected) {
-        this.smaSelected = smaSelected;
-    }
-
     public boolean isEmaSelected() {
         return emaSelected;
-    }
-
-    public void setEmaSelected(boolean emaSelected) {
-        this.emaSelected = emaSelected;
     }
 
     public boolean isRsiSelected() {
@@ -74,10 +62,6 @@ public class ChartState {
 
     public boolean isPriceHistorySelected() {
         return priceHistorySelected;
-    }
-
-    public void setPriceHistorySelected(boolean priceHistorySelected) {
-        this.priceHistorySelected = priceHistorySelected;
     }
 
     public void setPriceHistory(LinkedHashMap<Long, Double> priceHistory) {

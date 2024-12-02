@@ -22,10 +22,6 @@ public class SignupState {
         return email;
     }
 
-    public boolean getSignupError() {
-        return signupError;
-    }
-
     public String getPassword() {
         return password;
     }
