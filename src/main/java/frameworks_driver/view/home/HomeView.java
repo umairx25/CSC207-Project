@@ -1,7 +1,6 @@
 package frameworks_driver.view.home;
 
 import app.Builder;
-import interface_adapter.home.HomeController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,28 +9,22 @@ import java.awt.*;
  * Represents the main home view for the application, displaying options such as Portfolio,
  * Explore, Chatbot, and Logout, along with user details and a gradient background.
  */
-public class HomeView extends JFrame {
+public class HomeView extends JPanel{
 
     private JPanel currentView;
     private AnimatedGradientPanel gradientPanel;
     private TopPanel topPanel;
     private BottomPanel bottomPanel;
-    private final HomeController controller;
 
     /**
      * Constructs a new HomeView with user-specific details and navigation buttons.
      *
      * @param username          the name of the user
      * @param portfolioBalance  the current portfolio balance
-     * @param controller        the controller for handling actions in the home view
      * @param builder           the application builder for navigating between views
      */
-    public HomeView(String username, double portfolioBalance, HomeController controller, Builder builder) {
-        this.controller = controller;
-        setTitle("Home");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
+    public HomeView(String username, double portfolioBalance, Builder builder) {
+        setLayout(new BorderLayout());
 
         PortfolioButton portfolioButton = new PortfolioButton();
         portfolioButton.addActionListener(e -> builder.showView("signup"));
@@ -54,36 +47,5 @@ public class HomeView extends JFrame {
 
         add(gradientPanel);
         setVisible(true);
-    }
-
-    /**
-     * Switches the view to the chatbot panel.
-     *
-     * @param chatbotView the panel representing the chatbot interface
-     */
-    public void showChatbotView(JPanel chatbotView) {
-        controller.updateStateForChatbot();
-        gradientPanel.removeAll();
-        currentView = chatbotView;
-        gradientPanel.add(currentView, BorderLayout.CENTER);
-        gradientPanel.revalidate();
-        gradientPanel.repaint();
-    }
-
-    /**
-     * Restores the home layout with default components.
-     */
-    public void showHomeView() {
-        gradientPanel.removeAll();
-        gradientPanel.add(topPanel, BorderLayout.NORTH);
-        currentView = new CenterPanel(
-                new PortfolioButton(),
-                new ExploreButton(),
-                new ChatBotButton()
-        );
-        gradientPanel.add(currentView, BorderLayout.CENTER);
-        gradientPanel.add(bottomPanel, BorderLayout.SOUTH);
-        gradientPanel.revalidate();
-        gradientPanel.repaint();
     }
 }

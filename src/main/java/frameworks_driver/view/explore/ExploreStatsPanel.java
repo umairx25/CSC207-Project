@@ -27,15 +27,14 @@ public class ExploreStatsPanel extends JPanel {
         setBackground(ColourManager.INNER_BOX_BLUE);
         setLayout(new BorderLayout());
 
-        // Add the graph panel on top
+        // Add the chart panel on top
         add(chartView, BorderLayout.CENTER);
 
-        // Create bottom panel with BorderLayout
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        // Create bottom panel with GridBagLayout
+        JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBackground(ColourManager.NAVY_BLUE);
-
-        // Set preferred size for the bottom panel to make it taller
-        bottomPanel.setPreferredSize(new Dimension(bottomPanel.getWidth(), 200));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Left panel for description
         JPanel leftPanel = new JPanel();
@@ -43,9 +42,15 @@ public class ExploreStatsPanel extends JPanel {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
         descriptionLabel = createLabel("");
-        descriptionLabel.setFont(new Font("Verdana", Font.BOLD, 10));
+        descriptionLabel.setFont(new Font("Verdana", Font.BOLD, 14));
         descriptionLabel.setForeground(Color.WHITE);
         leftPanel.add(descriptionLabel);
+
+        gbc.gridx = 0;
+        gbc.weightx = 2.0;  // Make the left panel take more space horizontally
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        gbc.insets = new Insets(0, 50, 0, 0);
+        bottomPanel.add(leftPanel, gbc);
 
         // Right panel for other stats
         JPanel rightPanel = new JPanel();
@@ -63,6 +68,8 @@ public class ExploreStatsPanel extends JPanel {
                 "Webpage: "
         };
 
+        gbc.weighty = 1.0;  // Allow right panel to stretch vertically
+
         statsLabels = new JLabel[labelsText.length];
         for (int i = 0; i < labelsText.length; i++) {
             JLabel label = createLabel(labelsText[i]);
@@ -71,12 +78,17 @@ public class ExploreStatsPanel extends JPanel {
             statsLabels[i] = label;
         }
 
-        // Add panels to bottomPanel
-        bottomPanel.add(leftPanel, BorderLayout.WEST);
-        bottomPanel.add(rightPanel, BorderLayout.EAST);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;  // Set weight of right panel to 1.0 for equal distribution
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        bottomPanel.add(rightPanel, gbc);
 
         // Add bottomPanel to main panel
+        bottomPanel.setPreferredSize(new Dimension(this.getWidth(), 250));  // Set height limit
         add(bottomPanel, BorderLayout.SOUTH);
+
+        // Make sure the chart view panel has room to grow in the center
+        chartView.setPreferredSize(new Dimension(this.getWidth(), 500)); // Adjust based on your desired chart size
     }
 
     /**
@@ -102,7 +114,7 @@ public class ExploreStatsPanel extends JPanel {
         chartView.inputTicker(company.getTicker());
 
         // Update description
-        descriptionLabel.setText("<html><div style='width:400px; padding-bottom:10px;'>" +
+        descriptionLabel.setText("<html><div style='width:500px; padding-bottom:10px;'>" +
                 company.getDescription() + "</div></html>");
 
         // Update stats labels
@@ -121,7 +133,7 @@ public class ExploreStatsPanel extends JPanel {
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        Font font = new Font("Verdana", Font.BOLD, 10);
+        Font font = new Font("Verdana", Font.BOLD, 14);
         label.setFont(font);
         return label;
     }

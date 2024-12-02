@@ -15,9 +15,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
-// Common
-import interface_adapter.ViewManagerModel;
-
 // Chatbot
 import org.jetbrains.annotations.NotNull;
 import use_case.chatbot.ChatbotInteractor;
@@ -45,10 +42,6 @@ import use_case.chart.ChartInteractor;
 import use_case.chart.ChartOutputBoundary;
 
 // Home
-import interface_adapter.home.HomeController;
-import use_case.home.HomeInteractor;
-import interface_adapter.home.HomePresenter;
-import interface_adapter.home.HomeViewModel;
 import frameworks_driver.view.home.HomeView;
 
 // SignUp
@@ -71,7 +64,6 @@ import use_case.login.LoginOutputBoundary;
 public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
-    private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     private final ChartViewModel chartViewModel = new ChartViewModel();
     private final StockDataAccess stockDataAccess = new StockDataAccess();
@@ -91,6 +83,15 @@ public class Builder {
 
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
+    }
+
+    /**
+     * Switches the current view displayed in the card panel.
+     *
+     * @param viewName Name of the view to display.
+     */
+    public void showView(String viewName) {
+        cardLayout.show(cardPanel, viewName);
     }
 
     /**
@@ -119,7 +120,7 @@ public class Builder {
     public Builder addExploreView() {
         final ExploreViewModel exploreViewModel = new ExploreViewModel();
         final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel, this);
         final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
         final ExploreController exploreController = new ExploreController(exploreInteractor);
         ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
@@ -142,15 +143,6 @@ public class Builder {
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, this);
         cardPanel.add(containerView, "chatbot");
         return this;
-    }
-
-    /**
-     * Switches the current view displayed in the card panel.
-     *
-     * @param viewName Name of the view to display.
-     */
-    public void showView(String viewName) {
-        cardLayout.show(cardPanel, viewName);
     }
 
     /**
@@ -207,9 +199,8 @@ public class Builder {
      * @return Builder instance for chaining.
      */
     public Builder addHomeView() {
-        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
-        HomeView homeView = new HomeView("User", 12345.67, controller, this);
-        cardPanel.add(homeView.getContentPane(), "home");
+        HomeView homeView = new HomeView("User", 12345.67, this);
+        cardPanel.add(homeView, "home");
         return this;
     }
 
@@ -224,13 +215,9 @@ public class Builder {
         application.setIconImage(icon);
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        application.setMinimumSize(new Dimension(1500, 1000));
         application.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        application.pack();
         application.add(cardPanel);
-
-        viewManagerModel.setState(chartView.getViewName());
-        viewManagerModel.firePropertyChanged();
+        application.setVisible(true);
 
         return application;
     }

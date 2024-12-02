@@ -6,17 +6,17 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Builder builder = new Builder();
         builder.initialize_firebase("config.json");
-        builder.addSignupView()
-                .addHomeView()
-                .addExploreView()
-                .addLoginView()
-                .addChatbotView();
+//        builder.addSignupView()
+//                .addHomeView()
+                builder.addExploreView();
+//                .addLoginView()
+//                .addChatbotView();
 
         JFrame application = builder.build();
         application.setVisible(true);
 
         // Example: Start with the Signup view
-        builder.showView("explore");
+        builder.showView("login");
 
     }
 }
