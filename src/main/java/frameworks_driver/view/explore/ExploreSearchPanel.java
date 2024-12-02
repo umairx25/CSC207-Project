@@ -10,18 +10,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+/**
+ * Represents the search panel for the Explore feature, allowing users to search for companies.
+ */
 public class ExploreSearchPanel extends JPanel {
 
-    // UI Components
     private JTextField searchField;
     private JButton searchButton;
     private JButton homeButton;
 
-    // Dependencies
     private final ExploreController controller;
     private final ExploreViewModel viewModel;
     private final DefaultListModel<String> companyListModel;
 
+    /**
+     * Constructs a new ExploreSearchPanel object.
+     *
+     * @param controller   the controller for handling user interactions
+     * @param viewModel    the view model providing data and state for the search
+     * @param companyList  the list of companies displayed in the Explore view
+     */
     public ExploreSearchPanel(
             ExploreController controller,
             ExploreViewModel viewModel,
@@ -37,10 +45,7 @@ public class ExploreSearchPanel extends JPanel {
     }
 
     private void initializeComponents() {
-        // Initialize search field
         searchField = createSearchField();
-
-        // Initialize buttons
         searchButton = createStyledButton("Search");
         homeButton = createStyledButton("Home");
     }
@@ -109,5 +114,4 @@ public class ExploreSearchPanel extends JPanel {
             }
         });
     }
-
 }

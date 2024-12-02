@@ -9,11 +9,19 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+/**
+ * Represents the panel displaying detailed statistics and charts for a selected company.
+ */
 public class ExploreStatsPanel extends JPanel {
     private final ChartView chartView;
     private final JLabel descriptionLabel;
     private final JLabel[] statsLabels;
 
+    /**
+     * Constructs a new ExploreStatsPanel object.
+     *
+     * @param chartView the chart view to be displayed at the top of the panel
+     */
     public ExploreStatsPanel(ChartView chartView) {
         this.chartView = chartView;
         setBackground(ColourManager.INNER_BOX_BLUE);
@@ -76,15 +84,12 @@ public class ExploreStatsPanel extends JPanel {
         add(bottomPanel, BorderLayout.CENTER);
     }
 
-    private JLabel createLabel(String text) {
-        JLabel label = new JLabel(text);
-        Font font = new Font("Verdana", Font.BOLD, 14);
-        label.setFont(font);
-        return label;
-    }
-
+    /**
+     * Updates the statistics panel with details of the given company.
+     *
+     * @param company the Stock object containing company details
+     */
     public void updateStatsPanel(Stock company) {
-        // Handle the event where an invalid company is clicked
         if (company == null) {
             System.out.println("Stock object 'company' is null.");
             return;
@@ -117,5 +122,12 @@ public class ExploreStatsPanel extends JPanel {
 
         revalidate();
         repaint();
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        Font font = new Font("Verdana", Font.BOLD, 14);
+        label.setFont(font);
+        return label;
     }
 }

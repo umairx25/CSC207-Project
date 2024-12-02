@@ -2,6 +2,7 @@ package frameworks_driver.view.signup;
 
 import app.Builder;
 import com.google.firebase.auth.FirebaseAuthException;
+import frameworks_driver.view.login.UIHelper;
 import frameworks_driver.view.style_helpers.*;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
@@ -11,24 +12,33 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
+/**
+ * Represents the signup panel in the application, allowing users to register
+ * by providing their email, username, and password.
+ */
 public class SignupPanel extends JPanel {
+
     private final JTextField signUpEmailField;
     private final JTextField signUpUsernameField;
     private final JPasswordField signUpPasswordField;
-    private SignupController signupController;
-    private SignupViewModel viewModel;
 
+    /**
+     * Constructs a new SignupPanel with input fields for email, username, and password,
+     * along with buttons for submitting the signup form or returning to the login view.
+     *
+     * @param signupController the controller responsible for handling signup logic
+     * @param viewModel        the view model providing signup state and data
+     * @param builder          the application builder for navigating between views
+     */
     public SignupPanel(SignupController signupController, SignupViewModel viewModel, Builder builder) {
-        this.signupController = signupController;
-        this.viewModel = viewModel;
-
         setPreferredSize(new Dimension(500, 750));
         setLayout(new GridBagLayout());
         setBackground(ColourManager.DARK_BLUE);
 
+        // Add heading
         UIHelper.addHeading(this, "Register!");
 
-        // Initialize and add fields
+        // Initialize and add input fields
         signUpEmailField = new JTextField(20);
         UIHelper.addLabeledField(this, "Email Address", signUpEmailField);
 
@@ -38,9 +48,10 @@ public class SignupPanel extends JPanel {
         signUpPasswordField = new JPasswordField(20);
         UIHelper.addLabeledField(this, "Password", signUpPasswordField);
 
+        // Signup button
         JButton signUpButton = new JButton("Sign up");
         UIHelper.styleButton(signUpButton);
-        add(signUpButton, GridBagHelper.signUpButtonsGBC());
+        add(signUpButton, GridBagManager.signUpButtonsGBC());
 
         signUpButton.addActionListener(e -> {
             String email = signUpEmailField.getText();
@@ -71,11 +82,11 @@ public class SignupPanel extends JPanel {
             }
         });
 
+        // Back button
         JButton backButton = new JButton("Return to Login");
         UIHelper.styleButton(backButton);
-        add(backButton, GridBagHelper.signUpButtonsGBC());
+        add(backButton, GridBagManager.signUpButtonsGBC());
 
         backButton.addActionListener(e -> builder.showView("login"));
     }
-
 }

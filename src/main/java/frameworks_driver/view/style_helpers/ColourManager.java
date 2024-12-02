@@ -2,6 +2,9 @@ package frameworks_driver.view.style_helpers;
 
 import java.awt.Color;
 
+/**
+ * Provides predefined color constants for consistent styling across the application.
+ */
 public class ColourManager {
 
     //Login and signup panels
@@ -24,6 +27,5 @@ public class ColourManager {
 
     // Explore Page
     public static final Color NAVY_BLUE = new Color(14,27,63);
-    public static final Color CREAM = new Color(237, 232, 208);
     public static final Color SEARCH_BAR_GRAY = new Color(230,230,230);
 }

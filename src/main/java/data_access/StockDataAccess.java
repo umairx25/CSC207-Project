@@ -12,24 +12,44 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.chart.ChartDataAccessInterface;
 
+/**
+ * Provides data access for stock-related information and charting,
+ * including fetching historical data, current prices, and technical indicators.
+ */
 public class StockDataAccess implements ChartDataAccessInterface {
     final Dotenv dotenv = Dotenv.load();
-    private  final String API_KEY = dotenv.get("POLYGON_API_KEY");
+    private final String API_KEY = dotenv.get("POLYGON_API_KEY");
 
-    //All the methods that use ticker snapshot endpoint
-    public  String getTickerSnapshot(String ticker)   {
+    /**
+     * Retrieves the ticker snapshot data for a given stock ticker.
+     *
+     * @param ticker the stock ticker symbol
+     * @return JSON response as a String containing snapshot details
+     */
+    public String getTickerSnapshot(String ticker) {
         String baseURL = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/";
         String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
         return HTTPRequest(urlString);
     }
 
-    //All the methods that use company overview endpoint
-    public  String getCompanyOverview(String ticker) {
+    /**
+     * Retrieves the company overview for a given stock ticker.
+     *
+     * @param ticker the stock ticker symbol
+     * @return JSON response as a String containing company overview details
+     */
+    public String getCompanyOverview(String ticker) {
         String baseURL = "https://api.polygon.io/v3/reference/tickers/";
         String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
         return HTTPRequest(urlString);
     }
 
+    /**
+     * Retrieves the company name for a given stock ticker.
+     *
+     * @param ticker the stock ticker symbol
+     * @return the name of the company
+     */
     public String getTickerName(String ticker) {
         String result = getCompanyOverview(ticker);
         JSONObject jsonObject = new JSONObject(result);
@@ -37,27 +57,43 @@ public class StockDataAccess implements ChartDataAccessInterface {
         return resultsObject.getString("name");
     }
 
+    /**
+     * Retrieves the current price for a given stock ticker.
+     *
+     * @param ticker the stock ticker symbol
+     * @return the current price as a Double, rounded to 2 decimal places
+     */
     @Override
     public Double getCurrentPrice(String ticker) {
         String content = getTickerSnapshot(ticker);
-
         JSONObject jsonResponse = new JSONObject(content);
         JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
         return round(day.getDouble("c"), 2);
     }
 
+    /**
+     * Retrieves the percentage and absolute price change for a given stock ticker.
+     *
+     * @param ticker the stock ticker symbol
+     * @return a list containing the percentage and absolute price change
+     */
     @Override
     public List<Double> getPriceIncrease(String ticker) {
         String content = getTickerSnapshot(ticker);
         ArrayList<Double> increase = new ArrayList<>();
-
         JSONObject jsonResponse = new JSONObject(content);
-        JSONObject tickerData= jsonResponse.getJSONObject("ticker");
+        JSONObject tickerData = jsonResponse.getJSONObject("ticker");
         increase.add(round(tickerData.getDouble("todaysChangePerc"), 2));
         increase.add(round(tickerData.getDouble("todaysChange"), 2));
         return increase;
     }
 
+    /**
+     * Fetches historical stock price data for the last 5 years.
+     *
+     * @param ticker the stock ticker symbol
+     * @return a LinkedHashMap where keys are timestamps and values are closing prices
+     */
     public LinkedHashMap<Long, Double> getHistoricalData(String ticker) {
         LinkedHashMap<Long, Double> historicalData = new LinkedHashMap<>();
         final String startDate = java.time.LocalDate.now().minusYears(5).toString();
@@ -65,7 +101,6 @@ public class StockDataAccess implements ChartDataAccessInterface {
         String baseURL = "https://api.polygon.io/v2/aggs/ticker/";
         String urlString = baseURL + ticker + "/range/1/" + "week" + "/" + startDate + "/" + endDate + "?adjusted=true&sort=asc&apiKey=" + API_KEY;
 
-        System.out.println("Fetching historical data for " + ticker);
         try {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -93,13 +128,20 @@ public class StockDataAccess implements ChartDataAccessInterface {
             } else {
                 System.out.println("No 'results' found in response. Full response: " + content);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return historicalData;
     }
 
+    /**
+     * Fetches technical indicator data for a given stock ticker.
+     *
+     * @param indicator the name of the indicator (e.g., SMA, EMA)
+     * @param ticker    the stock ticker symbol
+     * @param window    the time window for the indicator
+     * @return a LinkedHashMap where keys are timestamps and values are indicator values
+     */
     @Override
     public LinkedHashMap<Long, Double> getIndicatorData(String indicator, String ticker, int window) {
         LinkedHashMap<Long, Double> data = new LinkedHashMap<>();
@@ -120,14 +162,7 @@ public class StockDataAccess implements ChartDataAccessInterface {
             result = jsonResponse.getJSONObject("results");
         } catch (Exception e) {
             System.out.println("No 'results' found in response.");
-            result = new JSONObject();
-        }
-
-        try {
-            result = jsonResponse.getJSONObject("results");
-        } catch (Exception e) {
-            System.out.println("No 'results' found in response.");
-            result = new JSONObject();
+            return data;
         }
 
         JSONArray values;
@@ -145,12 +180,24 @@ public class StockDataAccess implements ChartDataAccessInterface {
         return data;
     }
 
+    /**
+     * Rounds a given value to a specified number of decimal places.
+     *
+     * @param value  the value to round
+     * @param places the number of decimal places
+     * @return the rounded value as a Double
+     */
     public Double round(double value, int places) {
         DecimalFormat df = new DecimalFormat("#." + "#".repeat(places));
         return Double.parseDouble(df.format(value));
     }
 
-    //Sends requests to the server.
+    /**
+     * Sends an HTTP GET request to the specified URL.
+     *
+     * @param urlString the URL to send the request to
+     * @return the response as a String
+     */
     public String HTTPRequest(String urlString) {
         StringBuilder response = new StringBuilder();
 
@@ -177,5 +224,4 @@ public class StockDataAccess implements ChartDataAccessInterface {
 
         return response.toString();
     }
-
 }

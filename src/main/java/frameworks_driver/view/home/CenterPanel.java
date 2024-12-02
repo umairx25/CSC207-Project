@@ -3,8 +3,18 @@ package frameworks_driver.view.home;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Represents the central panel of the home view containing buttons for navigation.
+ */
 public class CenterPanel extends JPanel {
 
+    /**
+     * Constructs a new CenterPanel with navigation buttons.
+     *
+     * @param portfolioButton the button for accessing the portfolio feature
+     * @param exploreButton   the button for accessing the explore feature
+     * @param chatBotButton   the button for accessing the chatbot feature
+     */
     public CenterPanel(PortfolioButton portfolioButton, ExploreButton exploreButton, ChatBotButton chatBotButton) {
         setLayout(new GridBagLayout());
         setOpaque(false); // Transparent for gradient background

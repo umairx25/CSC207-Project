@@ -62,7 +62,7 @@ public class ChatbotInteractor implements ChatbotInputBoundary {
      * @return A formatted prompt string.
      */
     @NotNull
-    private static String getPrompt(ChatbotInputData inputData) {
+    public static String getPrompt(ChatbotInputData inputData) {
         String userMessage = inputData.message();
         return "Analyze the following question and provide the appropriate response:\n"
                 + "Question: \"" + userMessage + "\"\n"
