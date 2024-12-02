@@ -5,18 +5,11 @@ import use_case.home.HomeOutputBoundary;
 
 public class HomePresenter implements HomeOutputBoundary {
 
-    private final HomeViewModel viewModel;
-
-    public HomePresenter(HomeViewModel viewModel) {
-        this.viewModel = viewModel;
+    public HomePresenter() {
     }
 
     @Override
     public void presentChatbotNavigation(boolean isChatbotOpened) {
 /*        viewModel.setChatbotOpened(isChatbotOpened);*/
-    }
-
-    public HomeViewModel getViewModel() {
-        return viewModel; // Expose the ViewModel for state checks
     }
 }

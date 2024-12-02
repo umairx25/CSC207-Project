@@ -47,7 +47,6 @@ import use_case.chart.ChartOutputBoundary;
 import interface_adapter.home.HomeController;
 import use_case.home.HomeInteractor;
 import interface_adapter.home.HomePresenter;
-import interface_adapter.home.HomeViewModel;
 import frameworks_driver.view.home.HomeView;
 
 // SignUp
@@ -94,7 +93,7 @@ public class Builder {
 
     //Login
     private final LoginViewModel loginViewModel = new LoginViewModel();
-    private use_case.login.LoginOutputBoundary LoginOutputBoundary;
+    private LoginOutputBoundary LoginOutputBoundary;
     private final LoginUserDataAccess loginUserDataAccess = new LoginUserDataAccess();
     private  final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, LoginOutputBoundary);
 
@@ -191,7 +190,7 @@ public class Builder {
     }
 
     public Builder addHomeView() {
-        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
+        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter()));
         HomeView homeView = new HomeView("User", 12345.67, controller, this); // Pass 'this' as the Builder
         cardPanel.add(homeView.getContentPane(), "home");
         return this;

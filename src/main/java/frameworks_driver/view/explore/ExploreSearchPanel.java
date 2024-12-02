@@ -65,6 +65,7 @@ public class ExploreSearchPanel extends JPanel {
         JTextField field = new JTextField();
         field.setBackground(ColourManager.SEARCH_BAR_GRAY);
 
+        // Adds a message containing instructions in the search bar when user clicks away
         field.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
