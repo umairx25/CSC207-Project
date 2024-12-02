@@ -42,10 +42,6 @@ import use_case.chart.ChartInteractor;
 import use_case.chart.ChartOutputBoundary;
 
 // Home
-import interface_adapter.home.HomeController;
-import use_case.home.HomeInteractor;
-import interface_adapter.home.HomePresenter;
-import interface_adapter.home.HomeViewModel;
 import frameworks_driver.view.home.HomeView;
 
 // SignUp
@@ -90,6 +86,15 @@ public class Builder {
     }
 
     /**
+     * Switches the current view displayed in the card panel.
+     *
+     * @param viewName Name of the view to display.
+     */
+    public void showView(String viewName) {
+        cardLayout.show(cardPanel, viewName);
+    }
+
+    /**
      * Initializes Firebase with the provided service account file.
      *
      * @param file Path to the service account JSON file.
@@ -115,7 +120,7 @@ public class Builder {
     public Builder addExploreView() {
         final ExploreViewModel exploreViewModel = new ExploreViewModel();
         final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel, this);
         final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
         final ExploreController exploreController = new ExploreController(exploreInteractor);
         ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
@@ -138,15 +143,6 @@ public class Builder {
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, this);
         cardPanel.add(containerView, "chatbot");
         return this;
-    }
-
-    /**
-     * Switches the current view displayed in the card panel.
-     *
-     * @param viewName Name of the view to display.
-     */
-    public void showView(String viewName) {
-        cardLayout.show(cardPanel, viewName);
     }
 
     /**
@@ -203,9 +199,8 @@ public class Builder {
      * @return Builder instance for chaining.
      */
     public Builder addHomeView() {
-        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
-        HomeView homeView = new HomeView("User", 12345.67, controller, this);
-        cardPanel.add(homeView.getContentPane(), "home");
+        HomeView homeView = new HomeView("User", 12345.67, this);
+        cardPanel.add(homeView, "home");
         return this;
     }
 

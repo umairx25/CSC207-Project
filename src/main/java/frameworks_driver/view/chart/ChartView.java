@@ -139,6 +139,7 @@ public class ChartView extends JPanel implements PropertyChangeListener {
                 PlotOrientation.VERTICAL,
                 true, true, false
         );
+        lineChart.setBackgroundPaint(ColourManager.INNER_BOX_BLUE);
 
         CategoryPlot plot = lineChart.getCategoryPlot();
         NumberAxis rangeAxis = new NumberAxis("Price");

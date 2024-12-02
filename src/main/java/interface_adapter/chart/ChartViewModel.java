@@ -13,6 +13,7 @@ public class ChartViewModel extends ViewModel<ChartState> {
     private double currPrice;
     private String pointIncrease;
     private String percentIncrease;
+    public static final String CONTROL_PANEL_MESSAGE = "(Data represents the last 4 years)";
 
 
     public ChartViewModel() {
