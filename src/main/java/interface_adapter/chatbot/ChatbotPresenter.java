@@ -1,7 +1,7 @@
 package interface_adapter.chatbot;
 
-import use_case.chatBot.ChatbotOutputBoundary;
-import use_case.chatBot.ChatbotOutputData;
+import use_case.chatbot.ChatbotOutputBoundary;
+import use_case.chatbot.ChatbotOutputData;
 
 /**
  * Presenter for the chatbot use case.

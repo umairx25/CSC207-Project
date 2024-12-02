@@ -18,6 +18,17 @@ ChartPresenter implements ChartOutputBoundary {
             viewModel.updateSma(outputData.getSmaData());
             viewModel.updateEma(outputData.getEmaData());
             viewModel.updateRsi(outputData.getRsiData());
+            viewModel.updateCurrPrice(outputData.getCurrPrice());
+
+            String pointIncrease = outputData.getPointIncrease().toString();
+            String percentIncrease = outputData.getPercentIncrease().toString();
+            if (outputData.getPercentIncrease() > 0) {
+                pointIncrease = "+" + pointIncrease;
+                percentIncrease = "+" + percentIncrease;
+            }
+
+            viewModel.updatePointIncrease(pointIncrease);
+            viewModel.updatePercentIncrease(percentIncrease);
         }
 
         catch (Exception e) {

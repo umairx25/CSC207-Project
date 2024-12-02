@@ -5,10 +5,15 @@ import interface_adapter.ViewModel;
 import java.util.LinkedHashMap;
 //
 /**
-// * The ViewModel for the Chart View.
-// */
+ // * The ViewModel for the Chart View.
+ // */
 
-    public class ChartViewModel extends ViewModel<ChartState> {
+public class ChartViewModel extends ViewModel<ChartState> {
+
+    private double currPrice;
+    private String pointIncrease;
+    private String percentIncrease;
+
 
     public ChartViewModel() {
         super("chart");
@@ -65,5 +70,27 @@ import java.util.LinkedHashMap;
         firePropertyChanged("rsi");
     }
 
+    public void updateCurrPrice(double currPrice) {
+        this.currPrice = currPrice;
+    }
 
+    public void updatePointIncrease(String pointIncrease) {
+        this.pointIncrease = pointIncrease;
+    }
+
+    public void updatePercentIncrease(String percentIncrease) {
+        this.percentIncrease = percentIncrease;
+    }
+
+    public double getCurrPrice() {
+        return currPrice;
+    }
+
+    public String getPointIncrease() {
+        return pointIncrease;
+    }
+
+    public String getPercentIncrease() {
+        return percentIncrease;
+    }
 }
