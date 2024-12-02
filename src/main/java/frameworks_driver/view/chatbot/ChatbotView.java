@@ -19,7 +19,6 @@ public class ChatbotView extends JPanel {
         ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
         ChatbotController controller = new ChatbotController(interactor);
 
-        // Initialize ChatbotContainerView with Builder for navigation
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, builder);
 
         setLayout(new BorderLayout());
