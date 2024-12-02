@@ -2,6 +2,8 @@ package frameworks_driver.view.chatbot;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import app.Builder;
 import interface_adapter.chatbot.ChatbotController;
@@ -11,7 +13,6 @@ import interface_adapter.chatbot.ChatbotViewModel;
  * Main container view for the chatbot UI.
  * Combines the header, message display, and input components.
  */
-
 public class ChatbotContainerView extends JPanel {
     private final ChatbotMessageView messagePanel;
     private final ChatbotInputView inputPanel;
@@ -22,21 +23,26 @@ public class ChatbotContainerView extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // Header with Back button
         ChatbotHeaderView headerPanel = new ChatbotHeaderView(builder);
         add(headerPanel, BorderLayout.NORTH);
 
-        // Message display
         messagePanel = new ChatbotMessageView();
-        messagePanel.setBorder(BorderFactory.createLineBorder(Color.RED)); // Debug border
-        add(messagePanel, BorderLayout.CENTER);
+        JScrollPane messageScrollPane = new JScrollPane(messagePanel);
+        messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(messageScrollPane, BorderLayout.CENTER);
 
-        // Input field
         inputPanel = new ChatbotInputView(e -> sendMessage(), "Type your message here...");
-        inputPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN)); // Debug border
         add(inputPanel, BorderLayout.SOUTH);
 
         viewModel.setResponseHandler(response -> messagePanel.addMessage(response, false));
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                revalidate();
+                repaint();
+            }
+        });
     }
 
     private void sendMessage() {
@@ -46,17 +52,23 @@ public class ChatbotContainerView extends JPanel {
         if (userMessage == null || userMessage.isEmpty()) return;
 
         messagePanel.addMessage(userMessage, true);
+
         inputPanel.resetField(placeholderText);
         inputPanel.setEnabled(false);
 
-        SwingWorker<String, Void> worker = new SwingWorker<>() {
+        ChatbotHeaderView headerPanel = (ChatbotHeaderView) getComponent(0); // Assuming it's the first component
+        headerPanel.setTypingIndicatorVisible(true);
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
-            protected String doInBackground() {
-                return controller.handleInput(userMessage);
+            protected Void doInBackground() {
+                controller.handleInput(userMessage);
+                return null;
             }
 
             @Override
             protected void done() {
+                headerPanel.setTypingIndicatorVisible(false);
                 inputPanel.setEnabled(true);
             }
         };

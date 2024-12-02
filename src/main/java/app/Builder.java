@@ -217,8 +217,10 @@ public class Builder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.setExtendedState(JFrame.MAXIMIZED_BOTH);
         application.add(cardPanel);
+
         application.setVisible(true);
 
         return application;
     }
+
 }

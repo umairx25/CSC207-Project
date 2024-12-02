@@ -17,10 +17,6 @@ public class LoginInteractor implements LoginInputBoundary {
         String email = loginInputData.getEmail();
         String password = loginInputData.getPassword();
 
-//        if (!LoginUserDataAccess.checkIfEmailExists(email)) {
-//            System.out.println("email does not exist");
-//            loginPresenter.prepareFailView("Email not found.");
-//        } else {
             String token = LoginUserDataAccess.fetchToken(email, password);
             if (token != null && LoginUserDataAccess.verifyToken(token)) {
                 System.out.println("logged in");
