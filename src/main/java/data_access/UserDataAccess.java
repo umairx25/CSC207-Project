@@ -82,7 +82,7 @@ public class UserDataAccess implements SignupDataAccessInterface {
         System.out.println("Document created at: " + result.get().getUpdateTime());
     }
 
-    public void update_database(User user, Firestore db) throws IOException, ExecutionException, InterruptedException {
+    public void update_database(User user, Firestore db) throws ExecutionException, InterruptedException {
         DocumentReference docRef = db.collection("users").document(user.getEmail());
         Map<String, Object> data = new HashMap<>();
 
@@ -123,7 +123,9 @@ public class UserDataAccess implements SignupDataAccessInterface {
         return username;
     }
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException,
+            UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
+            IllegalAccessException, IOException {
         Builder builder = new Builder();
         builder.initialize_firebase("config.json");
         retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());

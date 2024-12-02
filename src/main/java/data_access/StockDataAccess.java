@@ -123,7 +123,20 @@ public class StockDataAccess implements ChartDataAccessInterface {
             result = new JSONObject();
         }
 
-        JSONArray values = result.getJSONArray("values");
+        try {
+            result = jsonResponse.getJSONObject("results");
+        } catch (Exception e) {
+            System.out.println("No 'results' found in response.");
+            result = new JSONObject();
+        }
+
+        JSONArray values;
+        try {
+            values = result.getJSONArray("values");
+        } catch (Exception e) {
+            System.out.println("No 'values' array found in results.");
+            return data;
+        }
 
         for (int i = values.length() - 1; i >= 0; i--) {
             JSONObject obj = values.getJSONObject(i);

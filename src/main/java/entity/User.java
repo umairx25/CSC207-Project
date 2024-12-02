@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class User {
-    public User(String email, String username, double balance, double portfolioValue, LinkedHashMap<String, ArrayList<String>> portfolio, ArrayList<String> transactions) {
+
+    public User(String email, String username, double balance, double portfolioValue, LinkedHashMap<String,
+            ArrayList<String>> portfolio, ArrayList<String> transactions) {
         this.email = email;
         this.username = username;
         this.balance = balance;

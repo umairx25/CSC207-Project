@@ -4,52 +4,59 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.swing.*;
-
-// Explore
+import io.github.cdimascio.dotenv.Dotenv;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+
+// Common
+import data_access.ChatbotDataAccess;
 import data_access.ExploreDataAccess;
+import data_access.StockDataAccess;
+import data_access.UserDataAccess;
+import interface_adapter.ViewManagerModel;
+
+// Chatbot
+import use_case.chatbot.ChatbotInteractor;
+import interface_adapter.chatbot.ChatbotPresenter;
+import interface_adapter.chatbot.ChatbotViewModel;
 import frameworks_driver.view.chatbot.ChatbotContainerView;
+import interface_adapter.chatbot.ChatbotController;
+
+// Explore
 import frameworks_driver.view.explore.ExploreView;
-import frameworks_driver.view.home.HomeView;
-import frameworks_driver.view.signup.RightPanel;
-import frameworks_driver.view.signup.SignupPanel;
-import interface_adapter.chart.ChartPresenter;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
 import interface_adapter.explore.ExploreViewModel;
-import interface_adapter.home.HomeController;
-import interface_adapter.home.HomePresenter;
-import interface_adapter.home.HomeViewModel;
-import interface_adapter.signup.SignupController;
-import interface_adapter.signup.SignupPresenter;
-import interface_adapter.signup.SignupState;
-import interface_adapter.signup.SignupViewModel;
-import io.github.cdimascio.dotenv.Dotenv;
 import use_case.explore.ExploreInputBoundary;
 import use_case.explore.ExploreInteractor;
 import use_case.explore.ExploreOutputBoundary;
 
 // Chart
-import data_access.StockDataAccess;
 import frameworks_driver.view.chart.ChartView;
-import interface_adapter.ViewManagerModel;
 import interface_adapter.chart.ChartController;
 import interface_adapter.chart.ChartPresenter;
 import interface_adapter.chart.ChartViewModel;
 import use_case.chart.ChartInputBoundary;
 import use_case.chart.ChartInteractor;
 import use_case.chart.ChartOutputBoundary;
-import data_access.ChatbotDataAccess;
-import use_case.chatbot.ChatbotInteractor;
-import interface_adapter.chatbot.ChatbotPresenter;
-import interface_adapter.chatbot.ChatbotViewModel;
-import interface_adapter.chatbot.ChatbotController;
+
+// Home
+import interface_adapter.home.HomeController;
 import use_case.home.HomeInteractor;
+import interface_adapter.home.HomePresenter;
+import interface_adapter.home.HomeViewModel;
+import frameworks_driver.view.home.HomeView;
+
+// SignUp
+import interface_adapter.signup.SignupController;
+import interface_adapter.signup.SignupPresenter;
+import interface_adapter.signup.SignupState;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import data_access.UserDataAccess;
+import interface_adapter.signup.SignupViewModel;
+import frameworks_driver.view.signup.RightPanel;
+import frameworks_driver.view.signup.SignupPanel;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -57,18 +64,8 @@ import data_access.UserDataAccess;
  * <p/>
  * This is done by adding each View and then adding related Use Cases.
  */
-
 public class Builder {
     private final JPanel cardPanel = new JPanel();
-    private final CardLayout cardLayout = new CardLayout();
-
-    // Explore
-    private final ExploreViewModel exploreViewModel = new ExploreViewModel();
-    private final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-    final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
-    final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
-    final ExploreController exploreController = new ExploreController(exploreInteractor);
-    ExploreView exploreView = new ExploreView(exploreController, exploreViewModel);
 
     // Chart
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
@@ -90,6 +87,7 @@ public class Builder {
 
 
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        CardLayout cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
     }
 
@@ -108,24 +106,14 @@ public class Builder {
     }
 
     public Builder addExploreView() {
+        // Explore
+        final ExploreViewModel exploreViewModel = new ExploreViewModel();
+        final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
+        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+        final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
+        final ExploreController exploreController = new ExploreController(exploreInteractor);
+        ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
         cardPanel.add(exploreView);
-        return this;
-    }
-
-    public Builder addChartView() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        ChartViewModel chartViewModel = new ChartViewModel();
-
-        // Initialize and set the SignupController
-        final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(
-                chartViewModel);
-        final ChartInputBoundary chartInteractor = new ChartInteractor(
-                stockDataAccess, (ChartPresenter) chartOutputBoundary);
-        final ChartController controller = new ChartController(chartInteractor);
-
-        ChartView chartView = new ChartView(chartViewModel, controller, chartViewModel.getState());
-
-        cardPanel.add(chartView, chartView.getViewName());
-
         return this;
     }
 
@@ -207,13 +195,16 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-        application.setSize(1300, 600);
+
+        // set application icon
         Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);
-        application.pack();
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+//        application.setSize(1300, 600); // frame will have a set size
+        application.setMinimumSize(new Dimension(1500, 1000));
+        application.setExtendedState(JFrame.MAXIMIZED_BOTH); // frame will open maximized
+        application.pack(); // sizes the frame so that all its contents are at or above their preferred sizes
         application.add(cardPanel);
 
         viewManagerModel.setState(chartView.getViewName());

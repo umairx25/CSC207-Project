@@ -1,7 +1,5 @@
 package app;
 
-import data_access.UserDataAccess;
-
 import javax.swing.*;
 import java.io.IOException;
 
@@ -15,15 +13,14 @@ public class Main {
      */
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         final Builder builder = new Builder();
-        builder.initialize_firebase("config.json");
+//        builder.initialize_firebase("config.json");
 
 
         final JFrame application = builder
-                .addChartView()
                 .addExploreView()
-                .addChatbotView()
-                .addSignupView()
-                .addHomeView()
+//                .addChatbotView()
+//                .addSignupView()
+//                .addHomeView()
                 .build();
 
         application.setVisible(true);
