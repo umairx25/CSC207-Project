@@ -5,9 +5,9 @@ import interface_adapter.ViewModel;
 
 import java.util.List;
 
-public class ExploreViewModel extends ViewModel<ExploreState> {
+public class ExploreViewModel extends ViewModel<Void> {
 
-    public static final String TITLE_LABEL = "Explore Page";
+    public static final String INITIAL_SEARCH_MESSAGE = "Enter a ticker symbol, the Market Identifier Code (MIC) for a particular stock exchange, or a keyword";
     public static final String ERROR_MESSAGE = "This company no longer exists or might have changed its ticker: ";
 
     private List<String> searchOutput;
@@ -16,15 +16,24 @@ public class ExploreViewModel extends ViewModel<ExploreState> {
 
     public ExploreViewModel() {
         super("explore");
-        setState(new ExploreState());
     }
+
+    @Override
+    public Void getState() {
+        return null; // Return null as we are not using state
+    }
+
+    @Override
+    public void setState(Void state) {
+        // Do nothing since Explore does not use state
+     }
 
     public List<String> getSearchOutput() {
         return searchOutput;
     }
 
-    public void setSearchOutput(List<String> searchOuput) {
-        this.searchOutput = searchOuput;
+    public void setSearchOutput(List<String> searchOutput) {
+        this.searchOutput = searchOutput;
     }
 
     public Stock getStockInfoOutput() {
@@ -42,6 +51,4 @@ public class ExploreViewModel extends ViewModel<ExploreState> {
     public void setErrorState(boolean errorState) {
         this.errorState = errorState;
     }
-
-
 }

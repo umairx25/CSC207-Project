@@ -1,8 +1,8 @@
 package frameworks_driver.view.chatbot;
 
-import view.ColourManager;
-import view.GridBagManager;
-import view.ImageManager;
+import frameworks_driver.view.style_helpers.ColourManager;
+import frameworks_driver.view.style_helpers.GridBagManager;
+import frameworks_driver.view.style_helpers.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +23,7 @@ public class ChatbotInputView extends JPanel {
      */
     public ChatbotInputView(ActionListener sendAction, String placeholderText) {
         setLayout(new BorderLayout());
-        setBackground(ColourManager.MEDIUM_GRAY);
+        setBackground(ColourManager.NAVY_BLUE);
         setPreferredSize(GridBagManager.INPUT_SIZE);
 
         messageField = new JTextField();

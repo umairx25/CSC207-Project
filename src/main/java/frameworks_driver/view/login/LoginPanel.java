@@ -1,11 +1,11 @@
 package frameworks_driver.view.login;
 
+import frameworks_driver.view.style_helpers.ColourManager;
+import frameworks_driver.view.style_helpers.FontManager;
+import frameworks_driver.view.style_helpers.GridBagManager;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.login.LoginState;
-import view.ColourManager;
-import view.FontManager;
-import view.GridBagManager;
 
 import javax.swing.*;
 import java.awt.*;
