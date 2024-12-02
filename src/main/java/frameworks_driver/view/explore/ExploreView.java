@@ -171,5 +171,6 @@ public class ExploreView extends JPanel {
             viewModel.setErrorState(false); //reset to avoid continuous error the next time a good company is selected
         }
     }
+
 }
 
