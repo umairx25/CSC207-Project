@@ -1,14 +1,15 @@
 package interface_adapter.home;
 
-public class HomeViewModel {
+import interface_adapter.ViewModel;
 
-    private boolean isChatbotOpened;
+/**
+ * The View Model for the Logged In View.
+ */
+public class HomeViewModel extends ViewModel<HomeState> {
 
-    public boolean isChatbotOpened() {
-        return isChatbotOpened;
-    }
-
-    public void setChatbotOpened(boolean chatbotOpened) {
-        this.isChatbotOpened = chatbotOpened;
+    public HomeViewModel() {
+        System.out.println("home view model reached view name retrived");
+        super("home view");
     }
 }
+

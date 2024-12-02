@@ -20,7 +20,7 @@ public class Main {
                 .addExploreView()
 //                .addChatbotView()
 //                .addSignupView()
-//                .addHomeView()
+                .addHomeView()
                 .build();
 
         application.setVisible(true);

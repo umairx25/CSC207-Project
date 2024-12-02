@@ -13,7 +13,7 @@ public class HomePresenter implements HomeOutputBoundary {
 
     @Override
     public void presentChatbotNavigation(boolean isChatbotOpened) {
-        viewModel.setChatbotOpened(isChatbotOpened);
+/*        viewModel.setChatbotOpened(isChatbotOpened);*/
     }
 
     public HomeViewModel getViewModel() {

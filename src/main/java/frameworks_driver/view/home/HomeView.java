@@ -2,14 +2,17 @@ package frameworks_driver.view.home;
 
 import interface_adapter.home.HomeController;
 import interface_adapter.home.HomePresenter;
+import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 import use_case.home.HomeInteractor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class HomeView extends JFrame {
-
+public class HomeView extends JPanel implements PropertyChangeListener {
+    private final String viewName = "home view";
     private JPanel currentView; // Store reference to the current panel
     private AnimatedGradientPanel gradientPanel;
     private TopPanel topPanel; // Keep references to original panels
@@ -18,10 +21,6 @@ public class HomeView extends JFrame {
 
     public HomeView(String username, double portfolioBalance, HomeController controller) {
         this.controller = controller; // Initialize the controller
-        setTitle("Home");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
 
         // Create components
         LogOutButton logOutButton = new LogOutButton();
@@ -91,6 +90,19 @@ public class HomeView extends JFrame {
         gradientPanel.repaint();
     }
 
+    public String getViewName() {
+        return viewName;
+    }
+
+    /**
+     * This method gets called when a bound property is changed.
+     *
+     * @param evt A PropertyChangeEvent object describing the event source
+     *            and the property that has changed.
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+    }
 }
 
 

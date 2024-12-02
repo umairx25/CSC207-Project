@@ -9,11 +9,21 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+/**
+ * A panel that displays the stats of a selected stock, including a chart,
+ * description, and key statistics such as market cap and volume.
+ */
 public class ExploreStatsPanel extends JPanel {
     private final ChartView chartView;
     private final JLabel descriptionLabel;
     private final JLabel[] statsLabels;
 
+    /**
+     * Constructs an ExploreStatsPanel that contains a chart view, a description,
+     * and a list of stock statistics.
+     *
+     * @param chartView the chart view component for displaying stock performance
+     */
     public ExploreStatsPanel(ChartView chartView) {
         this.chartView = chartView;
         setBackground(ColourManager.INNER_BOX_BLUE);
@@ -76,6 +86,12 @@ public class ExploreStatsPanel extends JPanel {
         add(bottomPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Creates a JLabel with a specified text and consistent font styling.
+     *
+     * @param text the text for the label
+     * @return the created JLabel
+     */
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         Font font = new Font("Verdana", Font.BOLD, 14);
@@ -83,6 +99,11 @@ public class ExploreStatsPanel extends JPanel {
         return label;
     }
 
+    /**
+     * Updates the stats panel with details of the provided stock entity.
+     *
+     * @param company the stock entity containing details such as ticker and description
+     */
     public void updateStatsPanel(Stock company) {
         // Handle the event where an invalid company is clicked
         if (company == null) {

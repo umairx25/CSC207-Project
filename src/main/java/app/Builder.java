@@ -4,6 +4,9 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.swing.*;
+
+import frameworks_driver.view.explore.ExploreSearchPanel;
+import frameworks_driver.view.explore.ExploreStatsPanel;
 import io.github.cdimascio.dotenv.Dotenv;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -66,6 +69,7 @@ import frameworks_driver.view.signup.SignupPanel;
  */
 public class Builder {
     private final JPanel cardPanel = new JPanel();
+    private final CardLayout cardLayout = new CardLayout();
 
     // Chart
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
@@ -86,8 +90,7 @@ public class Builder {
             signupOutputBoundary);
 
 
-    public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        CardLayout cardLayout = new CardLayout();
+    public Builder() {
         cardPanel.setLayout(cardLayout);
     }
 
@@ -106,41 +109,15 @@ public class Builder {
     }
 
     public Builder addExploreView() {
-        // Explore
         final ExploreViewModel exploreViewModel = new ExploreViewModel();
         final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel, this);
         final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
         final ExploreController exploreController = new ExploreController(exploreInteractor);
         ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
-        cardPanel.add(exploreView);
+        cardPanel.add(exploreView, exploreView.getViewName()); // view name is 'explore'
         return this;
     }
-
-//    public Builder addChatbotView() {
-//        // Initialize backend components
-//        ChatbotDataAccess dataAccess = new ChatbotDataAccess();
-//        ChatbotViewModel viewModel = new ChatbotViewModel();
-//        ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
-//        ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
-//        ChatbotController controller = new ChatbotController(interactor);
-//
-//        // Initialize frontend components
-//        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
-//
-//        cardPanel.add(containerView, "Chatbot");
-//
-//        // Create main application frame
-////        JFrame frame = new JFrame("AI Chat Application");
-////        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-////        frame.setSize(500, 700);
-////        frame.setLocationRelativeTo(null);
-////        frame.add(containerView);
-////
-////        // Display the frame
-////        frame.setVisible(true);
-//        return this;
-//    }
 
     public Builder addChatbotView() {
         ChatbotDataAccess dataAccess = new ChatbotDataAccess();
@@ -152,38 +129,31 @@ public class Builder {
         // Initialize frontend components
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
 
-        // Create main application frame
-        JFrame frame = new JFrame("AI Chat Application");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 700);
-        frame.setLocationRelativeTo(null);
-        frame.add(containerView);
-
-        // Display the frame
-        frame.setVisible(true);
+        cardPanel.add(containerView, "chatbot");
         return this;
+    }
+
+    public void showView(String viewName) {
+        cardLayout.show(cardPanel, viewName);
     }
 
     public Builder addSignupView() throws IOException {
         final SignupController signupController = new SignupController(signupInteractor);
-        final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel);
+//        final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel, this);
         final RightPanel rightPanel = new RightPanel();
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(signupPanel, BorderLayout.WEST);
+//        mainPanel.add(signupPanel, BorderLayout.WEST);
         mainPanel.add(rightPanel, BorderLayout.CENTER);
-
-        // Add the mainPanel to the cardPanel for proper navigation
         cardPanel.add(mainPanel, "signup");
+
         return this;
     }
 
     public Builder addHomeView() {
-        SwingUtilities.invokeLater(() -> {
-            HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
-            HomeView homeView = new HomeView("User", 12345.67, controller);
-            controller.setHomeView(homeView); // Set HomeView after creation
-        });
+        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
+        HomeView homeView = new HomeView("User", 12345.67, controller); // Pass 'this' as the Builder
+        cardPanel.add(homeView, "home");
         return this;
     }
 
@@ -195,8 +165,6 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-
-        // set application icon
         Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);
 
@@ -206,9 +174,6 @@ public class Builder {
         application.setExtendedState(JFrame.MAXIMIZED_BOTH); // frame will open maximized
         application.pack(); // sizes the frame so that all its contents are at or above their preferred sizes
         application.add(cardPanel);
-
-        viewManagerModel.setState(chartView.getViewName());
-        viewManagerModel.firePropertyChanged();
 
         return application;
     }

@@ -13,11 +13,12 @@ public class HomeInteractor implements HomeInputBoundary {
 
     @Override
     public void handleChatbotToggle() {
-        boolean isChatbotOpened = !((HomePresenter) outputBoundary).getViewModel().isChatbotOpened();
-        outputBoundary.presentChatbotNavigation(isChatbotOpened);
+//        boolean isChatbotOpened = !((HomePresenter) outputBoundary).getViewModel().isChatbotOpened();
+//        outputBoundary.presentChatbotNavigation(isChatbotOpened);
     }
 
     public boolean isChatbotOpened() {
-        return ((HomePresenter) outputBoundary).getViewModel().isChatbotOpened();
+//        return ((HomePresenter) outputBoundary).getViewModel().isChatbotOpened();
+        return true;
     }
 }
