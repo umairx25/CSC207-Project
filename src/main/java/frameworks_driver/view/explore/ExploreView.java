@@ -340,4 +340,5 @@ public class ExploreView extends JPanel {
             viewModel.setErrorState(false);
         }
     }
+
 }

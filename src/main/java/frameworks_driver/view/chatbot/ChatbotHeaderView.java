@@ -1,5 +1,6 @@
 package frameworks_driver.view.chatbot;
 
+import app.Builder;
 import frameworks_driver.view.style_helpers.ColourManager;
 import frameworks_driver.view.style_helpers.FontManager;
 import frameworks_driver.view.style_helpers.GridBagManager;
@@ -10,24 +11,28 @@ import java.awt.*;
 
 /**
  * Represents the header view for the chatbot UI.
- * Displays the chatbot icon, name, and typing indicator.
+ * Displays the chatbot icon, name, typing indicator, and a back button.
  */
 public class ChatbotHeaderView extends JPanel {
     private final JLabel typingIndicator;
 
     /**
-     * Constructs the ChatbotHeaderView with a bot icon, name, and typing indicator.
+     * Constructs the ChatbotHeaderView with a bot icon, name, typing indicator, and back button.
+     *
+     * @param builder The Builder instance to handle navigation.
      */
-    public ChatbotHeaderView() {
+    public ChatbotHeaderView(Builder builder) {
         setLayout(new BorderLayout());
         setBackground(ColourManager.DARKER_GRAY);
         setPreferredSize(new Dimension(GridBagManager.HEADER_SIZE));
 
+        // Left: Chatbot Icon
         ImageIcon botIcon = ImageManager.getImage("chatbot_pfp");
         JLabel iconLabel = new JLabel(botIcon);
         iconLabel.setBorder(GridBagManager.ICON_BORDER);
         add(iconLabel, BorderLayout.WEST);
 
+        // Center: Name and Typing Indicator
         JPanel nameAndTypingPanel = new JPanel(GridBagManager.HEADER_FLOW_LAYOUT);
         nameAndTypingPanel.setOpaque(false);
 
@@ -45,6 +50,17 @@ public class ChatbotHeaderView extends JPanel {
         nameAndTypingPanel.add(typingIndicator);
 
         add(nameAndTypingPanel, BorderLayout.CENTER);
+
+        // Right: Back Button
+        JButton backButton = new JButton("Back");
+        backButton.setFont(FontManager.OUTFIT_BOLD_16);
+        backButton.setForeground(ColourManager.WHITE);
+        backButton.setBackground(ColourManager.DARK_BLUE);
+        backButton.setFocusPainted(false);
+        backButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        backButton.addActionListener(e -> builder.showView("home")); // Navigate to Home view
+
+        add(backButton, BorderLayout.EAST);
     }
 
     /**

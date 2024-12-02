@@ -4,16 +4,18 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.swing.*;
+
+import data_access.*;
+import frameworks_driver.view.login.LoginPanel;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginPresenter;
+import interface_adapter.login.LoginViewModel;
 import io.github.cdimascio.dotenv.Dotenv;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 // Common
-import data_access.ChatbotDataAccess;
-import data_access.ExploreDataAccess;
-import data_access.StockDataAccess;
-import data_access.UserDataAccess;
 import interface_adapter.ViewManagerModel;
 
 // Chatbot
@@ -52,11 +54,15 @@ import frameworks_driver.view.home.HomeView;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupState;
+import use_case.login.LoginInteractor;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
 import interface_adapter.signup.SignupViewModel;
 import frameworks_driver.view.signup.RightPanel;
 import frameworks_driver.view.signup.SignupPanel;
+
+import use_case.login.LoginOutputBoundary;
+
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -66,6 +72,7 @@ import frameworks_driver.view.signup.SignupPanel;
  */
 public class Builder {
     private final JPanel cardPanel = new JPanel();
+    private final CardLayout cardLayout = new CardLayout();
 
     // Chart
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
@@ -85,9 +92,14 @@ public class Builder {
     final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess,
             signupOutputBoundary);
 
+    //Login
+    private final LoginViewModel loginViewModel = new LoginViewModel();
+    private use_case.login.LoginOutputBoundary LoginOutputBoundary;
+    private final LoginUserDataAccess loginUserDataAccess = new LoginUserDataAccess();
+    private  final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, LoginOutputBoundary);
+
 
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        CardLayout cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
     }
 
@@ -113,34 +125,9 @@ public class Builder {
         final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
         final ExploreController exploreController = new ExploreController(exploreInteractor);
         ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
-        cardPanel.add(exploreView);
+        cardPanel.add(exploreView, "explore");
         return this;
     }
-
-//    public Builder addChatbotView() {
-//        // Initialize backend components
-//        ChatbotDataAccess dataAccess = new ChatbotDataAccess();
-//        ChatbotViewModel viewModel = new ChatbotViewModel();
-//        ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
-//        ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
-//        ChatbotController controller = new ChatbotController(interactor);
-//
-//        // Initialize frontend components
-//        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
-//
-//        cardPanel.add(containerView, "Chatbot");
-//
-//        // Create main application frame
-////        JFrame frame = new JFrame("AI Chat Application");
-////        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-////        frame.setSize(500, 700);
-////        frame.setLocationRelativeTo(null);
-////        frame.add(containerView);
-////
-////        // Display the frame
-////        frame.setVisible(true);
-//        return this;
-//    }
 
     public Builder addChatbotView() {
         ChatbotDataAccess dataAccess = new ChatbotDataAccess();
@@ -149,41 +136,65 @@ public class Builder {
         ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
         ChatbotController controller = new ChatbotController(interactor);
 
-        // Initialize frontend components
-        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
+        // Pass Builder to ChatbotContainerView
+        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, this);
 
-        // Create main application frame
-        JFrame frame = new JFrame("AI Chat Application");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 700);
-        frame.setLocationRelativeTo(null);
-        frame.add(containerView);
-
-        // Display the frame
-        frame.setVisible(true);
+        cardPanel.add(containerView, "chatbot");
         return this;
+    }
+
+
+    public void showView(String viewName) {
+        cardLayout.show(cardPanel, viewName);
+    }
+
+    public JPanel getCardPanel() {
+        return cardPanel;
     }
 
     public Builder addSignupView() throws IOException {
         final SignupController signupController = new SignupController(signupInteractor);
-        final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel);
+        final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel, this);
         final RightPanel rightPanel = new RightPanel();
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(signupPanel, BorderLayout.WEST);
         mainPanel.add(rightPanel, BorderLayout.CENTER);
 
-        // Add the mainPanel to the cardPanel for proper navigation
         cardPanel.add(mainPanel, "signup");
         return this;
     }
 
+    public Builder addLoginView() throws IOException {
+        // Initialize the LoginOutputBoundary with a LoginPresenter and LoginViewModel
+        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(loginViewModel);
+
+        // Create the LoginInteractor with the LoginUserDataAccess and LoginOutputBoundary
+        final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, loginOutputBoundary);
+
+        // Create the LoginController with the LoginInteractor
+        final LoginController loginController = new LoginController(loginInteractor);
+
+        // Instantiate the LoginPanel, passing necessary dependencies
+        final LoginPanel loginPanel = new LoginPanel( loginController, loginViewModel, this);
+
+        // Create the right panel for layout consistency
+        final RightPanel rightPanel = new RightPanel();
+
+        // Combine the LoginPanel and RightPanel in a main panel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(loginPanel, BorderLayout.WEST);
+        mainPanel.add(rightPanel, BorderLayout.CENTER);
+
+        // Add the main panel to the card layout
+        cardPanel.add(mainPanel, "login");
+        return this;
+    }
+
     public Builder addHomeView() {
-        SwingUtilities.invokeLater(() -> {
-            HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
-            HomeView homeView = new HomeView("User", 12345.67, controller);
-            controller.setHomeView(homeView); // Set HomeView after creation
-        });
+        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
+        HomeView homeView = new HomeView("User", 12345.67, controller, this); // Pass 'this' as the Builder
+        cardPanel.add(homeView.getContentPane(), "home");
         return this;
     }
 
@@ -195,8 +206,6 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-
-        // set application icon
         Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
         application.setIconImage(icon);
 
