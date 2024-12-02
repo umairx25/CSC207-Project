@@ -12,10 +12,6 @@ public class LoginState {
         return email;
     }
 
-    public boolean getLoginError() {
-        return loginError;
-    }
-
     public String getPassword() {
         return password;
     }

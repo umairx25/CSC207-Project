@@ -15,9 +15,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
-// Common
-import interface_adapter.ViewManagerModel;
-
 // Chatbot
 import org.jetbrains.annotations.NotNull;
 import use_case.chatbot.ChatbotInteractor;
@@ -71,7 +68,6 @@ import use_case.login.LoginOutputBoundary;
 public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
-    private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     private final ChartViewModel chartViewModel = new ChartViewModel();
     private final StockDataAccess stockDataAccess = new StockDataAccess();
@@ -226,9 +222,6 @@ public class Builder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.setExtendedState(JFrame.MAXIMIZED_BOTH);
         application.add(cardPanel);
-
-        viewManagerModel.setState(chartView.getViewName());
-        viewManagerModel.firePropertyChanged();
 
         application.setVisible(true);
 

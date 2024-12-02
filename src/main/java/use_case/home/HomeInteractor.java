@@ -17,7 +17,4 @@ public class HomeInteractor implements HomeInputBoundary {
         outputBoundary.presentChatbotNavigation(isChatbotOpened);
     }
 
-    public boolean isChatbotOpened() {
-        return ((HomePresenter) outputBoundary).getViewModel().isChatbotOpened();
-    }
 }

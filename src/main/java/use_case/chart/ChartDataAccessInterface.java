@@ -8,8 +8,6 @@ public interface ChartDataAccessInterface {
 
     LinkedHashMap<Long, Double> getIndicatorData(String type, String ticker, int window);
 
-    String getTickerName(String ticker);
-
     Double getCurrentPrice(String ticker);
 
     List<Double> getPriceIncrease(String ticker);

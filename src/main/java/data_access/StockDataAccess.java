@@ -45,19 +45,6 @@ public class StockDataAccess implements ChartDataAccessInterface {
     }
 
     /**
-     * Retrieves the company name for a given stock ticker.
-     *
-     * @param ticker the stock ticker symbol
-     * @return the name of the company
-     */
-    public String getTickerName(String ticker) {
-        String result = getCompanyOverview(ticker);
-        JSONObject jsonObject = new JSONObject(result);
-        JSONObject resultsObject = jsonObject.getJSONObject("results");
-        return resultsObject.getString("name");
-    }
-
-    /**
      * Retrieves the current price for a given stock ticker.
      *
      * @param ticker the stock ticker symbol
