@@ -16,7 +16,7 @@ public class Main {
         application.setVisible(true);
 
         // Example: Start with the Signup view
-        builder.showView("login");
+        builder.showView("explore");
 
     }
 }

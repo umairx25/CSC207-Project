@@ -11,21 +11,18 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 
 /**
- * Represents the Explore View in the stock market application.
- * It provides a split-pane interface for viewing the company list,
- * company stats, and a search panel.
+ * Represents the main view for the Explore feature, allowing users to browse and select companies
+ * and view their details alongside charts and statistics.
  */
 public class ExploreView extends JPanel {
-
-    private final String viewName = "explore";
     private final ExploreViewModel viewModel;
 
     /**
-     * Constructs the ExploreView panel.
+     * Constructs a new ExploreView object.
      *
-     * @param controller the controller responsible for handling user actions
-     * @param viewModel  the ViewModel providing stock data and state management
-     * @param chartView  the chart view used to display stock performance
+     * @param controller the controller for handling user interactions
+     * @param viewModel  the view model providing data and state for the view
+     * @param chartView  the chart view for displaying stock charts
      */
     public ExploreView(ExploreController controller, ExploreViewModel viewModel, ChartView chartView) {
         this.viewModel = viewModel;
@@ -41,11 +38,12 @@ public class ExploreView extends JPanel {
         // Create stats panel and search panel
         ExploreStatsPanel statsPanel = new ExploreStatsPanel(chartView);
         ExploreSearchPanel searchPanel = new ExploreSearchPanel(controller, viewModel, companyList);
+        SwingUtilities.invokeLater(() -> scrollPane.requestFocusInWindow());
 
-        // Create split pane for company list and stats panel
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, statsPanel);
         splitPane.setDividerLocation(200);
         splitPane.setResizeWeight(0.2);
+        add(splitPane, BorderLayout.CENTER);
 
         // Customize split pane divider
         splitPane.setUI(new BasicSplitPaneUI() {
@@ -80,9 +78,9 @@ public class ExploreView extends JPanel {
     }
 
     /**
-     * Handles rendering updates, particularly error states, when displaying company data.
+     * Displays an error message if the view model is in an error state.
      *
-     * @param company the name of the company being rendered
+     * @param company the company name associated with the error
      */
     public void render(String company) {
         boolean errorState = viewModel.isErrorState();
@@ -91,15 +89,5 @@ public class ExploreView extends JPanel {
                     "Error", JOptionPane.WARNING_MESSAGE);
             viewModel.setErrorState(false);
         }
-    }
-
-
-    /**
-     * Gets the name of the view.
-     *
-     * @return the name of the view as a String
-     */
-    public String getViewName() {
-        return viewName;
     }
 }

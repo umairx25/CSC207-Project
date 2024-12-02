@@ -10,8 +10,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
- * A panel that displays the stats of a selected stock, including a chart,
- * description, and key statistics such as market cap and volume.
+ * Represents the panel displaying detailed statistics and charts for a selected company.
  */
 public class ExploreStatsPanel extends JPanel {
     private final ChartView chartView;
@@ -19,10 +18,9 @@ public class ExploreStatsPanel extends JPanel {
     private final JLabel[] statsLabels;
 
     /**
-     * Constructs an ExploreStatsPanel that contains a chart view, a description,
-     * and a list of stock statistics.
+     * Constructs a new ExploreStatsPanel object.
      *
-     * @param chartView the chart view component for displaying stock performance
+     * @param chartView the chart view to be displayed at the top of the panel
      */
     public ExploreStatsPanel(ChartView chartView) {
         this.chartView = chartView;
@@ -30,13 +28,14 @@ public class ExploreStatsPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Add the graph panel on top
-        add(chartView, BorderLayout.NORTH);
+        add(chartView, BorderLayout.CENTER);
 
-        // Create bottom panel with GridBagLayout
-        JPanel bottomPanel = new JPanel(new GridBagLayout());
+        // Create bottom panel with BorderLayout
+        JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBackground(ColourManager.NAVY_BLUE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Set preferred size for the bottom panel to make it taller
+        bottomPanel.setPreferredSize(new Dimension(bottomPanel.getWidth(), 200));
 
         // Left panel for description
         JPanel leftPanel = new JPanel();
@@ -44,15 +43,9 @@ public class ExploreStatsPanel extends JPanel {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
         descriptionLabel = createLabel("");
-        descriptionLabel.setFont(new Font("Verdana", Font.BOLD, 14));
+        descriptionLabel.setFont(new Font("Verdana", Font.BOLD, 10));
         descriptionLabel.setForeground(Color.WHITE);
         leftPanel.add(descriptionLabel);
-
-        gbc.gridx = 0;
-        gbc.weightx = 0;
-        gbc.gridheight = GridBagConstraints.REMAINDER;
-        gbc.insets = new Insets(0, 130, 0, 0);
-        bottomPanel.add(leftPanel, gbc);
 
         // Right panel for other stats
         JPanel rightPanel = new JPanel();
@@ -78,34 +71,20 @@ public class ExploreStatsPanel extends JPanel {
             statsLabels[i] = label;
         }
 
-        gbc.gridx = 1;
-        gbc.weightx = 1.0;
-        gbc.gridheight = GridBagConstraints.REMAINDER;
-        bottomPanel.add(rightPanel, gbc);
+        // Add panels to bottomPanel
+        bottomPanel.add(leftPanel, BorderLayout.WEST);
+        bottomPanel.add(rightPanel, BorderLayout.EAST);
 
-        add(bottomPanel, BorderLayout.CENTER);
+        // Add bottomPanel to main panel
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     /**
-     * Creates a JLabel with a specified text and consistent font styling.
+     * Updates the statistics panel with details of the given company.
      *
-     * @param text the text for the label
-     * @return the created JLabel
-     */
-    private JLabel createLabel(String text) {
-        JLabel label = new JLabel(text);
-        Font font = new Font("Verdana", Font.BOLD, 14);
-        label.setFont(font);
-        return label;
-    }
-
-    /**
-     * Updates the stats panel with details of the provided stock entity.
-     *
-     * @param company the stock entity containing details such as ticker and description
+     * @param company the Stock object containing company details
      */
     public void updateStatsPanel(Stock company) {
-        // Handle the event where an invalid company is clicked
         if (company == null) {
             System.out.println("Stock object 'company' is null.");
             return;
@@ -123,7 +102,7 @@ public class ExploreStatsPanel extends JPanel {
         chartView.inputTicker(company.getTicker());
 
         // Update description
-        descriptionLabel.setText("<html><div style='width:800px; padding-bottom:10px;'>" +
+        descriptionLabel.setText("<html><div style='width:400px; padding-bottom:10px;'>" +
                 company.getDescription() + "</div></html>");
 
         // Update stats labels
@@ -138,5 +117,12 @@ public class ExploreStatsPanel extends JPanel {
 
         revalidate();
         repaint();
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        Font font = new Font("Verdana", Font.BOLD, 10);
+        label.setFont(font);
+        return label;
     }
 }

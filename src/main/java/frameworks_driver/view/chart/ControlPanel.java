@@ -4,14 +4,21 @@ import frameworks_driver.view.style_helpers.ColourManager;
 
 import javax.swing.*;
 
+/**
+ * Represents the control panel for the chart view, allowing users to select
+ * different technical indicators (Price History, SMA, EMA, RSI) to display on the chart.
+ */
 public class ControlPanel extends JPanel {
 
-    // Checkboxes
+    // Checkboxes for different chart options
     private final JCheckBox priceHistoryCheckbox;
     private final SmaCheckbox smaCheckbox;
     private final EmaCheckbox emaCheckbox;
     private final RsiCheckbox rsiCheckbox;
 
+    /**
+     * Constructs a new ControlPanel object and initializes its components.
+     */
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -21,6 +28,7 @@ public class ControlPanel extends JPanel {
         emaCheckbox = new EmaCheckbox();
         rsiCheckbox = new RsiCheckbox();
 
+        // Set background color for checkboxes
         priceHistoryCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
         smaCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
         emaCheckbox.setBackground(ColourManager.INNER_BOX_BLUE);
@@ -33,20 +41,31 @@ public class ControlPanel extends JPanel {
         add(rsiCheckbox);
     }
 
-    // Getter methods for checkboxes
+    /**
+     * @return the checkbox for Price History
+     */
     public JCheckBox getPriceHistoryCheckbox() {
         return priceHistoryCheckbox;
     }
+
+    /**
+     * @return the checkbox for SMA (Simple Moving Average)
+     */
     public SmaCheckbox getSmaCheckbox() {
         return smaCheckbox;
     }
 
+    /**
+     * @return the checkbox for EMA (Exponential Moving Average)
+     */
     public EmaCheckbox getEmaCheckbox() {
         return emaCheckbox;
     }
 
+    /**
+     * @return the checkbox for RSI (Relative Strength Index)
+     */
     public RsiCheckbox getRsiCheckbox() {
         return rsiCheckbox;
     }
-
 }

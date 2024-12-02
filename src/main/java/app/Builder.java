@@ -19,6 +19,7 @@ import com.google.firebase.FirebaseOptions;
 import interface_adapter.ViewManagerModel;
 
 // Chatbot
+import org.jetbrains.annotations.NotNull;
 import use_case.chatbot.ChatbotInteractor;
 import interface_adapter.chatbot.ChatbotPresenter;
 import interface_adapter.chatbot.ChatbotViewModel;
@@ -47,6 +48,7 @@ import use_case.chart.ChartOutputBoundary;
 import interface_adapter.home.HomeController;
 import use_case.home.HomeInteractor;
 import interface_adapter.home.HomePresenter;
+import interface_adapter.home.HomeViewModel;
 import frameworks_driver.view.home.HomeView;
 
 // SignUp
@@ -62,71 +64,74 @@ import frameworks_driver.view.signup.SignupPanel;
 
 import use_case.login.LoginOutputBoundary;
 
-
 /**
- * The AppBuilder class is responsible for putting together the pieces of
- * our CA architecture; piece by piece.
- * <p/>
- * This is done by adding each View and then adding related Use Cases.
+ * Builder class for assembling the application's components and views
+ * in accordance with the Clean Architecture principles.
  */
 public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
-
-    // Chart
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
+
     private final ChartViewModel chartViewModel = new ChartViewModel();
     private final StockDataAccess stockDataAccess = new StockDataAccess();
     final ChartOutputBoundary chartOutputBoundary = new ChartPresenter(chartViewModel);
-    final ChartInputBoundary chartInteractor = new ChartInteractor(stockDataAccess,
-            (ChartPresenter) chartOutputBoundary);
+    final ChartInputBoundary chartInteractor = new ChartInteractor(stockDataAccess, (ChartPresenter) chartOutputBoundary);
     final ChartController chartController = new ChartController(chartInteractor);
     ChartView chartView = new ChartView(chartViewModel, chartController, chartViewModel.getState());
 
-    //Signup
     private final SignupViewModel signupViewModel = new SignupViewModel();
     private final SignupState signupState = new SignupState();
     private final UserDataAccess userDataAccess = new UserDataAccess(signupState.getEmail(), signupState.getPassword(), signupState.getUsername());
     final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(signupViewModel);
-    final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess,
-            signupOutputBoundary);
+    final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess, signupOutputBoundary);
 
-    //Login
     private final LoginViewModel loginViewModel = new LoginViewModel();
-    private LoginOutputBoundary LoginOutputBoundary;
     private final LoginUserDataAccess loginUserDataAccess = new LoginUserDataAccess();
-    private  final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, LoginOutputBoundary);
 
-
-    public Builder() {
+    public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
     }
 
+    /**
+     * Initializes Firebase with the provided service account file.
+     *
+     * @param file Path to the service account JSON file.
+     * @throws IOException If an error occurs while accessing the file.
+     */
     public void initialize_firebase(String file) throws IOException {
         Dotenv dotenv = Dotenv.load();
-        if (FirebaseApp.getApps().isEmpty()) { // Check if no FirebaseApp instances exist
+        if (FirebaseApp.getApps().isEmpty()) {
             FileInputStream serviceAccount = new FileInputStream(file);
-
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setProjectId(dotenv.get("PROJECT_ID"))
                     .build();
-
             FirebaseApp.initializeApp(options);
         }
     }
 
+    /**
+     * Adds the Explore view to the card panel.
+     *
+     * @return Builder instance for chaining.
+     */
     public Builder addExploreView() {
         final ExploreViewModel exploreViewModel = new ExploreViewModel();
         final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel, this);
+        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
         final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
         final ExploreController exploreController = new ExploreController(exploreInteractor);
         ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
-        cardPanel.add(exploreView, exploreView.getViewName()); // view name is 'explore'
+        cardPanel.add(exploreView, "explore");
         return this;
     }
 
+    /**
+     * Adds the Chatbot view to the card panel.
+     *
+     * @return Builder instance for chaining.
+     */
     public Builder addChatbotView() {
         ChatbotDataAccess dataAccess = new ChatbotDataAccess();
         ChatbotViewModel viewModel = new ChatbotViewModel();
@@ -134,22 +139,26 @@ public class Builder {
         ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
         ChatbotController controller = new ChatbotController(interactor);
 
-        // Pass Builder to ChatbotContainerView
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, this);
-
         cardPanel.add(containerView, "chatbot");
         return this;
     }
 
-
+    /**
+     * Switches the current view displayed in the card panel.
+     *
+     * @param viewName Name of the view to display.
+     */
     public void showView(String viewName) {
         cardLayout.show(cardPanel, viewName);
     }
 
-    public JPanel getCardPanel() {
-        return cardPanel;
-    }
-
+    /**
+     * Adds the Signup view to the card panel.
+     *
+     * @return Builder instance for chaining.
+     * @throws IOException If an error occurs while loading the view.
+     */
     public Builder addSignupView() throws IOException {
         final SignupController signupController = new SignupController(signupInteractor);
         final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel, this);
@@ -163,44 +172,51 @@ public class Builder {
         return this;
     }
 
+    /**
+     * Adds the Login view to the card panel.
+     *
+     * @return Builder instance for chaining.
+     * @throws IOException If an error occurs while loading the view.
+     */
     public Builder addLoginView() throws IOException {
-        // Initialize the LoginOutputBoundary with a LoginPresenter and LoginViewModel
-        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(loginViewModel);
-
-        // Create the LoginInteractor with the LoginUserDataAccess and LoginOutputBoundary
-        final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, loginOutputBoundary);
-
-        // Create the LoginController with the LoginInteractor
-        final LoginController loginController = new LoginController(loginInteractor);
-
-        // Instantiate the LoginPanel, passing necessary dependencies
-        final LoginPanel loginPanel = new LoginPanel( loginController, loginViewModel, this);
-
-        // Create the right panel for layout consistency
+        final LoginPanel loginPanel = getLoginPanel();
         final RightPanel rightPanel = new RightPanel();
-
-        // Combine the LoginPanel and RightPanel in a main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(loginPanel, BorderLayout.WEST);
         mainPanel.add(rightPanel, BorderLayout.CENTER);
-
-        // Add the main panel to the card layout
         cardPanel.add(mainPanel, "login");
         return this;
     }
 
+    /**
+     * Creates and configures the LoginPanel.
+     *
+     * @return Configured LoginPanel instance.
+     */
+    @NotNull
+    private LoginPanel getLoginPanel() {
+        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(loginViewModel);
+        final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, loginOutputBoundary);
+        final LoginController loginController = new LoginController(loginInteractor);
+        return new LoginPanel(loginController, loginViewModel, this);
+    }
+
+    /**
+     * Adds the Home view to the card panel.
+     *
+     * @return Builder instance for chaining.
+     */
     public Builder addHomeView() {
-        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter()));
-        HomeView homeView = new HomeView("User", 12345.67, controller, this); // Pass 'this' as the Builder
+        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
+        HomeView homeView = new HomeView("User", 12345.67, controller, this);
         cardPanel.add(homeView.getContentPane(), "home");
         return this;
     }
 
-
     /**
-     * Creates the JFrame for the application and initially sets the SignupView to be displayed.
+     * Builds the main application frame and sets initial configurations.
      *
-     * @return the application
+     * @return Configured JFrame instance.
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
@@ -208,11 +224,13 @@ public class Builder {
         application.setIconImage(icon);
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        application.setSize(1300, 600); // frame will have a set size
         application.setMinimumSize(new Dimension(1500, 1000));
-        application.setExtendedState(JFrame.MAXIMIZED_BOTH); // frame will open maximized
-        application.pack(); // sizes the frame so that all its contents are at or above their preferred sizes
+        application.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        application.pack();
         application.add(cardPanel);
+
+        viewManagerModel.setState(chartView.getViewName());
+        viewManagerModel.firePropertyChanged();
 
         return application;
     }
