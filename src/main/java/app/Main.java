@@ -14,9 +14,7 @@ public class Main {
 
         JFrame application = builder.build();
         application.setVisible(true);
-
-        // Example: Start with the Signup view
-        builder.showView("explore");
+        builder.showView("login");
 
     }
 }

@@ -224,14 +224,15 @@ public class Builder {
         application.setIconImage(icon);
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        application.setMinimumSize(new Dimension(1500, 1000));
         application.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        application.pack();
         application.add(cardPanel);
 
         viewManagerModel.setState(chartView.getViewName());
         viewManagerModel.firePropertyChanged();
 
+        application.setVisible(true);
+
         return application;
     }
+
 }
