@@ -148,11 +148,23 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         rangeAxis.setAutoRangeIncludesZero(false);
         rangeAxis.setTickUnit(new NumberTickUnit(20));
 
-        ChartPanel chartPanel = new ChartPanel(lineChart);
-        lineChart.setBackgroundPaint(ColourManager.INNER_BOX_BLUE);
-        chartPanel.setPreferredSize(new Dimension(1000, 770));
+        ChartPanel chartPanel = new ChartPanel(lineChart) {
+            @Override
+            public Dimension getPreferredSize() {
+                return getParent() != null ? getParent().getSize() : new Dimension(800, 600);
+            }
+        };
+
+        chartPanel.setPreferredSize(null);
+        chartPanel.setMinimumSize(new Dimension(200, 200));
+        chartPanel.setMaximumDrawWidth(Integer.MAX_VALUE);
+        chartPanel.setMaximumDrawHeight(Integer.MAX_VALUE);
+
         return chartPanel;
     }
+
+
+
 
     /**
      * Fetches chart data for the given stock ticker using the ChartController.
