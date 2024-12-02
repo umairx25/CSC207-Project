@@ -3,9 +3,10 @@ package frameworks_driver.view.style_helpers;
 import java.awt.Font;
 import java.io.File;
 
+/**
+ * Provides access to commonly used fonts in the application.
+ */
 public class FontManager {
-    // Define all commonly used fonts as constants
-    public static final Font SEGOE_FONT_16 = new Font("Segoe UI", Font.PLAIN, 16);
     public static final Font SEGOE_FONT_14 = new Font("Segoe UI", Font.PLAIN, 14);
     public static final Font SEGOE_FONT_12 = new Font("Segoe UI", Font.PLAIN, 12);
     public static final Font SEGOE_FONT_10 = new Font("Segoe UI", Font.PLAIN, 10);
@@ -21,6 +22,13 @@ public class FontManager {
 
     private FontManager() {}
 
+    /**
+     * Loads a custom font from the specified file.
+     *
+     * @param style the font style
+     * @param size  the font size
+     * @return the loaded font or a default font if loading fails
+     */
     private static Font loadFont(int style, int size) {
         try {
             return Font.createFont(Font.TRUETYPE_FONT, new File("assets/Outfit-Regular.ttf")).deriveFont(style, size);

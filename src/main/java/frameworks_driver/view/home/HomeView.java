@@ -6,23 +6,32 @@ import interface_adapter.home.HomeController;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Represents the main home view for the application, displaying options such as Portfolio,
+ * Explore, Chatbot, and Logout, along with user details and a gradient background.
+ */
 public class HomeView extends JFrame {
 
-    private JPanel currentView; // Store reference to the current panel
+    private JPanel currentView;
     private AnimatedGradientPanel gradientPanel;
-    private TopPanel topPanel; // Keep references to original panels
+    private TopPanel topPanel;
     private BottomPanel bottomPanel;
-    private final HomeController controller; // Store the controller reference
+    private final HomeController controller;
 
+    /**
+     * Constructs a new HomeView with user-specific details and navigation buttons.
+     *
+     * @param username          the name of the user
+     * @param portfolioBalance  the current portfolio balance
+     * @param controller        the controller for handling actions in the home view
+     * @param builder           the application builder for navigating between views
+     */
     public HomeView(String username, double portfolioBalance, HomeController controller, Builder builder) {
-        this.controller = controller; // Initialize the controller
+        this.controller = controller;
         setTitle("Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
-
-        // Create components
-
 
         PortfolioButton portfolioButton = new PortfolioButton();
         portfolioButton.addActionListener(e -> builder.showView("signup"));
@@ -33,66 +42,48 @@ public class HomeView extends JFrame {
         LogOutButton logOutButton = new LogOutButton();
         logOutButton.addActionListener(e -> builder.showView("login"));
 
-        // Initialize panels
         topPanel = new TopPanel(username, logOutButton);
         currentView = new CenterPanel(portfolioButton, exploreButton, chatbotButton);
         bottomPanel = new BottomPanel(portfolioBalance);
 
-        // Add components to AnimatedGradientPanel
         gradientPanel = new AnimatedGradientPanel();
         gradientPanel.setLayout(new BorderLayout());
         gradientPanel.add(topPanel, BorderLayout.NORTH);
         gradientPanel.add(currentView, BorderLayout.CENTER);
         gradientPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        // Add gradientPanel to the frame
         add(gradientPanel);
-
         setVisible(true);
     }
 
     /**
-     * Displays the Chatbot view by delegating to the controller.
+     * Switches the view to the chatbot panel.
+     *
+     * @param chatbotView the panel representing the chatbot interface
      */
     public void showChatbotView(JPanel chatbotView) {
-        // Delegate to controller for state update or logic if required
-        controller.updateStateForChatbot(); // Example: Controller manages state
-
-        // Remove all components from the frame
+        controller.updateStateForChatbot();
         gradientPanel.removeAll();
-
-        // Add the chatbot panel as the only content
-        currentView = chatbotView; // Update current view
+        currentView = chatbotView;
         gradientPanel.add(currentView, BorderLayout.CENTER);
-
-        // Refresh the layout
         gradientPanel.revalidate();
         gradientPanel.repaint();
     }
 
     /**
-     * Restores the HomeView layout by delegating to the controller.
+     * Restores the home layout with default components.
      */
     public void showHomeView() {
-        // Delegate to controller for state update or logic if required
-//        controller.updateStateForHome(); // Example: Controller manages state
-
-        // Remove all components from the frame
         gradientPanel.removeAll();
-
-        // Restore the original layout
         gradientPanel.add(topPanel, BorderLayout.NORTH);
         currentView = new CenterPanel(
                 new PortfolioButton(),
                 new ExploreButton(),
-                new ChatBotButton() // Ensure correct action is passed
+                new ChatBotButton()
         );
         gradientPanel.add(currentView, BorderLayout.CENTER);
         gradientPanel.add(bottomPanel, BorderLayout.SOUTH);
-
-        // Refresh the layout
         gradientPanel.revalidate();
         gradientPanel.repaint();
     }
-
 }

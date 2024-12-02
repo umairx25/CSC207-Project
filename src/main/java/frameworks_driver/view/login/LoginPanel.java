@@ -13,16 +13,21 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * The LoginPanel class connects the front end with the back-end Clean Architecture components.
+ * Represents the login panel of the application, connecting the front-end view
+ * with the back-end logic using Clean Architecture principles.
  */
 public class LoginPanel extends JPanel {
-    private final JLabel errorMessageLabel;
-    private final LoginController loginController;
-    private final LoginViewModel loginViewModel;
 
-    public LoginPanel( LoginController loginController, LoginViewModel loginViewModel, Builder builder) {
-        this.loginController = loginController;
-        this.loginViewModel = loginViewModel;
+    private final JLabel errorMessageLabel;
+
+    /**
+     * Constructs a new LoginPanel with input fields, buttons, and navigation options.
+     *
+     * @param loginController the controller responsible for login logic
+     * @param loginViewModel  the view model providing login state and data
+     * @param builder         the application builder for view navigation
+     */
+    public LoginPanel(LoginController loginController, LoginViewModel loginViewModel, Builder builder) {
 
         setLayout(new GridBagLayout());
         setBackground(ColourManager.DARK_BLUE);
@@ -51,7 +56,7 @@ public class LoginPanel extends JPanel {
             String password = new String(loginPasswordField.getPassword());
 
             if (email.isEmpty() || password.isEmpty()) {
-                updateErrorMessage("Fields cannot be empty");
+                updateErrorMessage();
             } else {
                 LoginState currentState = loginViewModel.getState();
                 currentState.setEmail(email);
@@ -64,9 +69,6 @@ public class LoginPanel extends JPanel {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-
-                // Handle ViewModel state updates
-//                handleViewModelUpdate(navigator);
             }
         });
 
@@ -84,27 +86,13 @@ public class LoginPanel extends JPanel {
         });
     }
 
-    private void updateErrorMessage(String message) {
-        errorMessageLabel.setText(message);
+    /**
+     * Updates the error message displayed in the panel.
+     */
+    private void updateErrorMessage() {
+        errorMessageLabel.setText("Fields cannot be empty");
         errorMessageLabel.setVisible(true);
         revalidate();
         repaint();
     }
-
-//    private void handleViewModelUpdate(PanelNavigator navigator) {
-//        LoginState state = loginViewModel.getState();
-//
-//        // Use the boolean `loginError` to determine success or failure
-//        if (Boolean.TRUE.equals(state.getLoginError())) {
-//            updateErrorMessage("Login failed. Please check your credentials.");
-//        } else if (state.getEmail() != null && !state.getEmail().isEmpty()) {
-//            errorMessageLabel.setVisible(false);
-//            revalidate();
-//            repaint();
-
-            // Navigate to InfoPanel upon successful login
-//            if (navigator instanceof MainFrame) {
-//                ((MainFrame) navigator).navigateToInfoPanel(state.getEmail());
-
-
 }

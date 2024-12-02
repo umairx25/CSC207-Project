@@ -3,29 +3,36 @@ package frameworks_driver.view.home;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Represents a panel with an animated gradient background.
+ */
 public class AnimatedGradientPanel extends JPanel {
     private float gradientOffset = 0; // Offset for animation
     private boolean forward = true;  // Controls the direction of the gradient
 
-    private final Timer timer = new Timer(30, e -> {
-        // Move the gradient offset in the current direction
-        if (forward) {
-            gradientOffset += 0.008f;
-            if (gradientOffset >= 1) {
-                gradientOffset = 1;
-                forward = false; // Reverse direction
-            }
-        } else {
-            gradientOffset -= 0.008f;
-            if (gradientOffset <= 0) {
-                gradientOffset = 0;
-                forward = true; // Reverse direction
-            }
-        }
-        repaint();
-    });
-
+    /**
+     * Constructs a new AnimatedGradientPanel and starts the animation.
+     */
     public AnimatedGradientPanel() {
+        // Move the gradient offset in the current direction
+        // Reverse direction
+        Timer timer = new Timer(30, e -> {
+            // Move the gradient offset in the current direction
+            if (forward) {
+                gradientOffset += 0.008f;
+                if (gradientOffset >= 1) {
+                    gradientOffset = 1;
+                    forward = false; // Reverse direction
+                }
+            } else {
+                gradientOffset -= 0.008f;
+                if (gradientOffset <= 0) {
+                    gradientOffset = 0;
+                    forward = true; // Reverse direction
+                }
+            }
+            repaint();
+        });
         timer.start(); // Start the animation
     }
 

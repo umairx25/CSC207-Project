@@ -20,6 +20,11 @@ import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.util.Map;
 
+/**
+ * Represents the graphical user interface for displaying stock charts.
+ * Allows users to view different technical indicators (Price History, SMA, EMA, RSI)
+ * and interact with checkboxes to customize the chart view.
+ */
 public class ChartView extends JPanel implements PropertyChangeListener {
 
     private final ControlPanel controlPanel;
@@ -27,36 +32,43 @@ public class ChartView extends JPanel implements PropertyChangeListener {
     private final ChartController chartController;
     private final ChartState chartState;
     private JFreeChart lineChart;
-    private final DefaultCategoryDataset dataset; // Shared dataset for all data series
+    private final DefaultCategoryDataset dataset;
 
+    /**
+     * Constructs a new ChartView object.
+     *
+     * @param chartViewModel  the view model containing chart data and state
+     * @param chartController the controller responsible for handling chart-related requests
+     * @param chartState      the state object representing the chart's current configuration
+     */
     public ChartView(ChartViewModel chartViewModel, ChartController chartController, ChartState chartState) {
-
         this.chartViewModel = chartViewModel;
         this.chartController = chartController;
         this.chartState = chartState;
 
         setLayout(new BorderLayout());
 
-        // Initialize panels and datasets
         dataset = new DefaultCategoryDataset();
         controlPanel = new ControlPanel();
         controlPanel.setBackground(ColourManager.INNER_BOX_BLUE);
         ChartPanel chartPanel = createChartPanel();
 
-        // Add panels
         add(controlPanel, BorderLayout.WEST);
         add(chartPanel, BorderLayout.CENTER);
 
         // Initialize checkboxes with the current state
         updateCheckboxes(chartViewModel.getState());
 
-        // Add item listeners to the checkboxes
+        // Add listeners to checkboxes
         addCheckboxListeners();
 
         // Register as a property change listener for the ViewModel
         chartViewModel.addPropertyChangeListener(this);
     }
 
+    /**
+     * Adds listeners to the checkboxes for updating chart data.
+     */
     private void addCheckboxListeners() {
         controlPanel.getPriceHistoryCheckbox().addItemListener(e -> updateChartData());
         controlPanel.getSmaCheckbox().addItemListener(e -> updateChartData());
@@ -64,6 +76,11 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         controlPanel.getRsiCheckbox().addItemListener(e -> updateChartData());
     }
 
+    /**
+     * Fetches and displays chart data for the given stock ticker.
+     *
+     * @param ticker the stock ticker symbol
+     */
     public void inputTicker(String ticker) {
         fetchChartData(ticker);
         lineChart.setTitle(ticker + "\n" + chartViewModel.getCurrPrice() + " USD" + "\n" +
@@ -73,30 +90,28 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         repaint();
     }
 
+    /**
+     * Updates the chart data based on the selected checkboxes.
+     */
     private void updateChartData() {
-        // Clear the dataset before updating
         dataset.clear();
 
         try {
-            // Add data based on selected checkboxes
             if (controlPanel.getPriceHistoryCheckbox().isSelected()) {
                 for (Map.Entry<Long, Double> entry : chartState.getPriceHistory().entrySet()) {
                     dataset.addValue(entry.getValue(), "Price History", entry.getKey());
                 }
             }
-
             if (controlPanel.getSmaCheckbox().isSelected()) {
                 for (Map.Entry<Long, Double> entry : chartState.getSma().entrySet()) {
                     dataset.addValue(entry.getValue(), "SMA", entry.getKey());
                 }
             }
-
             if (controlPanel.getEmaCheckbox().isSelected()) {
                 for (Map.Entry<Long, Double> entry : chartState.getEma().entrySet()) {
                     dataset.addValue(entry.getValue(), "EMA", entry.getKey());
                 }
             }
-
             if (controlPanel.getRsiCheckbox().isSelected()) {
                 for (Map.Entry<Long, Double> entry : chartState.getRsi().entrySet()) {
                     dataset.addValue(entry.getValue(), "RSI", entry.getKey());
@@ -104,14 +119,17 @@ public class ChartView extends JPanel implements PropertyChangeListener {
             }
         } catch (Exception e) {
             System.out.println("Indicator is null.");
-            return;
         }
 
-        // Refresh the chart
         revalidate();
         repaint();
     }
 
+    /**
+     * Creates and configures the chart panel for displaying the stock chart.
+     *
+     * @return a configured ChartPanel object
+     */
     private ChartPanel createChartPanel() {
         lineChart = ChartFactory.createLineChart(
                 "",
@@ -136,6 +154,11 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         return chartPanel;
     }
 
+    /**
+     * Fetches chart data for the given stock ticker using the ChartController.
+     *
+     * @param ticker the stock ticker symbol
+     */
     private void fetchChartData(String ticker) {
         ChartState initialState = chartViewModel.getState();
         String endDate = LocalDate.now().toString();
@@ -153,6 +176,11 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         );
     }
 
+    /**
+     * Handles property changes and updates the checkboxes to reflect the new chart state.
+     *
+     * @param evt the property change event
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName())) {
@@ -161,6 +189,11 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Updates the checkboxes in the control panel based on the given chart state.
+     *
+     * @param state the new ChartState object
+     */
     private void updateCheckboxes(ChartState state) {
         controlPanel.getSmaCheckbox().setSelected(state.isSmaSelected());
         controlPanel.getEmaCheckbox().setSelected(state.isEmaSelected());
@@ -168,6 +201,9 @@ public class ChartView extends JPanel implements PropertyChangeListener {
         controlPanel.getPriceHistoryCheckbox().setSelected(state.isPriceHistorySelected());
     }
 
+    /**
+     * @return the name of the view
+     */
     public String getViewName() {
         return "chart view";
     }
