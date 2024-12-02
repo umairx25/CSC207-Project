@@ -1,12 +1,10 @@
 package frameworks_driver.view.home;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class ChatBotButton extends JButton {
 
-    public ChatBotButton(ActionListener actionListener) {
+    public ChatBotButton() {
         super("Chatbot");
         setPreferredSize(new Dimension(150, 60));
         setFont(new Font("Arial", Font.BOLD, 16));

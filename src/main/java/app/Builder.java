@@ -5,10 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.swing.*;
 
-import data_access.LoginUserDataAccess;
+import data_access.*;
 import frameworks_driver.view.login.LoginPanel;
-import frameworks_driver.view.login.PanelNavigator;
-import frameworks_driver.view.login.RightPanel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -18,10 +16,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 // Common
-import data_access.ChatbotDataAccess;
-import data_access.ExploreDataAccess;
-import data_access.StockDataAccess;
-import data_access.UserDataAccess;
 import interface_adapter.ViewManagerModel;
 
 // Chatbot
@@ -57,16 +51,18 @@ import interface_adapter.home.HomeViewModel;
 import frameworks_driver.view.home.HomeView;
 
 // SignUp
-//import interface_adapter.signup.SignupController;
-//import interface_adapter.signup.SignupPresenter;
-//import interface_adapter.signup.SignupState;
+import interface_adapter.signup.SignupController;
+import interface_adapter.signup.SignupPresenter;
+import interface_adapter.signup.SignupState;
 import use_case.login.LoginInteractor;
+import use_case.signup.SignupInteractor;
+import use_case.signup.SignupOutputBoundary;
+import interface_adapter.signup.SignupViewModel;
+import frameworks_driver.view.signup.RightPanel;
+import frameworks_driver.view.signup.SignupPanel;
+
 import use_case.login.LoginOutputBoundary;
-//import use_case.signup.SignupInteractor;
-//import use_case.signup.SignupOutputBoundary;
-//import interface_adapter.signup.SignupViewModel;
-//import frameworks_driver.view.signup.RightPanel;
-//import frameworks_driver.view.signup.SignupPanel;
+
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -95,7 +91,6 @@ public class Builder {
     final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(signupViewModel);
     final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess,
             signupOutputBoundary);
-
 
     //Login
     private final LoginViewModel loginViewModel = new LoginViewModel();
@@ -141,12 +136,13 @@ public class Builder {
         ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
         ChatbotController controller = new ChatbotController(interactor);
 
-        // Initialize frontend components
-        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
+        // Pass Builder to ChatbotContainerView
+        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, this);
 
         cardPanel.add(containerView, "chatbot");
         return this;
     }
+
 
     public void showView(String viewName) {
         cardLayout.show(cardPanel, viewName);
@@ -180,7 +176,7 @@ public class Builder {
         final LoginController loginController = new LoginController(loginInteractor);
 
         // Instantiate the LoginPanel, passing necessary dependencies
-        final LoginPanel loginPanel = new LoginPanel((PanelNavigator) this, loginController, loginViewModel);
+        final LoginPanel loginPanel = new LoginPanel( loginController, loginViewModel, this);
 
         // Create the right panel for layout consistency
         final RightPanel rightPanel = new RightPanel();
@@ -194,7 +190,6 @@ public class Builder {
         cardPanel.add(mainPanel, "login");
         return this;
     }
-
 
     public Builder addHomeView() {
         HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
