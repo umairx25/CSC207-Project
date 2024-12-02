@@ -1,5 +1,6 @@
 package frameworks_driver.view.login;
 
+import app.Builder;
 import frameworks_driver.view.style_helpers.ColourManager;
 import frameworks_driver.view.style_helpers.FontManager;
 import frameworks_driver.view.style_helpers.GridBagManager;
@@ -19,12 +20,13 @@ public class LoginPanel extends JPanel {
     private final LoginController loginController;
     private final LoginViewModel loginViewModel;
 
-    public LoginPanel(PanelNavigator navigator, LoginController loginController, LoginViewModel loginViewModel) {
+    public LoginPanel( LoginController loginController, LoginViewModel loginViewModel, Builder builder) {
         this.loginController = loginController;
         this.loginViewModel = loginViewModel;
 
         setLayout(new GridBagLayout());
         setBackground(ColourManager.DARK_BLUE);
+        setPreferredSize(new Dimension(500, 750));
 
         UIHelper.addHeading(this, "Welcome!!");
 
@@ -51,21 +53,20 @@ public class LoginPanel extends JPanel {
             if (email.isEmpty() || password.isEmpty()) {
                 updateErrorMessage("Fields cannot be empty");
             } else {
-                // Update the state in the ViewModel
                 LoginState currentState = loginViewModel.getState();
                 currentState.setEmail(email);
                 currentState.setPassword(password);
                 loginViewModel.setState(currentState);
 
-                // Call the controller to handle login logic
                 try {
                     loginController.execute(email, password);
+                    builder.showView("home");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
 
                 // Handle ViewModel state updates
-                handleViewModelUpdate(navigator);
+//                handleViewModelUpdate(navigator);
             }
         });
 
@@ -78,7 +79,7 @@ public class LoginPanel extends JPanel {
         signUpLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                navigator.navigateTo("signup");
+                builder.showView("signup");
             }
         });
     }
@@ -90,23 +91,20 @@ public class LoginPanel extends JPanel {
         repaint();
     }
 
-    private void handleViewModelUpdate(PanelNavigator navigator) {
-        LoginState state = loginViewModel.getState();
-
-        // Use the boolean `loginError` to determine success or failure
-        if (Boolean.TRUE.equals(state.getLoginError())) {
-            updateErrorMessage("Login failed. Please check your credentials.");
-        } else if (state.getEmail() != null && !state.getEmail().isEmpty()) {
-            errorMessageLabel.setVisible(false);
-            revalidate();
-            repaint();
+//    private void handleViewModelUpdate(PanelNavigator navigator) {
+//        LoginState state = loginViewModel.getState();
+//
+//        // Use the boolean `loginError` to determine success or failure
+//        if (Boolean.TRUE.equals(state.getLoginError())) {
+//            updateErrorMessage("Login failed. Please check your credentials.");
+//        } else if (state.getEmail() != null && !state.getEmail().isEmpty()) {
+//            errorMessageLabel.setVisible(false);
+//            revalidate();
+//            repaint();
 
             // Navigate to InfoPanel upon successful login
-            if (navigator instanceof MainFrame) {
-                ((MainFrame) navigator).navigateToInfoPanel(state.getEmail());
-            }
-        }
-    }
+//            if (navigator instanceof MainFrame) {
+//                ((MainFrame) navigator).navigateToInfoPanel(state.getEmail());
 
 
 }

@@ -25,12 +25,12 @@ public class HomeController {
     /**
      * Handles toggling the chatbot view.
      */
-    public void toggleChatbot() {
-        interactor.handleChatbotToggle(); // Delegate the business logic to the interactor
-        if (homeView != null) {
-            homeView.showChatbotView(new ChatbotView(this)); // Update view to show chatbot
-        }
-    }
+//    public void toggleChatbot() {
+//        interactor.handleChatbotToggle(); // Delegate the business logic to the interactor
+//        if (homeView != null) {
+//            homeView.showChatbotView(new ChatbotView(this)); // Update view to show chatbot
+//        }
+//    }
 
     /**
      * Updates the state and restores the HomeView layout.
