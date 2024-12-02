@@ -93,6 +93,7 @@ public class ExploreView extends JPanel {
         }
     }
 
+
     /**
      * Gets the name of the view.
      *

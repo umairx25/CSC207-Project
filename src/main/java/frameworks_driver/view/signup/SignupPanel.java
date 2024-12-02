@@ -1,5 +1,6 @@
 package frameworks_driver.view.signup;
 
+import app.Builder;
 import com.google.firebase.auth.FirebaseAuthException;
 import frameworks_driver.view.style_helpers.*;
 import interface_adapter.signup.SignupController;
@@ -17,7 +18,7 @@ public class SignupPanel extends JPanel {
     private SignupController signupController;
     private SignupViewModel viewModel;
 
-    public SignupPanel(SignupController signupController, SignupViewModel viewModel) {
+    public SignupPanel(SignupController signupController, SignupViewModel viewModel, Builder builder) {
         this.signupController = signupController;
         this.viewModel = viewModel;
 
@@ -50,22 +51,22 @@ public class SignupPanel extends JPanel {
                 UIHelper.showErrorMessage(this, "Email and Username cannot be empty", "signup");
             } else if (password.length() < 6) {
                 UIHelper.showErrorMessage(this, "Password must be at least 6 characters", "signup");
-            } else if (!email.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")){
-                    UIHelper.showErrorMessage(this, "Invalid email address", "signup");
-                }
-
-            else {
+            } else if (!email.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+                UIHelper.showErrorMessage(this, "Invalid email address", "signup");
+            } else {
                 try {
                     signupController.execute(email, password, username);
+
                     SignupState currentState = viewModel.getState();
                     currentState.setEmail(email);
                     currentState.setPassword(password);
                     currentState.setUsername(username);
                     viewModel.setState(currentState);
-//                    navigator.navigateTo("login");
+
+                    builder.showView("home");
                 } catch (FirebaseAuthException | IOException ex) {
                     UIHelper.showErrorMessage(this, "Error, Try Again", "signup");
-                    System.out.println("Signup failed");
+                    System.out.println("Signup failed: " + ex.getMessage());
                 }
             }
         });
@@ -74,7 +75,7 @@ public class SignupPanel extends JPanel {
         UIHelper.styleButton(backButton);
         add(backButton, GridBagHelper.signUpButtonsGBC());
 
-//        backButton.addActionListener(e -> navigator.navigateTo("login"));
+        backButton.addActionListener(e -> builder.showView("login"));
     }
 
 }
