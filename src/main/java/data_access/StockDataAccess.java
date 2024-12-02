@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import use_case.chart.ChartDataAccessInterface;
 
 public class StockDataAccess implements ChartDataAccessInterface {
-     final Dotenv dotenv = Dotenv.load();
+    final Dotenv dotenv = Dotenv.load();
     private  final String API_KEY = dotenv.get("POLYGON_API_KEY");
 
     //All the methods that use ticker snapshot endpoint
@@ -123,7 +123,20 @@ public class StockDataAccess implements ChartDataAccessInterface {
             result = new JSONObject();
         }
 
-        JSONArray values = result.getJSONArray("values");
+        try {
+            result = jsonResponse.getJSONObject("results");
+        } catch (Exception e) {
+            System.out.println("No 'results' found in response.");
+            result = new JSONObject();
+        }
+
+        JSONArray values;
+        try {
+            values = result.getJSONArray("values");
+        } catch (Exception e) {
+            System.out.println("No 'values' array found in results.");
+            return data;
+        }
 
         for (int i = values.length() - 1; i >= 0; i--) {
             JSONObject obj = values.getJSONObject(i);
@@ -138,7 +151,7 @@ public class StockDataAccess implements ChartDataAccessInterface {
     }
 
     //Sends requests to the server.
-     public String HTTPRequest(String urlString) {
+    public String HTTPRequest(String urlString) {
         StringBuilder response = new StringBuilder();
 
         try {

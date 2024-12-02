@@ -1,5 +1,6 @@
 package frameworks_driver.view.chart;
 
+import frameworks_driver.view.style_helpers.ColourManager;
 import interface_adapter.chart.ChartController;
 import interface_adapter.chart.ChartState;
 import interface_adapter.chart.ChartViewModel;
@@ -11,7 +12,6 @@ import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
-import view.ColourManager;
 
 import javax.swing.*;
 import java.awt.*;

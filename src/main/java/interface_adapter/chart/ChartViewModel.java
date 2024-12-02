@@ -5,14 +5,14 @@ import interface_adapter.ViewModel;
 import java.util.LinkedHashMap;
 //
 /**
-// * The ViewModel for the Chart View.
-// */
+ // * The ViewModel for the Chart View.
+ // */
 
-    public class ChartViewModel extends ViewModel<ChartState> {
+public class ChartViewModel extends ViewModel<ChartState> {
 
-        private double currPrice;
-        private String pointIncrease;
-        private String percentIncrease;
+    private double currPrice;
+    private String pointIncrease;
+    private String percentIncrease;
 
 
     public ChartViewModel() {

@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.Gson;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.*;
-import use_case.chatBot.ChatbotDataAccessInterface;
+import use_case.chatbot.ChatbotDataAccessInterface;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

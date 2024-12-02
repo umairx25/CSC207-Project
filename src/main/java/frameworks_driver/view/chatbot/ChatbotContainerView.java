@@ -57,19 +57,6 @@ public class ChatbotContainerView extends JPanel {
             protected String doInBackground() {
                 return controller.handleInput(userMessage);
             }
-
-            @Override
-            protected void done() {
-                try {
-                    String botResponse = get();
-                    messagePanel.addMessage(botResponse, false);
-                } catch (Exception e) {
-                    messagePanel.addMessage("Error: Could not process response.", false);
-                } finally {
-                    inputPanel.setEnabled(true);
-                    headerPanel.setTypingIndicatorVisible(false);
-                }
-            }
         };
 
         worker.execute();

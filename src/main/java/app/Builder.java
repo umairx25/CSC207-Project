@@ -1,10 +1,29 @@
 package app;
 
 import java.awt.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import javax.swing.*;
+import io.github.cdimascio.dotenv.Dotenv;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+
+// Common
+import data_access.ChatbotDataAccess;
+import data_access.ExploreDataAccess;
+import data_access.StockDataAccess;
+import data_access.UserDataAccess;
+import interface_adapter.ViewManagerModel;
+
+// Chatbot
+import use_case.chatbot.ChatbotInteractor;
+import interface_adapter.chatbot.ChatbotPresenter;
+import interface_adapter.chatbot.ChatbotViewModel;
+import frameworks_driver.view.chatbot.ChatbotContainerView;
+import interface_adapter.chatbot.ChatbotController;
 
 // Explore
-import data_access.ExploreDataAccess;
 import frameworks_driver.view.explore.ExploreView;
 import interface_adapter.explore.ExploreController;
 import interface_adapter.explore.ExplorePresenter;
@@ -14,15 +33,30 @@ import use_case.explore.ExploreInteractor;
 import use_case.explore.ExploreOutputBoundary;
 
 // Chart
-import data_access.StockDataAccess;
 import frameworks_driver.view.chart.ChartView;
-import interface_adapter.ViewManagerModel;
 import interface_adapter.chart.ChartController;
 import interface_adapter.chart.ChartPresenter;
 import interface_adapter.chart.ChartViewModel;
 import use_case.chart.ChartInputBoundary;
 import use_case.chart.ChartInteractor;
 import use_case.chart.ChartOutputBoundary;
+
+// Home
+import interface_adapter.home.HomeController;
+import use_case.home.HomeInteractor;
+import interface_adapter.home.HomePresenter;
+import interface_adapter.home.HomeViewModel;
+import frameworks_driver.view.home.HomeView;
+
+// SignUp
+import interface_adapter.signup.SignupController;
+import interface_adapter.signup.SignupPresenter;
+import interface_adapter.signup.SignupState;
+import use_case.signup.SignupInteractor;
+import use_case.signup.SignupOutputBoundary;
+import interface_adapter.signup.SignupViewModel;
+import frameworks_driver.view.signup.RightPanel;
+import frameworks_driver.view.signup.SignupPanel;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -43,23 +77,116 @@ public class Builder {
     final ChartController chartController = new ChartController(chartInteractor);
     ChartView chartView = new ChartView(chartViewModel, chartController, chartViewModel.getState());
 
-    // Explore
-    private final ExploreViewModel exploreViewModel = new ExploreViewModel();
-    private final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
-    final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
-    final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
-    final ExploreController exploreController = new ExploreController(exploreInteractor);
-    ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
+    //Signup
+    private final SignupViewModel signupViewModel = new SignupViewModel();
+    private final SignupState signupState = new SignupState();
+    private final UserDataAccess userDataAccess = new UserDataAccess(signupState.getEmail(), signupState.getPassword(), signupState.getUsername());
+    final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(signupViewModel);
+    final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess,
+            signupOutputBoundary);
 
-    public Builder() {
+
+    public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         CardLayout cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
     }
 
+    public void initialize_firebase(String file) throws IOException {
+        Dotenv dotenv = Dotenv.load();
+        if (FirebaseApp.getApps().isEmpty()) { // Check if no FirebaseApp instances exist
+            FileInputStream serviceAccount = new FileInputStream(file);
+
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setProjectId(dotenv.get("PROJECT_ID"))
+                    .build();
+
+            FirebaseApp.initializeApp(options);
+        }
+    }
+
     public Builder addExploreView() {
+        // Explore
+        final ExploreViewModel exploreViewModel = new ExploreViewModel();
+        final ExploreDataAccess exploreDataAccess = new ExploreDataAccess();
+        final ExploreOutputBoundary exploreOutputBoundary = new ExplorePresenter(exploreViewModel);
+        final ExploreInputBoundary exploreInteractor = new ExploreInteractor(exploreDataAccess, exploreOutputBoundary);
+        final ExploreController exploreController = new ExploreController(exploreInteractor);
+        ExploreView exploreView = new ExploreView(exploreController, exploreViewModel, chartView);
         cardPanel.add(exploreView);
         return this;
     }
+
+//    public Builder addChatbotView() {
+//        // Initialize backend components
+//        ChatbotDataAccess dataAccess = new ChatbotDataAccess();
+//        ChatbotViewModel viewModel = new ChatbotViewModel();
+//        ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
+//        ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
+//        ChatbotController controller = new ChatbotController(interactor);
+//
+//        // Initialize frontend components
+//        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
+//
+//        cardPanel.add(containerView, "Chatbot");
+//
+//        // Create main application frame
+////        JFrame frame = new JFrame("AI Chat Application");
+////        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+////        frame.setSize(500, 700);
+////        frame.setLocationRelativeTo(null);
+////        frame.add(containerView);
+////
+////        // Display the frame
+////        frame.setVisible(true);
+//        return this;
+//    }
+
+    public Builder addChatbotView() {
+        ChatbotDataAccess dataAccess = new ChatbotDataAccess();
+        ChatbotViewModel viewModel = new ChatbotViewModel();
+        ChatbotPresenter presenter = new ChatbotPresenter(viewModel);
+        ChatbotInteractor interactor = new ChatbotInteractor(presenter, dataAccess);
+        ChatbotController controller = new ChatbotController(interactor);
+
+        // Initialize frontend components
+        ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel);
+
+        // Create main application frame
+        JFrame frame = new JFrame("AI Chat Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 700);
+        frame.setLocationRelativeTo(null);
+        frame.add(containerView);
+
+        // Display the frame
+        frame.setVisible(true);
+        return this;
+    }
+
+    public Builder addSignupView() throws IOException {
+        final SignupController signupController = new SignupController(signupInteractor);
+        final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel);
+        final RightPanel rightPanel = new RightPanel();
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(signupPanel, BorderLayout.WEST);
+        mainPanel.add(rightPanel, BorderLayout.CENTER);
+
+        // Add the mainPanel to the cardPanel for proper navigation
+        cardPanel.add(mainPanel, "signup");
+        return this;
+    }
+
+    public Builder addHomeView() {
+        SwingUtilities.invokeLater(() -> {
+            HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
+            HomeView homeView = new HomeView("User", 12345.67, controller);
+            controller.setHomeView(homeView); // Set HomeView after creation
+        });
+        return this;
+    }
+
 
     /**
      * Creates the JFrame for the application and initially sets the SignupView to be displayed.
@@ -68,20 +195,21 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        // set application icon
+        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
+        application.setIconImage(icon);
+
+        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        application.setSize(1300, 600); // frame will have a set size
+        application.setMinimumSize(new Dimension(1500, 1000));
+        application.setExtendedState(JFrame.MAXIMIZED_BOTH); // frame will open maximized
+        application.pack(); // sizes the frame so that all its contents are at or above their preferred sizes
         application.add(cardPanel);
 
         viewManagerModel.setState(chartView.getViewName());
         viewManagerModel.firePropertyChanged();
 
-        application.pack(); // Sizes the frame so that all its contents are at or above their preferred sizes
-        application.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
-        application.setIconImage(icon);
-
         return application;
     }
-
 }

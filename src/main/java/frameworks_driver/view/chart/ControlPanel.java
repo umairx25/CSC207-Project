@@ -1,6 +1,6 @@
 package frameworks_driver.view.chart;
 
-import view.ColourManager;
+import frameworks_driver.view.style_helpers.ColourManager;
 
 import javax.swing.*;
 
