@@ -62,10 +62,10 @@ public class PortfolioViewModel {
         pcs.firePropertyChange("totalGainLossPercentage", oldValue, totalGainLossPercentage);
     }
 
-    // Getters for the data
-    public double getTotalBalance() {
-        return totalBalance;
-    }
+//    // Getters for the data
+//    public double getTotalBalance() {
+//        return totalBalance;
+//    }
 
     public double getPortfolioBalance() {
         return portfolioBalance;

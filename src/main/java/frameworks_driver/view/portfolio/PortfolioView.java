@@ -1,4 +1,4 @@
-package frameworks_driver.view.Portfolio;
+package frameworks_driver.view.portfolio;
 
 import app.Builder;
 import interface_adapter.portfolio.PortfolioController;
@@ -24,11 +24,11 @@ public class PortfolioView extends JPanel {
         // Initialize UI components
         setLayout(new BorderLayout());
         setSize(1000, 700);
-        setBackground(ColourManager.INNER_BOX_BLUE);  // Set background to light blue
+        setBackground(ColourManager.NAVY_BLUE);  // Set background to light blue
 
         // Header Panel setup
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(ColourManager.INNER_BOX_BLUE); // Set header panel to dark blue
+        headerPanel.setBackground(ColourManager.NAVY_BLUE); // Set header panel to dark blue
 
         JLabel titleLabel = new JLabel("Portfolio", SwingConstants.LEFT);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -41,7 +41,7 @@ public class PortfolioView extends JPanel {
         topPanel.add(homeButton, BorderLayout.EAST);
 
         JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        balancePanel.setBackground(ColourManager.INNER_BOX_BLUE); // Set balance panel to dark blue
+        balancePanel.setBackground(ColourManager.NAVY_BLUE); // Set balance panel to dark blue
         JLabel balanceLabel = new JLabel("Balance:");
         JLabel portfolioBalanceLabel = new JLabel("Portfolio:");
         balanceLabel.setForeground(ColourManager.WHITE);  // Set text to white
@@ -54,13 +54,17 @@ public class PortfolioView extends JPanel {
 
         // Transaction Input Panel setup
         JPanel transactionPanel = new JPanel(new FlowLayout());
-        transactionPanel.setBackground(ColourManager.INNER_BOX_BLUE); // Set transaction panel to dark blue
+        transactionPanel.setBackground(ColourManager.NAVY_BLUE); // Set transaction panel to dark blue
 
         CompanyTextField companyTextField = new CompanyTextField();
         QuantityTextField quantityTextField = new QuantityTextField();
-        transactionPanel.add(new JLabel("Company:"));
+        JLabel companyLabel = new JLabel("Company:");
+        JLabel quantityLabel = new JLabel("Quantity:");
+        companyLabel.setForeground(ColourManager.WHITE);
+        quantityLabel.setForeground(ColourManager.WHITE);
+        transactionPanel.add(companyLabel);
         transactionPanel.add(companyTextField);
-        transactionPanel.add(new JLabel("Quantity:"));
+        transactionPanel.add(quantityLabel);
         transactionPanel.add(quantityTextField);
 
         // Apply grey color to buttons

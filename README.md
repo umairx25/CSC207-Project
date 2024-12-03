@@ -71,9 +71,10 @@ Meet your **personal finance mentor** powered by cutting-edge AI:
 **📸 Sneak Peek**  
 ![AI Chatbot](assets/chatbot_example.png)
 
-### 🔍 Explore Page  
+### 🔍 Explore Page
 Dive deep into the world of stocks with unparalleled data insights:
 - Access over **50,000+ stocks** and several technical indicators.
+- Easily **search stocks** by **ticker**, **exchange**, or **keyword** for quick and precise results.
 - **Historical and Current Data**: Stay updated with the latest and past trends of your favorite stocks.
 - Compare key indicators like **EMA**, **SMA**, and **RSI**, with real-time updates.
 - Generate **customized charts** for every stock to visualize performance.

@@ -1,6 +1,7 @@
 package frameworks_driver.view.home;
 
 import app.Builder;
+import entity.CurrentUser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,11 +20,9 @@ public class HomeView extends JPanel{
     /**
      * Constructs a new HomeView with user-specific details and navigation buttons.
      *
-     * @param username          the name of the user
-     * @param portfolioBalance  the current portfolio balance
      * @param builder           the application builder for navigating between views
      */
-    public HomeView(String username, double portfolioBalance, Builder builder) {
+    public HomeView(Builder builder) {
         setLayout(new BorderLayout());
 
         PortfolioButton portfolioButton = new PortfolioButton();
@@ -33,11 +32,16 @@ public class HomeView extends JPanel{
         ChatBotButton chatbotButton = new ChatBotButton();
         chatbotButton.addActionListener(e -> builder.showView("chatbot"));
         LogOutButton logOutButton = new LogOutButton();
-        logOutButton.addActionListener(e -> builder.showView("login"));
+        logOutButton.addActionListener(e -> {
+                CurrentUser.setEmail("");
+                builder.showView("login");
+                System.out.println("Logged out");
 
-        topPanel = new TopPanel(username, logOutButton);
+        });
+
+        topPanel = new TopPanel(logOutButton);
         currentView = new CenterPanel(portfolioButton, exploreButton, chatbotButton);
-        bottomPanel = new BottomPanel(portfolioBalance);
+        bottomPanel = new BottomPanel();
 
         gradientPanel = new AnimatedGradientPanel();
         gradientPanel.setLayout(new BorderLayout());

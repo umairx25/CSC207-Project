@@ -11,15 +11,8 @@ public class BottomPanel extends JPanel {
     /**
      * Constructs a new BottomPanel with the user's portfolio balance.
      *
-     * @param portfolioBalance the user's current portfolio balance
      */
-    public BottomPanel(double portfolioBalance) {
+    public BottomPanel() {
         setOpaque(false); // Transparent for gradient background
-
-        JLabel portfolioBalanceLabel = new JLabel("Portfolio Balance: $" + String.format("%.2f", portfolioBalance));
-        portfolioBalanceLabel.setFont(new Font("Segue UI", Font.BOLD, 16));
-        portfolioBalanceLabel.setForeground(Color.WHITE);
-
-        add(portfolioBalanceLabel);
     }
 }

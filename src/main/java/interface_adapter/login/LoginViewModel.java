@@ -16,4 +16,5 @@ public class LoginViewModel extends ViewModel<LoginState> {
         super("log in");
         setState(new LoginState());
     }
+
 }

@@ -1,8 +1,9 @@
-package frameworks_driver.view.Portfolio;
+package frameworks_driver.view.portfolio;
+
+import frameworks_driver.view.style_helpers.ColourManager;
 
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,11 @@ public class HistoryPanel extends JPanel {
 
     public HistoryPanel(List<Map<String, Object>> initialHistory) {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Transaction History"));
+        TitledBorder titledBorder = new TitledBorder("Transaction History");
+        titledBorder.setTitleColor(Color.WHITE);
+        setBorder(titledBorder);
+
+        setBackground(ColourManager.MEDIUM_GRAY);
 
         listModel = new DefaultListModel<>();
         if (initialHistory != null) {
@@ -22,6 +27,8 @@ public class HistoryPanel extends JPanel {
         historyList = new JList<>(listModel);
         historyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(historyList);
+        scrollPane.getViewport().getView().setBackground(Color.GRAY);
+        scrollPane.getViewport().getView().setForeground(Color.WHITE);
         add(scrollPane, BorderLayout.CENTER);
     }
 

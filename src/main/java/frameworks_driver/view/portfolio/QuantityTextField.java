@@ -1,4 +1,4 @@
-package frameworks_driver.view.Portfolio;
+package frameworks_driver.view.portfolio;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,19 +7,10 @@ import java.text.NumberFormat;
 
 public class QuantityTextField extends JFormattedTextField {
     public QuantityTextField() {
-        super(createFormatter());
+        super();
         setPreferredSize(new Dimension(100, 30));
         setBorder(BorderFactory.createTitledBorder("Quantity"));
         setValue(0);
-    }
-
-    private static NumberFormatter createFormatter() {
-        NumberFormat format = NumberFormat.getInstance();
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Integer.class);
-        formatter.setMinimum(0);
-        formatter.setAllowsInvalid(false);
-        return formatter;
     }
 
     public Object getValue() {

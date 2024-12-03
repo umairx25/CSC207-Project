@@ -1,4 +1,4 @@
-package frameworks_driver.view.Portfolio;
+package frameworks_driver.view.portfolio;
 
 import javax.swing.*;
 import java.awt.*;
