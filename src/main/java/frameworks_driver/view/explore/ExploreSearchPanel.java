@@ -16,8 +16,8 @@ import java.awt.event.FocusListener;
 public class ExploreSearchPanel extends JPanel {
 
     private JTextField searchField;
-    private JButton searchButton;
-    private JButton homeButton;
+    private Button searchButton;
+    private Button homeButton;
 
     private final ExploreController controller;
     private final ExploreViewModel viewModel;
@@ -71,8 +71,8 @@ public class ExploreSearchPanel extends JPanel {
         return field;
     }
 
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
         button.setBackground(ColourManager.MEDIUM_GRAY);
         button.setForeground(Color.WHITE);
         return button;

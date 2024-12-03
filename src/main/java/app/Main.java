@@ -1,7 +1,6 @@
 package app;
 
 import javax.swing.*;
-import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -9,14 +8,12 @@ public class Main {
         builder.initialize_firebase("config.json");
         builder.addSignupView()
                 .addHomeView()
-                .addExploreView()
                 .addLoginView()
-                .addPortfolioView()
+                .addExploreView()
                 .addChatbotView();
 
         JFrame application = builder.build();
         application.setVisible(true);
-        builder.showView("portfolio");
-
+        builder.showView("login");
     }
 }
