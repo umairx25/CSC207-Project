@@ -249,7 +249,7 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
+        Image icon = Toolkit.getDefaultToolkit().getImage("assets/icon.png");
         application.setIconImage(icon);
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

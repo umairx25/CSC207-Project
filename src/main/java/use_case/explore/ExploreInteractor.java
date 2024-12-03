@@ -52,7 +52,7 @@ public class ExploreInteractor implements ExploreInputBoundary {
      * @throws Exception if there is an issue fetching company details
      */
     @Override
-    public void getCompanyDetails(CompanyInputData inputData) throws Exception {
+    public void getCompanyDetails(CompanyInputData inputData) {
         try {
             Stock stock = new Stock(
                     inputData.getSelectedCompany(),

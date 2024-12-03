@@ -21,4 +21,5 @@ public interface SignupOutputBoundary {
      * @param errorMessage A message describing the failure reason.
      */
     void prepareFailView(String errorMessage);
+
 }

@@ -39,4 +39,5 @@ public class SignupOutputData {
     public boolean isSignupSuccess() {
         return signupSuccess;
     }
+
 }

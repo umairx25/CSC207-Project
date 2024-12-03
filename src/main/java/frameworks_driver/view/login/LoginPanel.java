@@ -4,6 +4,7 @@ import app.Builder;
 import frameworks_driver.view.style_helpers.ColourManager;
 import frameworks_driver.view.style_helpers.FontManager;
 import frameworks_driver.view.style_helpers.GridBagManager;
+import frameworks_driver.view.style_helpers.UIHelper;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.login.LoginState;
