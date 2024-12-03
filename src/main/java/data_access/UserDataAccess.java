@@ -148,8 +148,6 @@ public class UserDataAccess implements SignupDataAccessInterface {
 
             String username = document.getString("username");
             double balance = document.getDouble("balance");
-//            double portfolioValue = document.getDouble("portfolio_value");
-//            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
             List<Map<String, Object>> transactions = (List<Map<String, Object>>) document.get("transactionHistory");
             Map<String, Double> portfolio = (Map<String, Double>) document.get("portfolioHoldings");
 
@@ -180,23 +178,4 @@ public class UserDataAccess implements SignupDataAccessInterface {
         return username;
     }
 
-    /**
-     * Main method for testing user data access functionality.
-     *
-     * @param args command-line arguments
-     * @throws ExecutionException                if there are execution issues with Firestore operations
-     * @throws InterruptedException              if the Firestore operation is interrupted
-     * @throws UnsupportedLookAndFeelException   if look-and-feel setup fails
-     * @throws ClassNotFoundException            if a required class is not found
-     * @throws InstantiationException            if instantiation fails
-     * @throws IllegalAccessException            if access control fails
-     * @throws IOException                       if there are issues with database access
-     */
-//    public static void main(String[] args) throws ExecutionException, InterruptedException,
-//            UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
-//            IllegalAccessException, IOException {
-//        Builder builder = new Builder();
-//        builder.initialize_firebase("config.json");
-//        retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
-//    }
 }
