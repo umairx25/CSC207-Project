@@ -21,9 +21,9 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
    - [Common Issues & Solutions](#common-issues--solutions)
 5. [Usage Guide](#usage-guide)
 6. [Feedback](#feedback)
+7. [Contributions](#contributions)
 
 ---
-
 ## Creators
 
 The project was created by the following contributors:
@@ -248,4 +248,63 @@ We value your input and encourage you to share your thoughts on **StockFlow**. F
    - While we cannot guarantee every suggestion will be implemented, we value and appreciate your effort in helping us improve.
 
 Thank you for taking the time to share your feedback and help make **StockFlow** better!
+
+## Contributions
+
+We welcome contributions to **StockFlow**! Whether you're fixing bugs, adding features, or improving documentation, your help is greatly appreciated. Follow the steps below to get started:
+
+### How to Contribute
+
+1. **Fork the Repository**  
+   - Navigate to the [StockFlow Repository](https://github.com/umairx25/StockFlow) on GitHub.  
+   - Click the **Fork** button in the top-right corner to create your own copy of the repository.
+
+2. **Clone Your Fork**  
+   - Clone your forked repository to your local machine:
+     ```bash
+     git clone https://github.com/your-username/StockFlow.git
+     cd StockFlow
+     ```
+
+3. **Create a New Branch**  
+   - Use a descriptive name for your branch based on the feature or fix:
+     ```bash
+     git checkout -b feature/new-feature
+     ```
+
+4. **Make Your Changes**  
+   - Implement your changes and commit them with clear and concise messages:
+     ```bash
+     git add .
+     git commit -m "Add detailed description of your changes"
+     ```
+
+5. **Push Your Changes**  
+   - Push your branch to your forked repository:
+     ```bash
+     git push origin feature/new-feature
+     ```
+
+6. **Submit a Pull Request (PR)**  
+   - Go to your forked repository on GitHub and click **Compare & pull request**.  
+   - Provide a detailed description of your changes, including what issue it resolves or what feature it adds.
+
+---
+
+### Guidelines for a Good Merge Request
+
+- Ensure your code follows the project's coding standards.
+- Write clear and descriptive commit messages.
+- Include comments and documentation where necessary.
+- If applicable, include tests to validate your changes.
+
+---
+
+### Contribution Review Process
+
+1. All pull requests will be reviewed by the project maintainers.
+2. You may be asked to make revisions based on feedback.
+3. Once approved, your contribution will be merged into the main repository.
+
+Thank you for your interest in contributing to **StockFlow**! Together, we can make this project even better.
 
