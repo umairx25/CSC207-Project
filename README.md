@@ -22,6 +22,7 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
    - [Installation Steps](#installation-steps)
    - [Software and Package Management](#software-and-package-management)
    - [Common Issues & Solutions](#common-issues--solutions)
+5. [Usage Guide](#usage-guide)
 
 ---
 
@@ -92,11 +93,6 @@ Your personalized portfolio management system:
 
 **📸 Snapshot of Portfolio** 
 ![Portfolio](assets/portfolio_example.png)
-
-### 🎥 Experience StockFlow  
-Check out the app in action!  
-[![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)  
-*Logging in and starting your journey with StockFlow has never been easier!*
 
 ---
 
@@ -210,3 +206,29 @@ bash
 
 4. **Environment Variables Not Loaded**:
    - Confirm the .env file exists in the project root and is correctly formatted.
+
+## Usage Guide
+
+Once you have successfully installed the application, follow these steps to start using **StockFlow**:
+
+1. Open your preferred IDE (e.g., IntelliJ IDEA or Eclipse).
+2. Navigate to the following path in the project directory: `src/main/java/app/Main.java`.
+3. Run the `Main.java` file to launch the application.
+
+---
+
+### 📸 Example Walkthrough
+
+To help you get started, here are some visuals:
+
+1. **Logging In**  
+   [![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)
+
+2. **Exploring the Stocks Page**  
+   ![Explore Page](assets/explore_example.png)
+
+3. **Interacting with the AI Chatbot**  
+   ![AI Chatbot](assets/chatbot_example.png)
+
+Feel free to explore the app’s features such as the **Explore Page**, **Portfolio Page**, and the **AI Chatbot** for an interactive and educational trading experience. 🚀
+
