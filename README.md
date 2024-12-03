@@ -68,7 +68,7 @@ Meet your **personal finance mentor** powered by cutting-edge AI:
 - From explaining technical indicators to answering your questions about stocks, this chatbot is your trusted guide to the stock market.
 
 **📸 Sneak Peek**  
-![AI Chatbot](path/to/your-chatbot-image.png)
+![AI Chatbot](assets/chatbot_example.png)
 
 ### 🔍 Explore Page  
 Dive deep into the world of stocks with unparalleled data insights:
@@ -78,8 +78,9 @@ Dive deep into the world of stocks with unparalleled data insights:
 - Generate **customized charts** for every stock to visualize performance.
 - Get a comprehensive **company summary** with vital details, helping you make informed decisions.
 
-**📸 Explore Page in Action**  
-![Explore Page](path/to/your-explore-page-image.png)
+**📸 Explore Page in Action** 
+
+![Explore Page](assets/explore_example.png)
 
 ### 📈 Portfolio  
 Your personalized portfolio management system:
@@ -89,10 +90,123 @@ Your personalized portfolio management system:
 - Tailored insights to help you grow your portfolio and make smarter decisions.
 
 ### 🎥 Experience StockFlow  
-Check out the app in action!  
+Check out the app in action! 
+
 [![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)  
 *Logging in and starting your journey with StockFlow has never been easier!*
 
 ---
 
 These features make StockFlow a one-of-a-kind platform for beginners and enthusiasts alike. Whether you're just starting out or looking to refine your trading strategies, **StockFlow gives you the tools and confidence to master the market—all without the risks!** 🚀💡
+
+___
+
+## Installation Instructions 🚀
+
+Follow these detailed steps to set up and run the **StockFlow** application. Ensure you meet the necessary requirements and configure all dependencies properly.
+
+---
+
+### 🔧 Prerequisites
+
+1. **Java Development Kit (JDK)**:  
+   - Install **OpenJDK 22 or higher**.
+   - Ensure your IDE is configured with the correct SDK version.
+
+2. **Maven**:  
+   - The project uses Maven to manage dependencies. All required versions and packages are already included in the `pom.xml`.
+
+3. **Git**:  
+   - Make sure Git is installed for cloning the repository.
+
+---
+
+### 🔑 Configuration Files
+
+#### 1. **Firebase Configuration**
+   - Create a new Firebase project by visiting [Firebase Console](https://console.firebase.google.com).
+   - Navigate to **Project Settings** -> **General**:
+     - Copy the **Web API Key** and store it in the `.env` file under `WEB_API_KEY` (explained below).
+   - Go to **Service Accounts** -> **Generate New Private Key**:
+     - Download the JSON file and rename it as `config.json`.
+     - Place this file in the project directory under the project directory.
+
+#### 2. **Polygon API Key**
+   - Visit [Polygon.io](https://polygon.io/) and sign up for an account.
+   - Generate a new API Key from your dashboard.
+   - Save this key in the `.env` file under `POLYGON_API_KEY`.
+
+#### 3. **GPT-Powered API Key (Version GPT-4o Mini)**
+   - Sign up for OpenAI's API at [OpenAI Platform](https://platform.openai.com/).
+   - Generate an API Key for GPT-4.
+   - Save this key in the `.env` file under `GPT_API_KEY`.
+
+---
+
+### 📄 Environment Variables
+
+Create a `.env` file in the project directory and include the following keys (put in the keys you get):
+
+```plaintext
+PROJECT_ID=your_project_id
+WEB_API_KEY=your_web_api_key
+FIREBASE_INFO=src/main/java/frameworks_driver/firebase_info.json
+FIREBASE_AUTH_URL=https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword
+POLYGON_API_KEY=your_polygon_api_key
+GPT_API_KEY=your_gpt_api_key
+GPT_BASE_URL=https://api.openai.com/v1/chat/completions
+```
+
+## 🛠️ Installation Steps
+
+1. **Fork and Clone the Repository**:
+   - Fork the repository from GitHub: [StockFlow Repository](https://github.com/umairx25/StockFlow).
+   - Clone it locally:
+     ```bash
+     git clone https://github.com/your-username/StockFlow.git
+     cd StockFlow
+     ```
+
+2. **Set Up Dependencies**:
+   - Ensure Maven is installed and run:
+     ```bash
+     mvn clean install
+     ```
+
+3. **Run the Application**:
+   - Open the project in your preferred IDE (e.g., IntelliJ IDEA or Eclipse).
+   - Navigate to the `Main` class located in the app subfolder of `src`.
+   - Click **Run** to start the application.
+
+---
+
+### 🌐 Software and Package Management
+
+- **Dependencies**: All required libraries and their versions are listed in the `pom.xml`. Key dependencies include:
+  - **Firebase Admin SDK**: `9.4.1`
+  - **OpenAI GPT Integration**: `3.0.2`
+  - **JSON Processing**: `20240303`
+  - **JFreeChart**: `1.5.3`
+  - **JUnit (for testing)**: `4.13.1` and `5.8.1`
+
+---
+
+### ⚠️ Common Issues & Solutions
+
+1. **Missing Firebase Configuration**:
+   - Ensure `config.json` is correctly placed under the specified directory. Check the path in the `.env` file matches.
+
+2. **Maven Dependency Errors**:
+   - Run the following command to clean and rebuild:
+     ```bash
+     mvn clean install
+     ```
+
+3. **Java Version Compatibility**:
+   - Ensure your JDK version matches or exceeds `OpenJDK 22`. You can check this by running:
+     ```bash
+     java -version
+     ```
+
+4. **Environment Variables Not Loaded**:
+   - Confirm the `.env` file exists in the project root and is correctly formatted.
