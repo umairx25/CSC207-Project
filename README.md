@@ -1,181 +1,98 @@
-# Lab 5: Logout
+# StockFlow
 
-## Preamble
+**StockFlow** is a Stock Simulating Trader App designed to provide an interactive and engaging experience for users. It includes the following main features:
 
-In the current homework, you added code to the login use case to save the currently-logged-in
-user by saving the user in the Data Access Layer. You also added a unit test for this.
+- **Bit Chatbot**: An intelligent assistant for user queries.
+- **Portfolio Page**: A dedicated section to manage and track your investments.
+- **Explore Page**: A feature-rich page to discover and analyze stocks.
 
-In this lab, you will complete a logout use case as a team. You will also begin to discuss your project
-and the use cases that need to be implemented. 
+Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFlow).
 
-We have created all the Clean Architecture classes necessary for the logout use case.
+---
 
-By Friday, your team will submit:
-- your completed lab code [for credit]
-- a draft of your project blueprint proposal. [required, but not for credit]
+## Table of Contents
 
-# Phase 2 [for credit]
-_(recall, Phase 1 was your solo task of adding the storage of the currently-logged-in user)_
+1. [Project Overview](#project-overview)
+2. [Creators](#creators)
+3. [Features](#features)
+4. [Installation](#installation)
+5. [Usage Guide](#usage-guide)
+6. [License](#license)
+7. [Feedback](#feedback)
+8. [Contributions](#contributions)
 
-## Task 0: Fork this repo on GitHub
-**To get started, one team member should fork this repo on GitHub and share it with the team. 
-All of you should then clone it.**
+---
 
-* * *
+## Creators
 
-Suggested logistics: One of you should invite the others to collaborate on their fork of the
-original repo on GitHub. You can do this in your repo on GitHub under `Settings -> Collaborators`.
-This will allow you to push branches to a common repo and then use pull requests to contribute
-your code and review. To prevent others from pushing directly to the main branch,
-we recommend you set branch protection rules on GitHub. Below are how the settings might look if you
-add branch protection rules:
+The project was created by the following contributors:
 
-![image of branch protection rules for main with the
-requirement of two approvers to merge in pull requests.
-](images/branch_protection_rules.png)
+- [YaseenSadat](https://github.com/YaseenSadat)
+- [aneeqmuh](https://github.com/aneeqmuh)
+- [umairx25](https://github.com/umairx25)
+- [zarifali](https://github.com/zarifali)
+- [SameerShahed71](https://github.com/SameerShahed71)
 
-* * *
+---
 
-Open the project in IntelliJ and make sure you can successfully run `app/Main.java`.
-Note: you may need to set the Project SDK in the `Project Structure...` menu, and possibly
-also manually link the Maven project, as you did in Phase 1.
+## Summary
 
-## Task 1: Understanding the Program
+🌟 **What StockFlow Does**  
+StockFlow is a cutting-edge trading app designed to empower users with a seamless and risk-free stock trading experience. With features that let users explore diverse stocks, view historical data, and engage in simulated buying and selling, StockFlow brings the world of trading right to your fingertips. At its core is an AI-powered chatbot 🤖, your personal financial assistant, ready to answer your finance-related questions and guide you on your trading journey.
 
-You may notice that we have refactored the CA engine code _slightly_ since Phase 1, but the
-way we build the engine is drastically different: we have switched from using Factories to
-using the Builder design pattern, which we'll be discussing in lecture soon. 
+🌟 **Why We Built StockFlow**  
+Born from the shared vision of five passionate University of Toronto students 🧑‍💻, StockFlow was crafted as a learning tool for beginner traders and finance enthusiasts alike. We set out to create an educational platform that combines innovation and accessibility, promoting financial literacy and trading skills in a zero-risk environment. By simulating real-world trading scenarios through paper trading, StockFlow bridges the gap between theory and practice, making finance fun and approachable 🌍.
 
-Open up `app.Main` and read it as a team.
-- What are the Views and what are the current Use Cases?
-- Which Uses Cases are triggered from each View?
-- Which version of the DAO is `app.Main` using?
+🌟 **Why StockFlow is Unique**  
+Unlike many trading apps that require real money and involve real-world risks, StockFlow provides a *no-risk* alternative without compromising on the excitement and realism of the trading experience. Whether you're testing strategies or honing your trading instincts, StockFlow lets you learn, grow, and trade without the fear of financial loss—your gateway to mastering the stock market without a single dollar spent! 💹✨
 
-The major change since Phase 1 is that we have added the `app.AppBuilder` class which makes
-it easier to understand how our CA engine is being constructed — it also makes `app.Main` nice and concise!
-- Why do all those `addX` methods end in `return this;`? 
+---
 
-Run the program and make sure the signup and login Use Cases work.
+## Features 🌟
 
-Currently, you'll notice that the "Log Out" button still doesn't actually log you out. It's time to fix
-that button, which is part of the `LoggedInView`.
-We have created all the classes for you, but some of the code is missing.
-As a team, your task is to fill in the missing code so that the Logout Use Case is implemented.
-**The next part of the readme describes how your team will do this.**
+StockFlow is packed with cutting-edge features designed to deliver a seamless and educational stock trading experience. Here’s what makes StockFlow truly stand out:
 
-* * *
+### ✨ Account Management
+Effortlessly create, manage, and secure your account:
+- **Log In, Sign Up, and Log Out** functionalities ensure a smooth and secure user experience.
+- Start your journey with ease and pick up right where you left off.
 
-**Your team will know when you are done when:**
+### 🏠 Home Page
+The central hub of StockFlow, where users can seamlessly navigate across the app:
+- Intuitive layout to explore every feature with just a few clicks.
+- Your gateway to managing stocks and learning finance like a pro.
 
-- Clicking the "Log Out" button takes the user back to the Login View when you use the program.
-- The provided `LogoutInteractorTest` test passes.
+### 🤖 AI Chatbot
+Meet your **personal finance mentor** powered by cutting-edge AI:
+- A fully interactive chatbot that educates users on **finance-related topics**.
+- From explaining technical indicators to answering your questions about stocks, this chatbot is your trusted guide to the stock market.
 
-The "Log Out" button is an instance variable in class `LoggedInVew`. Go find it.
-Also look at the `interface_adapter.change_password.LoggedInViewModel`, which contains any
-data showing on the `LoggedInVew`.
+**📸 Sneak Peek**  
+![AI Chatbot](path/to/your-chatbot-image.png)
 
-* * *
+### 🔍 Explore Page
+Dive deep into the world of stocks with unparalleled data insights:
+- Access over **50,000+ stocks** and several technical indicators.
+- **Historical and Current Data**: Stay updated with the latest and past trends of your favorite stocks.
+- Compare key indicators like **EMA**, **SMA**, and **RSI**, with real-time updates.
+- Generate **customized charts** for every stock to visualize performance.
+- Get a comprehensive **company summary** with vital details, helping you make informed decisions.
 
-## Task 2: Dividing up the work
+**📸 Explore Page in Action**  
+![Explore Page](path/to/your-explore-page-image.png)
 
-There are `TODO` comments left in the files
-Recall that you can use the TODO tool window to conveniently pull up a complete list.
+### 📈 Portfolio
+Your personalized portfolio management system:
+- **Buy/Sell Stocks**: Seamlessly trade stocks with just a few clicks.
+- **Transaction History**: Keep track of all your past trades for full transparency.
+- **Personalized Dashboard**: View your **current holdings**, track performance, and manage your investments with ease.
+- Tailored insights to help you grow your portfolio and make smarter decisions.
 
-Once the TODOs are all complete, the "Log Out" button _should_ work!
+### 🎥 Experience StockFlow
+Check out the app in action!  
+[![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)  
+*Logging in and starting your journey with StockFlow has never been easier!*
 
-As a team, split up the TODOs (see below) between the members of your team.
+---
 
-There are TODOs in seven of the files.
-Make sure each member has at least one TODO which they will be responsible for completing.
-If your team prefers to work in pairs, that is fine too. Your individual branches
-will not be graded for this — only the final, working version.
-
-The TODOs are summarized below (by file) to help your team decide how to split them up:
-
-* * *
-
-- `Main.java`
-
-  - [ ] TODO: add the Logout Use Case to the app using the appBuilder
-
-* * *
-
-- `LoggedInView.java` (tip: refer to the other views for similar code)
-
-  - [ ] TODO: save the logout controller in the instance variable.
-  - [ ] TODO: execute the logout use case through the Controller
-
-* * *
-
-- `LogoutController.java` (tip: refer to the other controllers for similar code)
-
-  - [ ] TODO: Save the interactor in the instance variable.
-  - [ ] TODO: run the use case interactor for the logout use case
-
-* * *
-
-- `LogoutInputData.java` (should be done with the LogoutInteractor TODOs below)
-
-  - [ ] TODO: save the current username in an instance variable and add a getter.
-
-- `LogoutInteractor.java` (tip: refer to `ChangePasswordInteractor.java` for similar code)
-
-  - [ ] TODO: save the DAO and Presenter in the instance variables.
-  - [ ] TODO: implement the logic of the Logout Use Case
-
-* * *
-
-- `LogoutOutputData.java`
-
-  - [ ] TODO: save the parameters in the instance variables.
-
-* * *
-
-- `LogoutPresenter.java` (tip: refer to `SignupPresenter.java` for similar code)
-
-  - [ ] TODO: assign to the three instance variables.
-  - [ ] TODO: have prepareSuccessView update the LoggedInState
-  - [ ] TODO: have prepareSuccessView update the LoginState
-
-* * *
-
-1. Make a branch named the first part of your UofT email address, everything before the `@`.
-For example, if your email address is `paul.gries@mail.utoronto.ca`, then the branch name would
-be `paul.gries`.
-
-Make sure you switch to the new branch.
-
-In the terminal, this would look like below, but replaced with your own information:
-```
-git branch paul.gries
-git switch paul.gries
-```
-
-2. Complete your assigned TODOs and make a pull request on GitHub. In your pull request,
-   briefly describe what your TODOs were and how you implemented them. If you aren't sure
-   about part of it, include this in your pull request so everyone knows what to look
-   for when reviewing — or you can of course discuss with your team before making your
-   pull request since you are physically working in the same space.
-   - **Important: don't push any changes to the `.idea` folder, as that
-     may cause issues for your other teammates, as some files contain
-     configurations specific to your individual IntelliJ projects.**
-
-3. Review each other's pull requests to ensure each TODO is correctly implemented and that
-   there are no Checkstyle issues in the files that were modified.
-
-4. Once all TODOs are completed, your team should debug as needed to ensure the
-   correctness of the code. Setting a breakpoint where the log-out use case
-   interactor starts its work will likely be a great place to start when debugging.
-
-And that's it; you now have a working Logout Use Case! Instructions for
-how to submit your work on MarkUs will be posted later.
-
-Your team should spend the rest of the lab working on your project blueprint.
-
-* * *
-
-# Project Blueprint
-
-See Quercus for details about the project blueprint! By the end of the week,
-the goal is for your team to have a fully drafted blueprint so that your team
-will be ready to get started on your project after Reading Week.
+These features make StockFlow a one-of-a-kind platform for beginners and enthusiasts alike. Whether you're just starting out or looking to refine your trading strategies, **StockFlow gives you the tools and confidence to master the market—all without the risks!** 🚀💡
