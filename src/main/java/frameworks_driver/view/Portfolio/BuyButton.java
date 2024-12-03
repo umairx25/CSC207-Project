@@ -3,6 +3,7 @@ package frameworks_driver.view.Portfolio;
 import interface_adapter.portfolio.PortfolioController;
 import javax.swing.*;
 import java.awt.*;
+import frameworks_driver.view.style_helpers.ColourManager;
 
 public class BuyButton extends JButton {
     private final PortfolioController controller;
@@ -15,15 +16,16 @@ public class BuyButton extends JButton {
         this.companyField = companyField;
         this.quantityField = quantityField;
 
-        setBackground(new Color(46, 204, 113));
-        setForeground(Color.BLACK);
+//        setBackground(ColourManager.MEDIUM_GRAY);
         setPreferredSize(new Dimension(100, 30));
         addActionListener(e -> executeBuyOrder());
     }
 
     private void executeBuyOrder() {
         String company = companyField.getText();
+        System.out.println(company);
         int quantity = (int) quantityField.getValue();
+        System.out.println(quantity);
         controller.executeBuyOrder(company, quantity);
     }
 }

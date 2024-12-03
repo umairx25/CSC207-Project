@@ -135,10 +135,9 @@ public class StockDataAccess implements ChartDataAccessInterface {
     }
 
     //All the methods that use ticker snapshot endpoint
-    public static String getTickerSnapshot(String ticker) {
+    public static String getTickerSnapshot(String ticker)   {
         String baseURL = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/";
         String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
-        System.out.println(urlString);
         return HTTPRequest(urlString);
     }
 
@@ -225,13 +224,7 @@ public class StockDataAccess implements ChartDataAccessInterface {
 
         JSONObject jsonResponse = new JSONObject(content);
         JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
-        System.out.println(day.get("c"));
-        if (day.get("c").equals(0.0)){
-            JSONObject hour = jsonResponse.getJSONObject("ticker").getJSONObject("hour");
-            return round(hour.getDouble("c"), 4);
-        }
-
-        return round(day.getDouble("c"), 4);
+        return round(day.getDouble("c"), 2);
     }
 //    public Double getCurrentPrice(String ticker) {
 //        return 100.0; // Fixed price for testing purposes
@@ -448,6 +441,20 @@ public class StockDataAccess implements ChartDataAccessInterface {
             return "Ticker";
         } else {
             return "Keyword";
+        }
+    }
+
+    public static void main(String[] args) {
+        StockDataAccess stockDataAccess = new StockDataAccess();
+
+        // Get the current price for AAPL
+        Double currentPrice = stockDataAccess.getCurrentPrice("AAPL");
+
+        // Display the result
+        if (currentPrice != null) {
+            System.out.println("The current price of AAPL is: $" + currentPrice);
+        } else {
+            System.out.println("Failed to retrieve the current price for AAPL.");
         }
     }
 

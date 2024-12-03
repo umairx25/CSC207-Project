@@ -3,6 +3,8 @@ package frameworks_driver.view.Portfolio;
 import interface_adapter.portfolio.PortfolioController;
 import javax.swing.*;
 import java.awt.*;
+import frameworks_driver.view.style_helpers.ColourManager;
+
 
 public class SellButton extends JButton {
     private final PortfolioController controller;
@@ -15,8 +17,7 @@ public class SellButton extends JButton {
         this.companyField = companyField;
         this.quantityField = quantityField;
 
-        setBackground(new Color(231, 76, 60));
-        setForeground(Color.BLACK);
+        setBackground(ColourManager.MEDIUM_GRAY);
         setPreferredSize(new Dimension(100, 30));
         addActionListener(e -> executeSellOrder());
     }

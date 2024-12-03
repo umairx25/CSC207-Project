@@ -2,85 +2,101 @@ package frameworks_driver.view.Portfolio;
 
 import interface_adapter.portfolio.PortfolioController;
 import interface_adapter.portfolio.PortfolioViewModel;
-
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
+import java.util.Map;
 import java.util.List;
-import java.beans.PropertyChangeListener;
 
-public class PortfolioView extends JFrame {
+import frameworks_driver.view.style_helpers.ColourManager;
+
+public class PortfolioView extends JPanel {
     private final PortfolioViewModel viewModel;
-    private final JLabel balanceLabel;
-    private final JLabel portfolioBalanceLabel;
+    private final PortfolioController controller;
 
-    public PortfolioView(
-            PortfolioViewModel viewModel,
-            CompanyTextField companyTextField,
-            QuantityTextField quantityTextField,
-            BuyButton buyButton,
-            SellButton sellButton,
-            RefreshButton refreshButton,
-            PortfolioPanel portfolioPanel,
-            HistoryPanel historyPanel
-    ) {
+    private final PortfolioPanel portfolioPanel; // Reference to PortfolioPanel
+    private final HistoryPanel historyPanel;     // Reference to HistoryPanel
+
+    public PortfolioView(PortfolioViewModel viewModel, PortfolioController controller) {
         this.viewModel = viewModel;
+        this.controller = controller;
 
-        // Set up the frame
-        setTitle("Stock Trading Portfolio");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Initialize UI components
         setLayout(new BorderLayout());
+        setSize(1000, 700);
+        setBackground(ColourManager.INNER_BOX_BLUE);  // Set background to light blue
 
-
-        // Header Panel
+        // Header Panel setup
         JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(ColourManager.INNER_BOX_BLUE); // Set header panel to dark blue
 
-        // Title and Home Button
         JLabel titleLabel = new JLabel("Portfolio", SwingConstants.LEFT);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Color.BLUE);
-
+        titleLabel.setForeground(ColourManager.DARK_BLUE);  // Set text to white
         HomeButton homeButton = new HomeButton();
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(titleLabel, BorderLayout.WEST);
         topPanel.add(homeButton, BorderLayout.EAST);
 
-        // Balance Panel
         JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        balanceLabel = new JLabel("Balance:");
-        portfolioBalanceLabel = new JLabel("Portfolio:");
+        balancePanel.setBackground(ColourManager.INNER_BOX_BLUE); // Set balance panel to dark blue
+        JLabel balanceLabel = new JLabel("Balance:");
+        JLabel portfolioBalanceLabel = new JLabel("Portfolio:");
+        balanceLabel.setForeground(ColourManager.WHITE);  // Set text to white
+        portfolioBalanceLabel.setForeground(ColourManager.WHITE);  // Set text to white
         balancePanel.add(balanceLabel);
         balancePanel.add(portfolioBalanceLabel);
 
         headerPanel.add(topPanel, BorderLayout.NORTH);
         headerPanel.add(balancePanel, BorderLayout.SOUTH);
 
-        // Transaction Input Panel
+        // Transaction Input Panel setup
         JPanel transactionPanel = new JPanel(new FlowLayout());
+        transactionPanel.setBackground(ColourManager.INNER_BOX_BLUE); // Set transaction panel to dark blue
+
+        CompanyTextField companyTextField = new CompanyTextField();
+        QuantityTextField quantityTextField = new QuantityTextField();
         transactionPanel.add(new JLabel("Company:"));
         transactionPanel.add(companyTextField);
         transactionPanel.add(new JLabel("Quantity:"));
         transactionPanel.add(quantityTextField);
+
+        // Apply grey color to buttons
+        JButton buyButton = new BuyButton(controller, companyTextField, quantityTextField);
+        JButton sellButton = new SellButton(controller, companyTextField, quantityTextField);
+        JButton refreshButton = new RefreshButton(controller);
+
+        buyButton.setBackground(ColourManager.DARK_GRAY);
+        sellButton.setBackground(ColourManager.DARK_GRAY);
+        refreshButton.setBackground(ColourManager.DARK_GRAY);
+
         transactionPanel.add(buyButton);
         transactionPanel.add(sellButton);
         transactionPanel.add(refreshButton);
 
+        // Main Content Area setup
+        portfolioPanel = new PortfolioPanel();
+        historyPanel = new HistoryPanel(viewModel.getTransactionHistory());
 
-        // Main Content Area
         JPanel mainContentPanel = new JPanel(new BorderLayout());
+        mainContentPanel.setBackground(ColourManager.LIGHT_GRAY);  // Set main content background to light blue
         mainContentPanel.add(portfolioPanel, BorderLayout.CENTER);
         mainContentPanel.add(historyPanel, BorderLayout.EAST);
 
-        // Add Components to Frame
+        // Add components to frame
         add(headerPanel, BorderLayout.NORTH);
         add(transactionPanel, BorderLayout.CENTER);
         add(mainContentPanel, BorderLayout.SOUTH);
 
-        // Add ViewModel listeners
+        // ViewModel listener setup
         viewModel.addPropertyChangeListener(evt -> {
             switch (evt.getPropertyName()) {
+                case "portfolioData":
+                    portfolioPanel.updateTableData((Object[][]) evt.getNewValue());
+                    break;
+                case "transactionHistory":
+                    historyPanel.updateHistory((List<Map<String, Object>>) evt.getNewValue());
+                    break;
                 case "totalBalance":
                     balanceLabel.setText(String.format("Balance: $%.2f", (Double) evt.getNewValue()));
                     break;
@@ -89,5 +105,6 @@ public class PortfolioView extends JFrame {
                     break;
             }
         });
+
     }
 }

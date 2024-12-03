@@ -5,71 +5,47 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 public class HistoryPanel extends JPanel {
     private final DefaultListModel<String> listModel;
     private final JList<String> historyList;
-    private final JScrollPane scrollPane;
 
-    public HistoryPanel(List<String> initialHistory) {
-        // Set up the panel layout
+    public HistoryPanel(List<Map<String, Object>> initialHistory) {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("Transaction History"));
 
-        // Create list model
         listModel = new DefaultListModel<>();
-
-        // Populate initial history
         if (initialHistory != null) {
-            initialHistory.forEach(listModel::addElement);
+            flattenAndAddToListModel(initialHistory);
         }
 
-        // Create JList with the list model
         historyList = new JList<>(listModel);
         historyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Customize list appearance
-        historyList.setVisibleRowCount(15);
-
-        // Add scroll pane
-        scrollPane = new JScrollPane(historyList);
-        scrollPane.setPreferredSize(new Dimension(300, 400));
-
+        JScrollPane scrollPane = new JScrollPane(historyList);
         add(scrollPane, BorderLayout.CENTER);
-
-        // Optional: Add a listener to handle list changes
-        listModel.addListDataListener(new ListDataListener() {
-            @Override
-            public void intervalAdded(ListDataEvent e) {
-                scrollToBottom();
-            }
-
-            @Override
-            public void intervalRemoved(ListDataEvent e) {}
-
-            @Override
-            public void contentsChanged(ListDataEvent e) {}
-        });
     }
 
-    public void updateHistory(List<String> newHistory) {
-        // Clear existing entries
-        listModel.clear();
-
-        // Add new history entries
+    public void updateHistory(List<Map<String, Object>> newHistory) {
+        listModel.clear();  // Clear existing history
         if (newHistory != null) {
-            newHistory.forEach(listModel::addElement);
+            flattenAndAddToListModel(newHistory);  // Add new history data
         }
     }
 
-    private void scrollToBottom() {
-        SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = scrollPane.getVerticalScrollBar();
-            vertical.setValue(vertical.getMaximum());
-        });
-    }
 
-    // Optional: Method to get selected transaction
-    public String getSelectedTransaction() {
-        return historyList.getSelectedValue();
+    private void flattenAndAddToListModel(List<Map<String, Object>> historyList) {
+        for (Map<String, Object> transaction : historyList) {
+            String type = (String) transaction.get("type");
+            String company = (String) transaction.get("company");
+
+            // Add type conversion to handle potential Long
+            int quantity = ((Number) transaction.get("quantity")).intValue();
+
+            double price = ((Number) transaction.get("price")).doubleValue();
+
+            String formattedTransaction = String.format("%s %s: %d shares at $%.2f", type, company, quantity, price);
+            listModel.addElement(formattedTransaction);
+            System.out.println(formattedTransaction);
+        }
     }
 }

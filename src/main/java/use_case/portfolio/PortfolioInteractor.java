@@ -1,6 +1,8 @@
 package use_case.portfolio;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class PortfolioInteractor implements PortfolioInputBoundary {
     private final PortfolioDataAccessInterface dataAccess;
@@ -18,39 +20,44 @@ public class PortfolioInteractor implements PortfolioInputBoundary {
     public void executeTransaction(PortfolioInputData inputData) {
         try {
             if ("BUY".equalsIgnoreCase(inputData.getTransactionType())) {
-                dataAccess.executeBuyOrder(
-                        inputData.getCompany(),
-                        inputData.getQuantity()
-                );
-                System.out.println(inputData.getCompany());
+                dataAccess.executeBuyOrder(inputData.getCompany(), inputData.getQuantity());
             } else if ("SELL".equalsIgnoreCase(inputData.getTransactionType())) {
-                dataAccess.executeSellOrder(
-                        inputData.getCompany(),
-                        inputData.getQuantity()
-                );
+                dataAccess.executeSellOrder(inputData.getCompany(), inputData.getQuantity());
             } else {
                 throw new IllegalArgumentException("Invalid transaction type");
             }
 
-            // After successful transaction, get and present updated portfolio info
-            presenter.presentPortfolioInfo(getPortfolioInfo());
+            // Fetch updated data after executing transaction
+            PortfolioOutputData updatedData = getPortfolioInfo();
+            presenter.presentPortfolioInfo(updatedData);
+
         } catch (Exception e) {
             presenter.presentTransactionError(e.getMessage());
-
         }
     }
 
     @Override
-    public PortfolioOutputData getPortfolioInfo() {
-        return new PortfolioOutputData(
-                dataAccess.getTotalBalance(),
-                dataAccess.getPortfolioBalance(),
-                dataAccess.getPortfolioData(),
-                dataAccess.getTransactionHistory(),
-                dataAccess.getTotalGainLoss(),
-                dataAccess.getTotalGainLossPercentage()
-        );
-    }
+        public PortfolioOutputData getPortfolioInfo() {
+            double totalBalance = dataAccess.getTotalBalance();
+            double portfolioBalance = dataAccess.getPortfolioBalance();
+            Object[][] portfolioData = dataAccess.getPortfolioData();
+            List<Map<String, Object>> transactionHistory = dataAccess.getTransactionHistory();
+            double totalGainLoss = dataAccess.getTotalGainLoss();
+            double totalGainLossPercentage = dataAccess.getTotalGainLossPercentage();
 
+            // Debug fetched data
+            System.out.println("Total Balance: " + totalBalance);
+            System.out.println("Portfolio Balance: " + portfolioBalance);
+            System.out.println("Portfolio Data: " + Arrays.deepToString(portfolioData));
+            System.out.println("Transaction History: " + transactionHistory);
 
+            return new PortfolioOutputData(
+                    totalBalance,
+                    portfolioBalance,
+                    portfolioData,
+                    transactionHistory,
+                    totalGainLoss,
+                    totalGainLossPercentage
+            );
+        }
 }

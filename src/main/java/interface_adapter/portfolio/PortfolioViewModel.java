@@ -2,25 +2,26 @@ package interface_adapter.portfolio;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
+import java.util.List;
+import java.util.Map;
 
 public class PortfolioViewModel {
     private double totalBalance;
     private double portfolioBalance;
     private Object[][] portfolioData;
-    private java.util.List<String> transactionHistory;
+    private List<Map<String, Object>> transactionHistory;
     private double totalGainLoss;
     private double totalGainLossPercentage;
     private String errorMessage;
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    // Add property change listener
+    // Add property change listener for automatic UI updates
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-    // Setters with property change support
+    // Setters that trigger property changes
     public void setTotalBalance(double totalBalance) {
         double oldValue = this.totalBalance;
         this.totalBalance = totalBalance;
@@ -34,16 +35,20 @@ public class PortfolioViewModel {
     }
 
     public void setPortfolioData(Object[][] portfolioData) {
+        if (portfolioData == null) {
+            portfolioData = new Object[0][0];  // Default to an empty 2D array if null
+        }
         Object[][] oldValue = this.portfolioData;
         this.portfolioData = portfolioData;
-        pcs.firePropertyChange("portfolioData", oldValue, portfolioData);
+        pcs.firePropertyChange("portfolioData", oldValue, portfolioData); // Fire property change
     }
 
-    public void setTransactionHistory(java.util.List<String> transactionHistory) {
-        java.util.List<String> oldValue = this.transactionHistory;
+    public void setTransactionHistory(List<Map<String, Object>> transactionHistory) {
+        List<Map<String, Object>> oldValue = this.transactionHistory;
         this.transactionHistory = transactionHistory;
-        pcs.firePropertyChange("transactionHistory", oldValue, transactionHistory);
+        pcs.firePropertyChange("transactionHistory", oldValue, transactionHistory);  // Fire property change event
     }
+
 
     public void setTotalGainLoss(double totalGainLoss) {
         double oldValue = this.totalGainLoss;
@@ -57,13 +62,7 @@ public class PortfolioViewModel {
         pcs.firePropertyChange("totalGainLossPercentage", oldValue, totalGainLossPercentage);
     }
 
-    public void setErrorMessage(String errorMessage) {
-        String oldValue = this.errorMessage;
-        this.errorMessage = errorMessage;
-        pcs.firePropertyChange("errorMessage", oldValue, errorMessage);
-    }
-
-    // Getters
+    // Getters for the data
     public double getTotalBalance() {
         return totalBalance;
     }
@@ -76,7 +75,7 @@ public class PortfolioViewModel {
         return portfolioData;
     }
 
-    public java.util.List<String> getTransactionHistory() {
+    public List<Map<String, Object>> getTransactionHistory() {
         return transactionHistory;
     }
 
@@ -92,31 +91,9 @@ public class PortfolioViewModel {
         return errorMessage;
     }
 
-    public Object[][] getPortfolioTableData() {
-        return portfolioData;
-    }
-
-    public java.util.List<String> getTransactionHistoryList() {
-        return transactionHistory;
-    }
-
-    public String getBalanceDisplay() {
-        return String.format("$%.2f", totalBalance);
-    }
-
-    public String getPortfolioBalanceDisplay() {
-        return String.format("$%.2f", portfolioBalance);
-    }
-
-    public String getGainLossPercentageDisplay() {
-        return String.format("%.2f%%", totalGainLossPercentage);
-    }
-
-    public boolean hasError() {
-        return errorMessage != null && !errorMessage.isEmpty();
-    }
-
-    public void clearError() {
-        setErrorMessage(null);
+    public void setErrorMessage(String errorMessage) {
+        String oldValue = this.errorMessage;
+        this.errorMessage = errorMessage;
+        pcs.firePropertyChange("errorMessage", oldValue, errorMessage);
     }
 }

@@ -1,6 +1,6 @@
 package data_access;
 
-import app.Builder;
+//import app.Builder;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,12 +50,16 @@ public class UserDataAccess implements SignupDataAccessInterface {
 
             UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
             System.out.println("Successfully created new user: " + userRecord.getUid());
-            initialize_database(user, db);
+
+            PortfolioFirestoreAccess firestoreAccess = new PortfolioFirestoreAccess();
+            firestoreAccess.initializeUser(user.getEmail(), 10000.0);  // Initialize with zero balance
+
             return true;
-        } catch (FirebaseAuthException | IOException | ExecutionException | InterruptedException e) {
+        } catch (FirebaseAuthException | ExecutionException | InterruptedException e) {
             return false;
         }
     }
+
 
 
     public boolean existingUser(String email) {
@@ -123,10 +127,10 @@ public class UserDataAccess implements SignupDataAccessInterface {
         return username;
     }
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        Builder builder = new Builder();
-        builder.initialize_firebase("config.json");
-        retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
-    }
+//    public static void main(String[] args) throws ExecutionException, InterruptedException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+//        Builder builder = new Builder();
+//        builder.initialize_firebase("config.json");
+//        retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
+//    }
 
 }

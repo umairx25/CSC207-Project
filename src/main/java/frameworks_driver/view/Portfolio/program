@@ -1,0 +1,1297 @@
+\\ Data Access Layer
+
+\\ ChartDataAccess.java
+package data_access;
+
+import io.github.cdimascio.dotenv.Dotenv;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import use_case.chart.ChartDataAccessInterface;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+public class ChartDataAccess implements ChartDataAccessInterface {
+
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("POLYGON_API_KEY");
+
+    private String makeHttpRequest(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder content = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            conn.disconnect();
+
+            return content.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public LinkedHashMap<Long, Double> getHistoricalData(String ticker, String timespan, String startDate, String endDate) {
+        LinkedHashMap<Long, Double> historicalData = new LinkedHashMap<>();
+        String urlString = String.format(
+                "https://api.polygon.io/v2/aggs/ticker/%s/range/1/%s/%s/%s?adjusted=true&sort=asc&apiKey=%s",
+                ticker, timespan, startDate, endDate, API_KEY
+        );
+
+        String content = makeHttpRequest(urlString);
+        if (content != null) {
+            JSONObject json = new JSONObject(content);
+            if (json.has("results")) {
+                JSONArray results = json.getJSONArray("results");
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject dailyData = results.getJSONObject(i);
+                    historicalData.put(dailyData.getLong("t"), dailyData.getDouble("c"));
+                }
+            }
+        }
+        return historicalData;
+    }
+
+    @Override
+    public LinkedHashMap<Long, Double> getIndicatorData(String type, String ticker, String timespan, String from, String to, int window) {
+        String urlString = String.format(
+                "https://api.polygon.io/v1/indicators/%s/%s?timespan=%s&from=%s&to=%s&window=%d&limit=5000&apiKey=%s",
+                type, ticker, timespan, from, to, window, API_KEY
+        );
+
+        LinkedHashMap<Long, Double> data = new LinkedHashMap<>();
+        String content = makeHttpRequest(urlString);
+        if (content != null) {
+            JSONObject jsonResponse = new JSONObject(content);
+            if (jsonResponse.has("results")) {
+                JSONArray values = jsonResponse.getJSONObject("results").getJSONArray("values");
+                for (int i = 0; i < values.length(); i++) {
+                    JSONObject obj = values.getJSONObject(i);
+                    data.put(obj.getLong("timestamp"), obj.getDouble("value"));
+                }
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public String getTickerName(String ticker) {
+        String urlString = String.format(
+                "https://api.polygon.io/v3/reference/tickers/%s?apiKey=%s", ticker, API_KEY
+        );
+        String content = makeHttpRequest(urlString);
+        if (content != null) {
+            JSONObject json = new JSONObject(content);
+            return json.getJSONObject("results").getString("name");
+        }
+        return "";
+    }
+
+    @Override
+    public Double getCurrentPrice(String ticker) {
+        String urlString = String.format(
+                "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/%s?apiKey=%s", ticker, API_KEY
+        );
+        String content = makeHttpRequest(urlString);
+        if (content != null) {
+            JSONObject json = new JSONObject(content);
+            return json.getJSONObject("ticker").getJSONObject("day").getDouble("c");
+        }
+        return null;
+    }
+
+    @Override
+    public List<Double> getPriceIncrease(String ticker) {
+        String urlString = String.format(
+                "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/%s?apiKey=%s", ticker, API_KEY
+        );
+        String content = makeHttpRequest(urlString);
+        ArrayList<Double> increase = new ArrayList<>();
+        if (content != null) {
+            JSONObject json = new JSONObject(content);
+            JSONObject tickerData = json.getJSONObject("ticker");
+            increase.add(round(tickerData.getDouble("todaysChangePerc"), 4));
+            increase.add(round(tickerData.getDouble("todaysChange"), 4));
+        }
+        return increase;
+    }
+
+    private Double round(double value, int places) {
+        DecimalFormat df = new DecimalFormat("#." + "#".repeat(places));
+        return Double.parseDouble(df.format(value));
+    }
+}
+
+\\InMemoryPortfolioUserDataAccess.java
+package data_access;
+
+import data_access.StockDataAccess;
+import use_case.portfolio.PortfolioUserDataAccessInterface;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class InMemoryPortfolioUserDataAccess implements PortfolioUserDataAccessInterface {
+    private double cashBalance = 27000.00; // Starting cash balance
+    private final Map<String, PortfolioPosition> portfolio = new HashMap<>();
+    private final List<Transaction> transactionHistory = new ArrayList<>();
+
+    @Override
+    public void executeBuyOrder(String company, int quantity) {
+        double pricePerShare = getStockPrice(company);
+        if (pricePerShare == -1) {
+            throw new RuntimeException("Failed to fetch stock price for " + company);
+        }
+
+        double totalCost = pricePerShare * quantity;
+        if (!hasEnoughBalance(company, quantity)) {
+            throw new IllegalArgumentException("Not enough balance to execute buy order.");
+        }
+
+        // Update cash balance
+        cashBalance -= totalCost;
+
+        // Update portfolio position
+        PortfolioPosition position = portfolio.getOrDefault(company, new PortfolioPosition(company, 0, 0));
+        double newAverageCost = ((position.getQuantity() * position.getAvgCost()) + totalCost) / (position.getQuantity() + quantity);
+        position.addQuantity(quantity, newAverageCost);
+        portfolio.put(company, position);
+
+        // Add transaction to history
+        transactionHistory.add(new Transaction("BUY", company, quantity, pricePerShare));
+    }
+
+    @Override
+    public void executeSellOrder(String company, int quantity) {
+        if (!hasEnoughShares(company, quantity)) {
+            throw new IllegalArgumentException("Not enough shares to execute sell order.");
+        }
+
+        double pricePerShare = getStockPrice(company);
+        if (pricePerShare == -1) {
+            throw new RuntimeException("Failed to fetch stock price for " + company);
+        }
+
+        // Update cash balance
+        double totalValue = pricePerShare * quantity;
+        cashBalance += totalValue;
+
+        // Update portfolio position
+        PortfolioPosition position = portfolio.get(company);
+        position.subtractQuantity(quantity);
+        if (position.getQuantity() == 0) {
+            portfolio.remove(company);
+        }
+
+        // Add transaction to history
+        transactionHistory.add(new Transaction("SELL", company, quantity, pricePerShare));
+    }
+
+    @Override
+    public double getTotalBalance() {
+        return cashBalance;
+    }
+
+    @Override
+    public double getPortfolioBalance() {
+        return portfolio.values().stream().mapToDouble(position -> position.getQuantity() * getStockPrice(position.getCompany())).sum();
+    }
+
+    @Override
+    public Object[][] getPortfolioData() {
+        Object[][] data = new Object[portfolio.size()][3];
+        int index = 0;
+        for (PortfolioPosition position : portfolio.values()) {
+            data[index++] = new Object[]{
+                    position.getCompany(),
+                    position.getQuantity(),
+                    position.getAvgCost(),
+                    getStockPrice(position.getCompany()),
+                    position.getQuantity() * getStockPrice(position.getCompany())
+            };
+        }
+        return data;
+    }
+
+    @Override
+    public List<String> getTransactionHistory() {
+        List<String> history = new ArrayList<>();
+        for (Transaction transaction : transactionHistory) {
+            history.add(transaction.toString());
+        }
+        return history;
+    }
+
+    @Override
+    public double getTotalGainLoss() {
+        return getPortfolioBalance() - portfolio.values().stream().mapToDouble(position -> position.getQuantity() * position.getAvgCost()).sum();
+    }
+
+    @Override
+    public double getTotalGainLossPercentage() {
+        double totalCost = portfolio.values().stream().mapToDouble(position -> position.getQuantity() * position.getAvgCost()).sum();
+        return totalCost == 0 ? 0 : (getTotalGainLoss() / totalCost) * 100;
+    }
+
+    @Override
+    public boolean hasEnoughShares(String company, int quantity) {
+        PortfolioPosition position = portfolio.get(company);
+        return position != null && position.getQuantity() >= quantity;
+    }
+
+    @Override
+    public boolean hasEnoughBalance(String company, int quantity) {
+        double pricePerShare = getStockPrice(company);
+        return cashBalance >= pricePerShare * quantity;
+    }
+
+    private double getStockPrice(String company) {
+        try {
+            // Use StockDataAccess to fetch the current price for the given company
+            StockDataAccess stockDataAccess = new StockDataAccess();
+            return stockDataAccess.getCurrentPrice(company); // Assume such a method exists
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private static class PortfolioPosition {
+        private final String company;
+        private int quantity;
+        private double avgCost;
+
+        public PortfolioPosition(String company, int quantity, double avgCost) {
+            this.company = company;
+            this.quantity = quantity;
+            this.avgCost = avgCost;
+        }
+
+        public String getCompany() {
+            return company;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public double getAvgCost() {
+            return avgCost;
+        }
+
+        public void addQuantity(int quantity, double avgCost) {
+            this.quantity += quantity;
+            this.avgCost = avgCost;
+        }
+
+        public void subtractQuantity(int quantity) {
+            this.quantity -= quantity;
+        }
+    }
+
+    private static class Transaction {
+        private final String type;
+        private final String company;
+        private final int quantity;
+        private final double price;
+
+        public Transaction(String type, String company, int quantity, double price) {
+            this.type = type;
+            this.company = company;
+            this.quantity = quantity;
+            this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return type + ": " + quantity + " shares of " + company + " at $" + price;
+        }
+    }
+}
+
+\\ StockDataAccess.java
+package data_access;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import use_case.chart.ChartDataAccessInterface;
+
+
+public class StockDataAccess implements ChartDataAccessInterface {
+    static final Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("POLYGON_API_KEY");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public static String getAggregateData(String ticker, int multiplier, String timespan, String from, String to) {
+        String baseURL = "https://api.polygon.io/v2/aggs/ticker/";
+        String urlString = baseURL + ticker + "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
+        return HTTPRequest(urlString);
+    }
+    public static List<Double> getHistoricalClosingData(String ticker, int multiplier, String timespan, String from, String to) {
+        String urlString = "https://api.polygon.io/v2/aggs/ticker/" + ticker + "/range/" + multiplier + "/" + timespan + "/" + from + "/" + to + "?apiKey=" + API_KEY;
+        List<Double> prices = new ArrayList<>();
+        String results = HTTPRequest(urlString);
+        JSONObject jsonResponse = new JSONObject(results);
+        JSONArray resultsArray = jsonResponse.getJSONArray("results");
+        for (int i = 0; i < resultsArray.length(); i++) {
+            JSONObject dataPoint = resultsArray.getJSONObject(i);
+            double closePrice = dataPoint.getDouble("c"); // Closing price
+            prices.add(closePrice);
+        }
+        return prices;
+    }
+
+    //Ticker Information: if limit is left empty the api will default it to 100
+    //you can search by either the ticker or exchange name (mic codes only) or keyword but only one at a time!
+    public static String searchCompany(String ticker, String exchange, String keyword) {
+        String baseURL = "https://api.polygon.io/v3/reference/tickers";
+        String limit = "1000";
+        String urlString;
+
+        if (!Objects.equals(ticker, "") && Objects.equals(exchange, "") && Objects.equals(keyword, "")) {
+            urlString = baseURL + "?ticker=" + ticker + "&market=stocks&limit=" + limit + "&apiKey=" + API_KEY;
+        } else if (Objects.equals(ticker, "") && !Objects.equals(exchange, "") && Objects.equals(keyword, "")) {
+            urlString = baseURL + "?market=stocks&exchange=" + exchange + "&limit=" + limit + "&apiKey=" + API_KEY;
+        } else if (Objects.equals(ticker, "") && Objects.equals(exchange, "") && !Objects.equals(keyword, "")) {
+            urlString = baseURL + "?market=stocks&search=" + keyword + "&limit=" + limit + "&apiKey=" + API_KEY;
+        } else {
+            throw new IllegalArgumentException("You must enter either a ticker, an exchange, or a keyword, but not " +
+                    "more than one!");
+        }
+
+        return HTTPRequest(urlString);
+    }
+
+    public static List<String> extractCompanyTickers(String jsonData) {
+        List<String> tickers = new ArrayList<>();
+
+        JSONObject jsonObject = new JSONObject(jsonData);
+        JSONArray results = jsonObject.getJSONArray("results");
+
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject company = results.getJSONObject(i);
+            String ticker = company.getString("ticker");
+            tickers.add(ticker);
+        }
+
+        // Remove duplicates
+        LinkedHashSet<String> cleanSet = new LinkedHashSet<>(tickers);
+
+        return new ArrayList<>(cleanSet);
+    }
+
+    // Logic for getting average volume data for the last 30 days
+    public static JSONArray fetchVolumeData(String ticker)  {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(30);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String from = startDate.format(formatter);
+        String to = endDate.format(formatter);
+        int multiplier = 1;
+        String timespan = "day";
+
+        String result = getAggregateData(ticker, multiplier, timespan, from, to);
+        JSONObject jsonResponse = new JSONObject(result);
+
+        if (jsonResponse.has("results")) {
+            return jsonResponse.getJSONArray("results");
+        } else {
+            return new JSONArray();
+        }
+    }
+
+    public static String calculateAverageVolume(String ticker) {
+        JSONArray resultsArray = fetchVolumeData(ticker);
+
+        if (resultsArray.isEmpty()) {
+            return "N/A";
+        }
+
+        double totalVolume = 0;
+        for (int i = 0; i < resultsArray.length(); i++) {
+            JSONObject dataPoint = resultsArray.getJSONObject(i);
+            totalVolume += dataPoint.getDouble("v"); // Volume
+        }
+        return formatNumber(totalVolume / resultsArray.length());
+    }
+
+    public static List<String> getAllExchanges() {
+        List<String> exchanges = new ArrayList<>();
+        String urlString = "https://api.polygon.io/v3/reference/exchanges?asset_class=stocks&apiKey=tRolQKcnnsS0ASS2_TFAZfjEjqHclpxU";
+
+        String result = HTTPRequest(urlString);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONArray results = jsonObject.getJSONArray("results");
+
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject exchange = results.getJSONObject(i);
+            if (exchange.has("mic")) { // Check if the "mic" key exists
+                exchanges.add(exchange.getString("mic"));
+            }
+        }
+        return exchanges;
+    }
+
+    //All the methods that use ticker snapshot endpoint
+    public static String getTickerSnapshot(String ticker)   {
+        String baseURL = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/";
+        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
+        return HTTPRequest(urlString);
+    }
+
+    public static String getOpen(String ticker) {
+        String result = getTickerSnapshot(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject tickerObject = jsonObject.getJSONObject("ticker");
+        JSONObject dayObject = tickerObject.getJSONObject("day");
+
+        double open = dayObject.getDouble("o");
+        if (open != 0) {
+            return formatNumber(open);
+        } else {
+            return "Stock is currently closed.";
+        }
+    }
+
+    public static List<String> getHighLow(String ticker) throws Exception {
+        String result = getTickerSnapshot(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+
+        JSONObject tickerObject;
+        try {
+            tickerObject = jsonObject.getJSONObject("ticker");
+        } catch (Exception e){
+            return Arrays.asList("N/A", "N/A");
+        }
+
+        JSONObject dayObject;
+        try {
+            dayObject = tickerObject.getJSONObject("day");
+        } catch (Exception e){
+            return Arrays.asList("N/A", "N/A");
+        }
+
+        List<String> highLow = new ArrayList<>();
+        highLow.add(formatNumber(dayObject.getDouble("h")));
+        highLow.add(formatNumber(dayObject.getDouble("l")));
+        return highLow;
+    }
+
+    //All the methods that use company overview endpoint
+    public static String getCompanyOverview(String ticker) {
+        String baseURL = "https://api.polygon.io/v3/reference/tickers/";
+        String urlString = baseURL + ticker + "?apiKey=" + API_KEY;
+        return HTTPRequest(urlString);
+    }
+
+    public static String getPrimaryExchange(String ticker) throws Exception {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+
+        try {
+            return resultsObject.getString("primary_exchange");
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    public static String getMarketCap(String ticker) throws Exception {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+
+        try {
+            double marketCap = resultsObject.getDouble("market_cap");
+            return formatNumber(marketCap);
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    public String getTickerName(String ticker) {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+        return resultsObject.getString("name");
+    }
+
+    @Override
+    public Double getCurrentPrice(String ticker) {
+        String content = getTickerSnapshot(ticker);
+
+        JSONObject jsonResponse = new JSONObject(content);
+        JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
+        return round(day.getDouble("c"), 4);
+    }
+
+    @Override
+    public List<Double> getPriceIncrease(String ticker) {
+        String content = getTickerSnapshot(ticker);
+        ArrayList<Double> increase = new ArrayList<>();
+
+        JSONObject jsonResponse = new JSONObject(content);
+        JSONObject tickerData= jsonResponse.getJSONObject("ticker");
+        increase.add(round(tickerData.getDouble("todaysChangePerc"), 4));
+        increase.add(round(tickerData.getDouble("todaysChange"), 4));
+        return increase;
+    }
+
+    public static String getDesc(String ticker) throws Exception {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+
+        try {
+            return resultsObject.getString("description");
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    public static String getWebpage(String ticker) throws Exception {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+
+        try {
+            return resultsObject.getString("homepage_url");
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    public static String getLocation(String ticker) throws Exception {
+        String result = getCompanyOverview(ticker);
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject resultsObject = jsonObject.getJSONObject("results");
+
+        if (!resultsObject.has("address")) {
+            return "N/A";
+        } else {
+            JSONObject addressObject = resultsObject.getJSONObject("address");
+            try {
+                return addressObject.getString("city") + ", " + addressObject.getString("state");
+            } catch (Exception e) {
+                return "N/A";
+            }
+        }
+    }
+
+//    public LinkedHashMap<Long, Double> getHistoricalData(String ticker, String timespan, String startDate, String endDate) {
+//        LinkedHashMap<Long, Double> historicalData = new LinkedHashMap<>();
+//        String content = getAggregateData(ticker, 1,timespan, startDate, endDate);
+//        JSONObject jsonObject = new JSONObject(content);
+//        System.out.println("Fetching historical data for " + ticker);
+//
+//        if (jsonObject.has("results")) {
+//            JSONArray results = jsonObject.getJSONArray("results");
+//            for (int i = 0; i < results.length(); i++) {
+//                JSONObject dailyData = results.getJSONObject(i);
+//                Long date = dailyData.getLong("t");
+//                double closePrice = dailyData.getDouble("c");
+//                historicalData.put(date, closePrice);
+//            }
+//        } else {
+//            System.out.println("No 'results' found in response. Full response: " + content);
+//        }
+//        return historicalData;
+//    }
+
+    public LinkedHashMap<Long, Double> getHistoricalData(String ticker, String timespan, String startDate, String endDate) {
+        LinkedHashMap<Long, Double> historicalData = new LinkedHashMap<>();
+        String baseURL = "https://api.polygon.io/v2/aggs/ticker/";
+        String urlString = baseURL + ticker + "/range/1/" + timespan + "/" + startDate + "/" + endDate + "?adjusted=true&sort=asc&apiKey=" + API_KEY;
+
+        System.out.println("Fetching historical data for " + ticker);
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder content = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            conn.disconnect();
+
+            JSONObject json = new JSONObject(content.toString());
+            if (json.has("results")) {
+                JSONArray results = json.getJSONArray("results");
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject dailyData = results.getJSONObject(i);
+//                    String date = FORMATTER.format(
+//                            LocalDate.ofEpochDay(dailyData.getLong("t") / 86400000L)
+//                    );
+                    Long date = dailyData.getLong("t");
+                    double closePrice = dailyData.getDouble("c");
+                    historicalData.put(date, closePrice);
+                }
+            } else {
+                System.out.println("No 'results' found in response. Full response: " + content);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return historicalData;
+    }
+
+    @Override
+    public LinkedHashMap<Long, Double> getIndicatorData(String indicator, String ticker, String timespan, String from, String to, int window) {
+        LinkedHashMap<Long, Double> data = new LinkedHashMap<>();
+
+        String urlString = String.format(
+                "https://api.polygon.io/v1/indicators/%s/%s?timespan=%s&from=%s&to=%s&window=%d&limit=5000&apiKey=%s",
+                indicator, ticker, timespan, from, to, window, API_KEY
+        );
+
+        String content = HTTPRequest(urlString);
+        JSONObject jsonResponse = new JSONObject(content);
+
+        JSONObject result;
+        try {
+            result = jsonResponse.getJSONObject("results");
+        } catch (Exception e) {
+            System.out.println("No 'results' found in response.");
+            result = new JSONObject();
+        }
+
+        JSONArray values = result.getJSONArray("values");
+
+        for (int i = values.length() - 1; i >= 0; i--) {
+            JSONObject obj = values.getJSONObject(i);
+            data.put(obj.getLong("timestamp"), obj.getDouble("value"));
+        }
+        return data;
+    }
+
+
+
+    public static Double round(double value, int places) {
+        DecimalFormat df = new DecimalFormat("#." + "#".repeat(places));
+        return Double.parseDouble(df.format(value));
+    }
+
+
+    //Sends requests to the server.
+    static String HTTPRequest(String urlString) {
+        StringBuilder response = new StringBuilder();
+
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+            } else {
+                System.out.println("GET request failed. Response Code: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return response.toString();
+    }
+
+    //Makes the json output look pretty.
+    public static String formatJson(String json) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(gson.fromJson(json, Object.class));
+    }
+
+    //Utility method to round numbers
+    public static String formatNumber(double value) {
+        if (value >= 1_000_000_000_000.0) {
+            return String.format("%.1fT", value / 1_000_000_000_000.0);
+        } else if (value >= 1_000_000_000.0) {
+            return String.format("%.1fB", value / 1_000_000_000.0);
+        } else if (value >= 1_000_000.0) {
+            return String.format("%.2fM", value / 1_000_000.0);
+        } else {
+            return String.format("%.2f", value);
+        }
+    }
+
+    public static String identifyInputType(String input) {
+        // Regex pattern for tickers (alphanumeric, periods, 1-5 characters)
+        String tickerPattern = "^[A-Za-z0-9.]{1,5}$";
+        // List of known exchanges
+        List<String> exchanges = getAllExchanges();
+
+        if (exchanges.contains(input.toUpperCase())) {
+            return "Exchange";
+        } else if (input.matches(tickerPattern)) {
+            return "Ticker";
+        } else {
+            return "Keyword";
+        }
+    }
+
+}
+\\ View Layer
+
+\\ BuyButton.java
+package frameworks_driver.view.Portfolio;
+
+import interface_adapter.portfolio.PortfolioController;
+import javax.swing.*;
+import java.awt.*;
+
+public class BuyButton extends JButton {
+    private final PortfolioController controller;
+    private final CompanyTextField companyField;
+    private final QuantityTextField quantityField;
+
+    public BuyButton(PortfolioController controller, CompanyTextField companyField, QuantityTextField quantityField) {
+        super("Buy");
+        this.controller = controller;
+        this.companyField = companyField;
+        this.quantityField = quantityField;
+
+        setBackground(new Color(46, 204, 113));
+        setForeground(Color.WHITE);
+        setPreferredSize(new Dimension(100, 30));
+        addActionListener(e -> executeBuyOrder());
+    }
+
+    private void executeBuyOrder() {
+        String company = companyField.getText();
+        int quantity = (int) quantityField.getValue();
+        controller.executeBuyOrder(company, quantity);
+    }
+}
+
+\\ CompanyTextField.java
+package frameworks_driver.view.Portfolio;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class CompanyTextField extends JTextField {
+    public CompanyTextField() {
+        setPreferredSize(new Dimension(150, 30));
+        setToolTipText("Enter company ticker");
+        setBorder(BorderFactory.createTitledBorder("Company"));
+    }
+
+    @Override
+    public String getText() {
+        return super.getText().toUpperCase().trim();
+    }
+}
+
+\\ HistoryPanel.java
+package frameworks_driver.view.Portfolio;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
+public class HistoryPanel extends JPanel {
+    private final JList<String> historyList;
+    private final DefaultListModel<String> listModel;
+
+    public HistoryPanel(List<String> initialHistory) {
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createTitledBorder("Transaction History"));
+
+        listModel = new DefaultListModel<>();
+        initialHistory.forEach(listModel::addElement);
+
+        historyList = new JList<>(listModel);
+        historyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(historyList);
+        scrollPane.setPreferredSize(new Dimension(300, 400));
+
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    public void updateHistory(List<String> newHistory) {
+        listModel.clear();
+        newHistory.forEach(listModel::addElement);
+    }
+}
+
+\\ HomeButton.java
+
+package frameworks_driver.view.Portfolio;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class HomeButton extends JButton {
+    public HomeButton() {
+        super("Home");
+        setBackground(new Color(52, 152, 219));
+        setForeground(Color.WHITE);
+        setPreferredSize(new Dimension(80, 30));
+    }
+
+    public void addHomeButtonListener(ActionListener listener) {
+        addActionListener(listener);
+    }
+}
+
+
+\\ PortfolioPanel.java
+package frameworks_driver.view.Portfolio;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+
+public class PortfolioPanel extends JPanel {
+    private final JTable portfolioTable;
+    private final String[] columnNames = {"Ticker", "Company", "Quantity", "Average Cost",
+            "Market Price", "Total Value", "Profit"};
+
+    public PortfolioPanel() {
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createTitledBorder("Portfolio Holdings"));
+
+        portfolioTable = new JTable(new Object[0][7], columnNames);
+        portfolioTable.setFillsViewportHeight(true);
+
+        JScrollPane scrollPane = new JScrollPane(portfolioTable);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    public void updateTableData(Object[][] newData) {
+        portfolioTable.setModel(new DefaultTableModel(newData, columnNames));
+    }
+}
+
+
+\\ PortfolioView.java
+package frameworks_driver.view.Portfolio;
+
+import interface_adapter.portfolio.PortfolioController;
+import interface_adapter.portfolio.PortfolioViewModel;
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+public class PortfolioView extends JPanel implements PropertyChangeListener {
+    private final PortfolioViewModel viewModel;
+    private final PortfolioController controller;
+    private final JLabel totalBalanceLabel;
+    private final JLabel portfolioBalanceLabel;
+    private final JLabel gainLossLabel;
+    private final PortfolioPanel portfolioPanel;
+    private final HistoryPanel historyPanel;
+
+    public PortfolioView(PortfolioViewModel viewModel, PortfolioController controller) {
+        this.viewModel = viewModel;
+        this.controller = controller;
+        this.viewModel.addPropertyChangeListener(this);
+
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Top Panel
+        JPanel topPanel = new JPanel(new BorderLayout());
+
+        // Header Panel (Title and Home Button)
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("Portfolio");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(0, 102, 204));
+        headerPanel.add(titleLabel, BorderLayout.WEST);
+
+        HomeButton homeButton = new HomeButton();
+        headerPanel.add(homeButton, BorderLayout.EAST);
+        topPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // Balance Panel
+        JPanel balancePanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        totalBalanceLabel = new JLabel();
+        portfolioBalanceLabel = new JLabel();
+        gainLossLabel = new JLabel();
+        updateBalanceLabels();
+
+        balancePanel.add(totalBalanceLabel);
+        balancePanel.add(portfolioBalanceLabel);
+        balancePanel.add(gainLossLabel);
+        topPanel.add(balancePanel, BorderLayout.CENTER);
+
+        add(topPanel, BorderLayout.NORTH);
+
+        // Center Panel with Portfolio and History
+        portfolioPanel = new PortfolioPanel();
+        historyPanel = new HistoryPanel(viewModel.getTransactionHistory());
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                portfolioPanel, historyPanel);
+        splitPane.setResizeWeight(0.7);
+        add(splitPane, BorderLayout.CENTER);
+
+        // Trading Panel
+        JPanel tradingPanel = createTradingPanel();
+        add(tradingPanel, BorderLayout.SOUTH);
+
+        // Initial refresh
+        controller.refreshPortfolio();
+    }
+
+    private JPanel createTradingPanel() {
+        JPanel tradingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        tradingPanel.setBorder(BorderFactory.createTitledBorder("Trading"));
+
+        CompanyTextField companyField = new CompanyTextField();
+        QuantityTextField quantityField = new QuantityTextField();
+        BuyButton buyButton = new BuyButton(controller, companyField, quantityField);
+        SellButton sellButton = new SellButton(controller, companyField, quantityField);
+        System.out.println(companyField);
+
+        tradingPanel.add(companyField);
+        tradingPanel.add(quantityField);
+        tradingPanel.add(buyButton);
+        tradingPanel.add(sellButton);
+
+        return tradingPanel;
+    }
+
+    private void updateBalanceLabels() {
+        totalBalanceLabel.setText(String.format("Total Balance: $%.2f", viewModel.getTotalBalance()));
+        portfolioBalanceLabel.setText(String.format("Portfolio Balance: $%.2f", viewModel.getPortfolioBalance()));
+
+        double gainLoss = viewModel.getTotalGainLoss();
+        double gainLossPercentage = viewModel.getTotalGainLossPercentage();
+        Color gainLossColor = gainLoss >= 0 ? new Color(46, 204, 113) : new Color(231, 76, 60);
+        gainLossLabel.setText(String.format("Total Gain/Loss: $%.2f (%.2f%%)", gainLoss, gainLossPercentage));
+        gainLossLabel.setForeground(gainLossColor);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("state")) {
+            updateBalanceLabels();
+            portfolioPanel.updateTableData(viewModel.getPortfolioTableData());
+            historyPanel.updateHistory(viewModel.getTransactionHistory());
+
+            // Handle errors if any
+            String error = viewModel.getError();
+            if (error != null && !error.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        error,
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                viewModel.setError(null);
+            }
+        }
+    }
+}
+
+
+\\ QuantityTextField.java
+package frameworks_driver.view.Portfolio;
+
+import javax.swing.*;
+import java.awt.*;
+import javax.swing.text.NumberFormatter;
+import java.text.NumberFormat;
+
+public class QuantityTextField extends JFormattedTextField {
+    public QuantityTextField() {
+        super(createFormatter());
+        setPreferredSize(new Dimension(100, 30));
+        setBorder(BorderFactory.createTitledBorder("Quantity"));
+        setValue(0);
+    }
+
+    private static NumberFormatter createFormatter() {
+        NumberFormat format = NumberFormat.getInstance();
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setAllowsInvalid(false);
+        return formatter;
+    }
+
+    public Object getValue() {
+        Object value = super.getValue();
+        return value == null ? 0 : (Integer) value;
+    }
+}
+
+\\ SellButton.java
+package frameworks_driver.view.Portfolio;
+
+import interface_adapter.portfolio.PortfolioController;
+import javax.swing.*;
+import java.awt.*;
+
+public class SellButton extends JButton {
+    private final PortfolioController controller;
+    private final CompanyTextField companyField;
+    private final QuantityTextField quantityField;
+
+    public SellButton(PortfolioController controller, CompanyTextField companyField, QuantityTextField quantityField) {
+        super("Sell");
+        this.controller = controller;
+        this.companyField = companyField;
+        this.quantityField = quantityField;
+
+        setBackground(new Color(231, 76, 60));
+        setForeground(Color.WHITE);
+        setPreferredSize(new Dimension(100, 30));
+        addActionListener(e -> executeSellOrder());
+    }
+
+    private void executeSellOrder() {
+        String company = companyField.getText();
+        int quantity = (int) quantityField.getValue();
+        controller.executeSellOrder(company, quantity);
+    }
+}
+
+\\ Use Case
+
+\\ ChartDataAccessInterface.java
+package use_case.chart;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+
+public interface ChartDataAccessInterface {
+    LinkedHashMap<Long, Double> getHistoricalData(String ticker, String timespan, String startDate, String endDate);
+
+    LinkedHashMap<Long, Double> getIndicatorData(String type, String ticker, String timespan, String from, String to, int window);
+
+    String getTickerName(String ticker);
+
+    Double getCurrentPrice(String ticker);
+
+    List<Double> getPriceIncrease(String ticker);
+}
+
+\\ PortfolioInputBoundary.java
+package use_case.portfolio;
+
+public interface PortfolioInputBoundary {
+    void execute(PortfolioInputData inputData);
+}
+
+
+\\ PortfolioInputData
+package use_case.portfolio;
+
+public class PortfolioInputData {
+    private final String company;
+    private final int quantity;
+    private final String orderType;
+
+    public PortfolioInputData(String company, int quantity, String orderType) {
+        this.company = company;
+        this.quantity = quantity;
+        this.orderType = orderType;
+    }
+
+    public String getCompany() { return company; }
+    public int getQuantity() { return quantity; }
+    public String getOrderType() { return orderType; }
+}
+
+
+\\ PortfolioInteractor.java
+package use_case.portfolio;
+
+import data_access.StockDataAccess;
+
+public class PortfolioInteractor implements PortfolioInputBoundary {
+    private final PortfolioUserDataAccessInterface dataAccess;
+    private final PortfolioOutputBoundary presenter;
+
+    public PortfolioInteractor(PortfolioUserDataAccessInterface dataAccess, StockDataAccess stockDataAccess, PortfolioOutputBoundary presenter) {
+        this.dataAccess = dataAccess;
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void execute(PortfolioInputData inputData) {
+        try {
+            switch (inputData.getOrderType()) {
+                case "BUY":
+                    processBuyOrder(inputData);
+                    break;
+                case "SELL":
+                    processSellOrder(inputData);
+                    break;
+                case "REFRESH":
+                    refreshPortfolioData();
+                    break;
+            }
+        } catch (Exception e) {
+            presenter.presentError(e.getMessage());
+        }
+    }
+
+    private void processBuyOrder(PortfolioInputData inputData) {
+        // Verify current price using StockDataAccess
+        StockDataAccess stockDataAccess = new StockDataAccess();
+        Double currentPrice = stockDataAccess.getCurrentPrice(inputData.getCompany());
+        System.out.println(currentPrice);
+        if (currentPrice == null) {
+            throw new RuntimeException("Unable to fetch current price for " + inputData.getCompany());
+        }
+
+        dataAccess.executeBuyOrder(inputData.getCompany(), inputData.getQuantity());
+        refreshPortfolioData();
+    }
+
+    private void processSellOrder(PortfolioInputData inputData) {
+        // Similar verification as buy order
+        StockDataAccess stockDataAccess = new StockDataAccess();
+        Double currentPrice = stockDataAccess.getCurrentPrice(inputData.getCompany());
+        if (currentPrice == null) {
+            throw new RuntimeException("Unable to fetch current price for " + inputData.getCompany());
+        }
+
+        dataAccess.executeSellOrder(inputData.getCompany(), inputData.getQuantity());
+        refreshPortfolioData();
+    }
+
+    private void refreshPortfolioData() {
+        System.out.println(dataAccess.getTransactionHistory());
+        portfolioOutputData outputData = new portfolioOutputData(
+                dataAccess.getTotalBalance(),
+                dataAccess.getPortfolioBalance(),
+                dataAccess.getPortfolioData(),
+                dataAccess.getTransactionHistory(),
+                dataAccess.getTotalGainLoss(),
+                dataAccess.getTotalGainLossPercentage()
+        );
+        presenter.presentPortfolioData(outputData);
+    }
+}
+
+\\ PortfolioOutputBoundary.java
+package use_case.portfolio;
+
+public interface PortfolioOutputBoundary {
+    void presentPortfolioData(portfolioOutputData outputData);
+    void presentError(String error);
+}
+
+\\ portfolioOutputData.java
+package use_case.portfolio;
+
+import java.util.List;
+
+public class portfolioOutputData {
+    private final double totalBalance;
+    private final double portfolioBalance;
+    private final Object[][] portfolioData;
+    private final List<String> transactionHistory;
+    private final double totalGainLoss;
+    private final double totalGainLossPercentage;
+
+    public portfolioOutputData(double totalBalance, double portfolioBalance,
+                               Object[][] portfolioData, List<String> transactionHistory,
+                               double totalGainLoss, double totalGainLossPercentage) {
+        this.totalBalance = totalBalance;
+        this.portfolioBalance = portfolioBalance;
+        this.portfolioData = portfolioData;
+        this.transactionHistory = transactionHistory;
+        this.totalGainLoss = totalGainLoss;
+        this.totalGainLossPercentage = totalGainLossPercentage;
+    }
+
+    public double getTotalBalance() { return totalBalance; }
+    public double getPortfolioBalance() { return portfolioBalance; }
+    public Object[][] getPortfolioData() { return portfolioData; }
+    public List<String> getTransactionHistory() { return transactionHistory; }
+    public double getTotalGainLoss() { return totalGainLoss; }
+    public double getTotalGainLossPercentage() { return totalGainLossPercentage; }
+}
+
+\\ Main.java
+package use_case;
+
+import data_access.InMemoryPortfolioUserDataAccess;
+import data_access.StockDataAccess;
+import interface_adapter.portfolio.PortfolioController;
+import interface_adapter.portfolio.PortfolioPresenter;
+import interface_adapter.portfolio.PortfolioViewModel;
+import use_case.portfolio.PortfolioInputBoundary;
+import use_case.portfolio.PortfolioInteractor;
+import frameworks_driver.view.Portfolio.PortfolioView;
+
+import javax.swing.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // Data Access Layer
+        InMemoryPortfolioUserDataAccess portfolioDataAccess = new InMemoryPortfolioUserDataAccess();
+        StockDataAccess stockDataAccess = new StockDataAccess();
+
+        // ViewModel
+        PortfolioViewModel portfolioViewModel = new PortfolioViewModel();
+
+        // Presenter
+        PortfolioPresenter portfolioPresenter = new PortfolioPresenter(portfolioViewModel);
+
+        // Interactor (Use Case)
+        PortfolioInputBoundary portfolioInteractor = new PortfolioInteractor(
+                portfolioDataAccess, stockDataAccess, portfolioPresenter);
+
+        // Controller
+        PortfolioController portfolioController = new PortfolioController(portfolioInteractor);
+
+        // View
+        PortfolioView portfolioView = new PortfolioView(portfolioViewModel, portfolioController);
+
+        // Set up JFrame
+        JFrame frame = new JFrame("Stock Trading Simulator - Portfolio");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600); // Set size as per your design
+        frame.add(portfolioView);
+        frame.setVisible(true);
+    }
+}

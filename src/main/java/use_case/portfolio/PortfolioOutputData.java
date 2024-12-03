@@ -1,13 +1,15 @@
 package use_case.portfolio;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class PortfolioOutputData {
     private final double totalBalance;
     private final double portfolioBalance;
     private final Object[][] portfolioData;
-    private final List<String> transactionHistory;
+    private final List<Map<String, Object>> transactionHistory;
     private final double totalGainLoss;
     private final double totalGainLossPercentage;
 
@@ -15,7 +17,7 @@ public class PortfolioOutputData {
             double totalBalance,
             double portfolioBalance,
             Object[][] portfolioData,
-            List<String> transactionHistory,
+            List<Map<String, Object>> transactionHistory,
             double totalGainLoss,
             double totalGainLossPercentage
     ) {
@@ -40,7 +42,7 @@ public class PortfolioOutputData {
         return portfolioData;
     }
 
-    public List<String> getTransactionHistory() {
+    public List<Map<String, Object>> getTransactionHistory() {
         return transactionHistory;
     }
 
@@ -51,4 +53,5 @@ public class PortfolioOutputData {
     public double getTotalGainLossPercentage() {
         return totalGainLossPercentage;
     }
+
 }

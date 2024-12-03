@@ -3,12 +3,13 @@ package frameworks_driver.view.Portfolio;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import frameworks_driver.view.style_helpers.ColourManager;
+
 
 public class HomeButton extends JButton {
     public HomeButton() {
         super("Home");
-        setBackground(new Color(52, 152, 219));
-        setForeground(Color.BLACK);
+        setBackground(ColourManager.MEDIUM_GRAY);
         setPreferredSize(new Dimension(80, 30));
     }
 

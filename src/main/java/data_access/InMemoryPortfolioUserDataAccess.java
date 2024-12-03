@@ -1,212 +1,237 @@
 package data_access;
 
+import com.google.cloud.firestore.*;
+import com.google.firebase.cloud.FirestoreClient;
 import use_case.portfolio.PortfolioDataAccessInterface;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInterface {
-    private double cashBalance = 27000.00; // Starting cash balance
-    private final Map<String, PortfolioPosition> portfolio = new HashMap<>();
-    private final List<Transaction> transactionHistory = new ArrayList<>();
+    private final PortfolioFirestoreAccess firestoreAccess;
+    private final String userEmail;
+    private final Firestore db;
+
+    public InMemoryPortfolioUserDataAccess(String userEmail) {
+        this.firestoreAccess = new PortfolioFirestoreAccess();
+        this.userEmail = userEmail;
+        this.db = FirestoreClient.getFirestore();
+    }
 
     @Override
     public void executeBuyOrder(String company, int quantity) {
-        // Fetch the stock price for the company using ChartDataAccess
-        StockDataAccess dataAccess = new StockDataAccess();
-        double pricePerShare = dataAccess.getCurrentPrice(company);
-        System.out.println(pricePerShare);
-        if (pricePerShare == -1) {
-            throw new RuntimeException("Failed to fetch stock price for " + company);
+        try {
+            StockDataAccess dataAccess = new StockDataAccess();
+            double pricePerShare = dataAccess.getCurrentPrice(company);
+            if (pricePerShare == -1) {
+                throw new RuntimeException("Failed to fetch stock price for " + company);
+            }
+
+            double totalCost = pricePerShare * quantity;
+
+            Map<String, Object> userData = firestoreAccess.getUserData(userEmail);
+            double balance = (double) userData.get("balance");
+
+            if (balance < totalCost) {
+                throw new IllegalArgumentException("Not enough balance to execute buy order.");
+            }
+
+            // Update Firestore balance
+            firestoreAccess.updateBalance(userEmail, balance - totalCost);
+
+            // Update portfolio holdings (correctly add to the quantity)
+            firestoreAccess.updatePortfolio(userEmail, company, quantity);  // Update portfolio holdings
+
+            // Add transaction record
+            firestoreAccess.addTransaction(userEmail, "BUY", company, quantity, pricePerShare);
+
+            // Refresh transaction history
+            getTransactionHistory();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error executing buy order: " + e.getMessage(), e);
         }
-
-        // Calculate total cost of buying the specified quantity
-        double totalCost = pricePerShare * quantity;
-        System.out.println(totalCost);
-        if (cashBalance < totalCost) {
-            throw new IllegalArgumentException("Not enough balance to execute buy order.");
-        }
-
-        // Update cash balance after the purchase
-        cashBalance -= totalCost;
-
-        // Update portfolio position
-        PortfolioPosition position = portfolio.getOrDefault(company, new PortfolioPosition(company, 0, 0));
-        double newAverageCost = ((position.getQuantity() * position.getAvgCost()) + totalCost) / (position.getQuantity() + quantity);
-        position.addQuantity(quantity, newAverageCost);
-        portfolio.put(company, position);
-
-        // Add transaction to history
-        transactionHistory.add(new Transaction("BUY", company, quantity, pricePerShare));
     }
 
     @Override
     public void executeSellOrder(String company, int quantity) {
-        StockDataAccess dataAccess = new StockDataAccess();
-        PortfolioPosition position = portfolio.get(company);
-        if (position == null || position.getQuantity() < quantity) {
-            throw new IllegalArgumentException("Not enough shares to execute sell order.");
+        try {
+            StockDataAccess dataAccess = new StockDataAccess();
+            double pricePerShare = dataAccess.getCurrentPrice(company);
+            if (pricePerShare == -1) {
+                throw new RuntimeException("Failed to fetch stock price for " + company);
+            }
+
+            DocumentReference userDoc = db.collection("users").document(userEmail);
+            DocumentSnapshot snapshot = userDoc.get().get();
+
+            Map<String, Long> portfolio = (Map<String, Long>) snapshot.get("portfolioHoldings");
+            if (portfolio == null) {
+                throw new IllegalArgumentException("Portfolio is not initialized for user: " + userEmail);
+            }
+
+            long currentQuantity = portfolio.getOrDefault(company, 0L);
+            if (currentQuantity < quantity) {
+                throw new IllegalArgumentException("Not enough shares of " + company + " to sell.");
+            }
+
+            // Deduct the shares from the portfolio
+            portfolio.put(company, currentQuantity - quantity);
+
+            // Calculate the total earnings from the sale
+            double totalEarnings = quantity * pricePerShare;
+
+            // Retrieve the current balance
+            Double currentBalance = snapshot.getDouble("balance");
+            if (currentBalance == null) {
+                throw new RuntimeException("Balance field is missing for user: " + userEmail);
+            }
+
+            double newBalance = currentBalance + totalEarnings;
+
+            // Update Firestore with updated portfolio and balance
+            userDoc.update("portfolioHoldings", portfolio).get();
+            userDoc.update("balance", newBalance).get();
+
+            // Add transaction record for the sell
+            firestoreAccess.addTransaction(userEmail, "SELL", company, quantity, pricePerShare);
+
+            // Refresh transaction history
+            getTransactionHistory();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error executing sell order: " + e.getMessage(), e);
         }
+    }
 
-        // Fetch the stock price for the company using StockDataAccess
-        double pricePerShare = dataAccess.getCurrentPrice(company);
-        if (pricePerShare == -1) {
-            throw new RuntimeException("Failed to fetch stock price for " + company);
+
+    @Override
+    public Object[][] getPortfolioData() {
+        try {
+            Map<String, Object> userData = firestoreAccess.getUserData(userEmail);
+            Map<String, Long> portfolio = (Map<String, Long>) userData.get("portfolioHoldings");
+
+            if (portfolio == null || portfolio.isEmpty()) {
+                return new Object[0][];
+            }
+
+            StockDataAccess dataAccess = new StockDataAccess();
+            Object[][] data = new Object[portfolio.size()][6];
+            int i = 0;
+
+            for (Map.Entry<String, Long> entry : portfolio.entrySet()) {
+                String company = entry.getKey();
+                long quantity = entry.getValue();
+                double marketPrice = dataAccess.getCurrentPrice(company);
+                double avgCost = getAverageCost(company);
+                double totalValue = quantity * marketPrice;
+                double gainLoss = (marketPrice - avgCost) * quantity;
+
+                data[i++] = new Object[]{
+                        company, quantity, avgCost, marketPrice, totalValue, gainLoss
+                };
+            }
+
+            return data;
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching portfolio data: " + e.getMessage(), e);
         }
+    }
 
-        // Calculate total value from selling the specified quantity
-        double totalValue = pricePerShare * quantity;
-
-        // Update cash balance after the sale
-        cashBalance += totalValue;
-
-        // Update portfolio position
-        position.subtractQuantity(quantity);
-
-        // Remove company from portfolio if no shares are left
-        if (position.getQuantity() == 0) {
-            portfolio.remove(company);
-        } else {
-            portfolio.put(company, position);
+    @Override
+    public List<Map<String, Object>> getTransactionHistory() {
+        try {
+            return firestoreAccess.getTransactionHistory(userEmail);
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching transaction history: " + e.getMessage(), e);
         }
-
-        // Add transaction to history
-        transactionHistory.add(new Transaction("SELL", company, quantity, pricePerShare));
     }
 
     @Override
     public double getTotalBalance() {
-        return cashBalance;
+        try {
+            return firestoreAccess.getBalance(userEmail);
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching total balance: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public double getPortfolioBalance() {
-        return portfolio.values().stream().mapToDouble(position -> position.getQuantity() * getStockPrice(position.getCompany())).sum();
-    }
+        try {
+            Map<String, Long> portfolio = getPortfolioHoldings();
+            if (portfolio == null) return 0;
 
-    /**
-     */
-    @Override
-    public List<String[]> getPortfolioTableData() {
-        return List.of();
-    }
+            StockDataAccess dataAccess = new StockDataAccess();
+            double totalValue = 0;
 
-    @Override
-    public Object[][] getPortfolioData() {
-        Object[][] data = new Object[portfolio.size()][6];
-        int index = 0;
-        for (PortfolioPosition position : portfolio.values()) {
-            double currentPrice = getStockPrice(position.getCompany());
-            double totalValue = position.getQuantity() * currentPrice;
-            double totalCost = position.getQuantity() * position.getAvgCost();
-            double gainLossPercentage = totalCost == 0 ? 0 : ((totalValue - totalCost) / totalCost) * 100;
+            for (Map.Entry<String, Long> entry : portfolio.entrySet()) {
+                double marketPrice = dataAccess.getCurrentPrice(entry.getKey());
+                totalValue += entry.getValue() * marketPrice;
+            }
 
-            data[index++] = new Object[]{
-                    position.getCompany(),
-                    position.getQuantity(),
-                    position.getAvgCost(),
-                    currentPrice,
-                    totalValue,
-                    String.format("%.2f%%", gainLossPercentage)
-            };
+            return totalValue;
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching portfolio balance: " + e.getMessage(), e);
         }
-        return data;
-    }
-
-    @Override
-    public List<String> getTransactionHistory() {
-        List<String> history = new ArrayList<>();
-        for (Transaction transaction : transactionHistory) {
-            history.add(transaction.toString());
-        }
-        return history;
     }
 
     @Override
     public double getTotalGainLoss() {
-        return getPortfolioBalance() - portfolio.values().stream().mapToDouble(position -> position.getQuantity() * position.getAvgCost()).sum();
+        double portfolioValue = getPortfolioBalance();
+        double investedCapital = getInvestedCapital();
+        return portfolioValue - investedCapital;
     }
 
     @Override
     public double getTotalGainLossPercentage() {
-        double totalCost = portfolio.values().stream().mapToDouble(position -> position.getQuantity() * position.getAvgCost()).sum();
-        return totalCost == 0 ? 0 : (getTotalGainLoss() / totalCost) * 100;
+        double investedCapital = getInvestedCapital();
+        return investedCapital == 0 ? 0 : (getTotalGainLoss() / investedCapital) * 100;
     }
 
-    @Override
-    public boolean hasEnoughShares(String company, int quantity) {
-        PortfolioPosition position = portfolio.get(company);
-        return position != null && position.getQuantity() >= quantity;
-    }
-
-    @Override
-    public boolean hasEnoughBalance(String company, int quantity) {
-        double pricePerShare = getStockPrice(company);
-        return cashBalance >= pricePerShare * quantity;
-    }
-
-    private double getStockPrice(String company) {
+    private double getAverageCost(String company) {
         try {
-            // Use StockDataAccess to fetch the current price for the given company
-            StockDataAccess stockDataAccess = new StockDataAccess();
-            return stockDataAccess.getCurrentPrice(company); // Assume such a method exists
+            List<Map<String, Object>> history = getTransactionHistory();
+            double totalCost = 0.0;
+            int totalShares = 0;
+
+            for (Map<String, Object> transaction : history) {
+                if ("BUY".equalsIgnoreCase((String) transaction.get("type"))
+                        && company.equals(transaction.get("company"))) {
+                    int quantity = ((Number) transaction.get("quantity")).intValue();
+                    double price = ((Number) transaction.get("price")).doubleValue();
+
+                    totalCost += quantity * price;
+                    totalShares += quantity;
+                }
+            }
+
+            return totalShares == 0 ? 0.0 : totalCost / totalShares;
         } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
+            throw new RuntimeException("Error calculating average cost for company: " + company, e);
         }
     }
 
-    private static class PortfolioPosition {
-        private final String company;
-        private int quantity;
-        private double avgCost;
+    private double getInvestedCapital() {
+        try {
+            Map<String, Long> portfolio = getPortfolioHoldings();
+            double totalCost = 0.0;
 
-        public PortfolioPosition(String company, int quantity, double avgCost) {
-            this.company = company;
-            this.quantity = quantity;
-            this.avgCost = avgCost;
-        }
+            for (String company : portfolio.keySet()) {
+                totalCost += portfolio.get(company) * getAverageCost(company);
+            }
 
-        public String getCompany() {
-            return company;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public double getAvgCost() {
-            return avgCost;
-        }
-
-        public void addQuantity(int quantity, double avgCost) {
-            this.quantity += quantity;
-            this.avgCost = avgCost;
-        }
-
-        public void subtractQuantity(int quantity) {
-            this.quantity -= quantity;
+            return totalCost;
+        } catch (Exception e) {
+            throw new RuntimeException("Error calculating invested capital: " + e.getMessage(), e);
         }
     }
 
-    private static class Transaction {
-        private final String type;
-        private final String company;
-        private final int quantity;
-        private final double price;
-
-        public Transaction(String type, String company, int quantity, double price) {
-            this.type = type;
-            this.company = company;
-            this.quantity = quantity;
-            this.price = price;
-        }
-
-        @Override
-        public String toString() {
-            return type + ": " + quantity + " shares of " + company + " at $" + price;
+    private Map<String, Long> getPortfolioHoldings() {
+        try {
+            Map<String, Object> userData = firestoreAccess.getUserData(userEmail);
+            return (Map<String, Long>) userData.get("portfolioHoldings");
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching portfolio holdings: " + e.getMessage(), e);
         }
     }
 }
