@@ -1,6 +1,7 @@
 package frameworks_driver.view.login;
 
 import app.Builder;
+import entity.CurrentUser;
 import frameworks_driver.view.style_helpers.ColourManager;
 import frameworks_driver.view.style_helpers.FontManager;
 import frameworks_driver.view.style_helpers.GridBagManager;
@@ -65,22 +66,16 @@ public class LoginPanel extends JPanel {
                 currentState.setPassword(password);
                 loginViewModel.setState(currentState);
 
+
                 try {
                     loginController.execute(email, password);
-                    builder.showView("home");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ExecutionException ex) {
-                    throw new RuntimeException(ex);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                } catch (UnsupportedLookAndFeelException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                } catch (InstantiationException ex) {
-                    throw new RuntimeException(ex);
-                } catch (IllegalAccessException ex) {
+                    if (!loginViewModel.getState().isLoginError()) {
+                        builder.showView("home");
+                    }
+                    loginViewModel.getState().setLoginError(false);
+
+                } catch (IOException | ExecutionException | InterruptedException | UnsupportedLookAndFeelException |
+                         ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
                     throw new RuntimeException(ex);
                 }
             }

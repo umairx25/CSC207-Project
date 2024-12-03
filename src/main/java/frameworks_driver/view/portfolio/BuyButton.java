@@ -1,9 +1,8 @@
-package frameworks_driver.view.Portfolio;
+package frameworks_driver.view.portfolio;
 
 import interface_adapter.portfolio.PortfolioController;
 import javax.swing.*;
 import java.awt.*;
-import frameworks_driver.view.style_helpers.ColourManager;
 
 public class BuyButton extends JButton {
     private final PortfolioController controller;

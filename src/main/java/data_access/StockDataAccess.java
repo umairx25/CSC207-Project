@@ -54,8 +54,18 @@ public class StockDataAccess implements ChartDataAccessInterface {
     public Double getCurrentPrice(String ticker) {
         String content = getTickerSnapshot(ticker);
         JSONObject jsonResponse = new JSONObject(content);
-        JSONObject day = jsonResponse.getJSONObject("ticker").getJSONObject("day");
-        return round(day.getDouble("c"), 2);
+
+        JSONObject tickerData = jsonResponse.getJSONObject("ticker");
+        JSONObject day = tickerData.getJSONObject("day");
+        JSONObject prevDay = tickerData.getJSONObject("prevDay");
+
+        double currentPrice = day.getDouble("c");
+        if (currentPrice == 0) {
+            // Fallback to previous day's closing price
+            currentPrice = prevDay.getDouble("c");
+        }
+
+        return round(currentPrice, 2);
     }
 
     /**

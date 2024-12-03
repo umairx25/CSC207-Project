@@ -1,15 +1,14 @@
 package data_access;
 
-import app.Builder;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
-import com.google.firebase.cloud.FirestoreClient;
+import entity.CurrentUser;
 import entity.User;
-import use_case.signup.SignupDataAccessInterface;
+import use_case.signup.SignupUserDataAccessInterface;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -25,10 +24,10 @@ import java.util.concurrent.ExecutionException;
  * Provides methods for user data access, including signing up users,
  * validating existing users, and interacting with the Firestore database.
  */
-public class UserDataAccess implements SignupDataAccessInterface {
+public class UserDataAccess implements SignupUserDataAccessInterface {
     String email;
     String password;
-    String username;
+//    String username;
     final Dotenv dotenv = Dotenv.load();
 
     /**
@@ -36,33 +35,35 @@ public class UserDataAccess implements SignupDataAccessInterface {
      *
      * @param email    the email of the user
      * @param password the password of the user
-     * @param username the username of the user
+//     * @param username the username of the user
      */
-    public UserDataAccess(String email, String password, String username) {
+    public UserDataAccess(String email, String password) {
         this.email = email;
         this.password = password;
-        this.username = username;
+//        this.username = username;
+
     }
 
     /**
      * Signs up a new user in Firebase Auth and initializes their data in Firestore.
      *
-     * @param user     the user entity to sign up
+//     * @param user     the user entity to sign up
      * @param password the user's password
      * @param db       the Firestore database instance
      * @return true if the signup is successful, false otherwise
-     * @throws FirebaseAuthException if Firebase authentication fails
      */
-    public boolean signup(User user, String password, Firestore db) throws FirebaseAuthException {
+    public boolean signup(String password, Firestore db) {
         try {
             // Validate email format
-            if (user.getEmail() == null || !user.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+            System.out.println("UserDa Signup: " + CurrentUser.getemail());
+            if (CurrentUser.getemail() == null || !CurrentUser.getemail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+                System.out.println(CurrentUser.getemail());
                 throw new IllegalArgumentException("Invalid email format");
             }
 
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                    .setEmail(user.getEmail())
-                    .setDisplayName(user.getUsername())
+                    .setEmail(CurrentUser.getemail())
+                    .setDisplayName(CurrentUser.getemail())
                     .setEmailVerified(false)
                     .setPassword(password)
                     .setDisabled(false);
@@ -71,7 +72,7 @@ public class UserDataAccess implements SignupDataAccessInterface {
             System.out.println("Successfully created new user: " + userRecord.getUid());
 
             PortfolioFirestoreAccess firestoreAccess = new PortfolioFirestoreAccess();
-            firestoreAccess.initializeUser(user.getEmail(), 10000.0);  // Initialize with zero balance
+            firestoreAccess.initializeUser(CurrentUser.getemail(), 10000.0);  // Initialize with zero balance
 
             return true;
         } catch (FirebaseAuthException | ExecutionException | InterruptedException e) {
@@ -165,36 +166,10 @@ public class UserDataAccess implements SignupDataAccessInterface {
     }
 
     /**
-     * @return the password of the user
-     */
-    public String getPassword () {
-        return password;
-    }
-
-    /**
      * @return the username of the user
      */
-    public String getUsername () {
-        return username;
-    }
-
-    /**
-     * Main method for testing user data access functionality.
-     *
-     * @param args command-line arguments
-     * @throws ExecutionException                if there are execution issues with Firestore operations
-     * @throws InterruptedException              if the Firestore operation is interrupted
-     * @throws UnsupportedLookAndFeelException   if look-and-feel setup fails
-     * @throws ClassNotFoundException            if a required class is not found
-     * @throws InstantiationException            if instantiation fails
-     * @throws IllegalAccessException            if access control fails
-     * @throws IOException                       if there are issues with database access
-     */
-//    public static void main (String[]args) throws ExecutionException, InterruptedException,
-//            UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
-//            IllegalAccessException, IOException {
-//        Builder builder = new Builder();
-//        builder.initialize_firebase("config.json");
-//        retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
+//    public String getUsername () {
+//        return username;
 //    }
+
 }

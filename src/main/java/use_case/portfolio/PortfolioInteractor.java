@@ -39,6 +39,7 @@ public class PortfolioInteractor implements PortfolioInputBoundary {
     @Override
         public PortfolioOutputData getPortfolioInfo() {
             double totalBalance = dataAccess.getTotalBalance();
+            System.out.println(totalBalance);
             double portfolioBalance = dataAccess.getPortfolioBalance();
             Object[][] portfolioData = dataAccess.getPortfolioData();
             List<Map<String, Object>> transactionHistory = dataAccess.getTransactionHistory();

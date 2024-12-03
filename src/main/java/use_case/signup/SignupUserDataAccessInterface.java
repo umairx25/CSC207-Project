@@ -13,17 +13,17 @@ import java.util.concurrent.ExecutionException;
  * This interface defines methods for signing up a user, initializing Firebase and Firestore,
  * and retrieving user data from the Firestore database.
  */
-public interface SignupDataAccessInterface {
+public interface SignupUserDataAccessInterface {
 
     /**
      * Signs up a new user by creating an account and storing their data in Firebase Authentication.
      *
-     * @param user The user to be created.
+//     * @param user The user to be created.
      * @param password The password for the user.
      * @param db The Firestore database instance.
      * @throws FirebaseAuthException If there is an error with Firebase authentication.
      */
-    public static void signup(User user, String password, Firestore db) throws FirebaseAuthException {}
+    public boolean signup(String password, Firestore db);
 
     /**
      * Initializes the Firebase system with the provided credentials file.
@@ -54,5 +54,14 @@ public interface SignupDataAccessInterface {
      * @throws InterruptedException If the operation is interrupted.
      */
     public User retreive_user_data(String email, Firestore db) throws ExecutionException, InterruptedException;
+
+    /**
+     * Checks if a user with the specified email exists in Firebase Auth.
+     *
+     * @param email the email of the user to check
+     * @return true if the user exists, false otherwise
+     */
+    public boolean existingUser(String email);
+
 
 }

@@ -2,18 +2,19 @@ package data_access;
 
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import entity.CurrentUser;
 import use_case.portfolio.PortfolioDataAccessInterface;
 
 import java.util.*;
 
 public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInterface {
     private final PortfolioFirestoreAccess firestoreAccess;
-    private final String userEmail;
+//    private final String CurrentUser.getemail() = CurrentUser.getemail();
     private final Firestore db;
 
-    public InMemoryPortfolioUserDataAccess(String userEmail) {
+    public InMemoryPortfolioUserDataAccess() {
         this.firestoreAccess = new PortfolioFirestoreAccess();
-        this.userEmail = userEmail;
+//        this.CurrentUser.getemail() = CurrentUser.getemail();
         this.db = FirestoreClient.getFirestore();
     }
 
@@ -28,7 +29,7 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
 
             double totalCost = pricePerShare * quantity;
 
-            Map<String, Object> userData = firestoreAccess.getUserData(userEmail);
+            Map<String, Object> userData = firestoreAccess.getUserData(CurrentUser.getemail());
             double balance = (double) userData.get("balance");
 
             if (balance < totalCost) {
@@ -36,13 +37,13 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
             }
 
             // Update Firestore balance
-            firestoreAccess.updateBalance(userEmail, balance - totalCost);
+            firestoreAccess.updateBalance(CurrentUser.getemail(), balance - totalCost);
 
             // Update portfolio holdings (correctly add to the quantity)
-            firestoreAccess.updatePortfolio(userEmail, company, quantity);  // Update portfolio holdings
+            firestoreAccess.updatePortfolio(CurrentUser.getemail(), company, quantity);  // Update portfolio holdings
 
             // Add transaction record
-            firestoreAccess.addTransaction(userEmail, "BUY", company, quantity, pricePerShare);
+            firestoreAccess.addTransaction(CurrentUser.getemail(), "BUY", company, quantity, pricePerShare);
 
             // Refresh transaction history
             getTransactionHistory();
@@ -61,12 +62,12 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
                 throw new RuntimeException("Failed to fetch stock price for " + company);
             }
 
-            DocumentReference userDoc = db.collection("users").document(userEmail);
+            DocumentReference userDoc = db.collection("users").document(CurrentUser.getemail());
             DocumentSnapshot snapshot = userDoc.get().get();
 
             Map<String, Long> portfolio = (Map<String, Long>) snapshot.get("portfolioHoldings");
             if (portfolio == null) {
-                throw new IllegalArgumentException("Portfolio is not initialized for user: " + userEmail);
+                throw new IllegalArgumentException("Portfolio is not initialized for user: " + CurrentUser.getemail());
             }
 
             long currentQuantity = portfolio.getOrDefault(company, 0L);
@@ -83,7 +84,7 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
             // Retrieve the current balance
             Double currentBalance = snapshot.getDouble("balance");
             if (currentBalance == null) {
-                throw new RuntimeException("Balance field is missing for user: " + userEmail);
+                throw new RuntimeException("Balance field is missing for user: " + CurrentUser.getemail());
             }
 
             double newBalance = currentBalance + totalEarnings;
@@ -93,7 +94,7 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
             userDoc.update("balance", newBalance).get();
 
             // Add transaction record for the sell
-            firestoreAccess.addTransaction(userEmail, "SELL", company, quantity, pricePerShare);
+            firestoreAccess.addTransaction(CurrentUser.getemail(), "SELL", company, quantity, pricePerShare);
 
             // Refresh transaction history
             getTransactionHistory();
@@ -107,7 +108,7 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
     @Override
     public Object[][] getPortfolioData() {
         try {
-            Map<String, Object> userData = firestoreAccess.getUserData(userEmail);
+            Map<String, Object> userData = firestoreAccess.getUserData(CurrentUser.getemail());
             Map<String, Long> portfolio = (Map<String, Long>) userData.get("portfolioHoldings");
 
             if (portfolio == null || portfolio.isEmpty()) {
@@ -140,7 +141,7 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
     @Override
     public List<Map<String, Object>> getTransactionHistory() {
         try {
-            return firestoreAccess.getTransactionHistory(userEmail);
+            return firestoreAccess.getTransactionHistory(CurrentUser.getemail());
         } catch (Exception e) {
             throw new RuntimeException("Error fetching transaction history: " + e.getMessage(), e);
         }
@@ -148,8 +149,10 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
 
     @Override
     public double getTotalBalance() {
+        System.out.println("Reaches total balance " +  CurrentUser.getemail());
         try {
-            return firestoreAccess.getBalance(userEmail);
+            System.out.println(CurrentUser.getemail());
+            return firestoreAccess.getBalance(CurrentUser.getemail());
         } catch (Exception e) {
             throw new RuntimeException("Error fetching total balance: " + e.getMessage(), e);
         }
@@ -228,7 +231,7 @@ public class InMemoryPortfolioUserDataAccess implements PortfolioDataAccessInter
 
     private Map<String, Long> getPortfolioHoldings() {
         try {
-            Map<String, Object> userData = firestoreAccess.getUserData(userEmail);
+            Map<String, Object> userData = firestoreAccess.getUserData(CurrentUser.getemail());
             return (Map<String, Long>) userData.get("portfolioHoldings");
         } catch (Exception e) {
             throw new RuntimeException("Error fetching portfolio holdings: " + e.getMessage(), e);

@@ -1,5 +1,7 @@
 package use_case.login;
 
+import entity.CurrentUser;
+
 /**
  * Interactor for the Login Use Case.
  *
@@ -10,6 +12,7 @@ package use_case.login;
 public class LoginInteractor implements LoginInputBoundary {
     private final LoginUserDataAccessInterface LoginUserDataAccess;
     private final LoginOutputBoundary loginPresenter;
+    private final CurrentUser currentUser;
 
     /**
      * Constructs a LoginInteractor with the specified data access interface and presenter.
@@ -17,9 +20,10 @@ public class LoginInteractor implements LoginInputBoundary {
      * @param userDataAccess The data access interface to fetch and verify user data.
      * @param loginPresenter The presenter responsible for preparing the success or failure view.
      */
-    public LoginInteractor(LoginUserDataAccessInterface userDataAccess, LoginOutputBoundary loginPresenter) {
+    public LoginInteractor(LoginUserDataAccessInterface userDataAccess, LoginOutputBoundary loginPresenter, CurrentUser currentUser) {
         this.LoginUserDataAccess = userDataAccess;
         this.loginPresenter = loginPresenter;
+        this.currentUser = currentUser;
     }
 
     /**
@@ -38,9 +42,10 @@ public class LoginInteractor implements LoginInputBoundary {
         // Attempt to fetch and verify the user's token based on email and password.
         String token = LoginUserDataAccess.fetchToken(email, password);
         if (token != null && LoginUserDataAccess.verifyToken(token)) {
-            System.out.println("logged in");
             // Prepare the success view with a valid token
             loginPresenter.prepareSuccessView(new LoginOutputData(email, true));
+            this.currentUser.setEmail(email);
+            System.out.println("Logged in as: " + this.currentUser.getemail());
         } else {
             System.out.println("credentials are wrong");
             // Prepare the failure view if the credentials are invalid

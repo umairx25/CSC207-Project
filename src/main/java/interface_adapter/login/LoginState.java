@@ -8,6 +8,11 @@ package interface_adapter.login;
 public class LoginState {
 
     private String email;
+
+    public boolean isLoginError() {
+        return loginError;
+    }
+
     private boolean loginError;
     private String password;
 
@@ -47,6 +52,8 @@ public class LoginState {
     public void setLoginError(boolean loginError) {
         this.loginError = loginError;
     }
+
+
 
     /**
      * Sets the password for the login state.
