@@ -232,3 +232,22 @@ To help you get started, here are some visuals:
 
 Feel free to explore the app’s features such as the **Explore Page**, **Portfolio Page**, and the **AI Chatbot** for an interactive and educational trading experience. 🚀
 
+## Feedback
+
+We value your input and encourage you to share your thoughts on **StockFlow**. Feedback helps us improve and create a better experience for all users. Here's how you can provide feedback:
+
+1. **How to Submit Feedback**  
+   - Fill out our [Google Form](https://forms.gle/a9m8UvACvpv2ZzBn6). It's quick and easy to use.
+
+2. **What Counts as Valid Feedback**  
+   - Suggestions for new features or enhancements.
+   - Reports on bugs or issues you encounter.
+   - Comments on usability or user experience.
+
+3. **What to Expect When Submitting Feedback**  
+   - Your feedback will be reviewed by the development team.
+   - We will prioritize critical bugs and evaluate suggestions for future updates.
+   - While we cannot guarantee every suggestion will be implemented, we value and appreciate your effort in helping us improve.
+
+Thank you for taking the time to share your feedback and help make **StockFlow** better!
+
