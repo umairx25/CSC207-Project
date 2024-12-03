@@ -1,10 +1,7 @@
 # StockFlow
 
 **StockFlow** is a Stock Simulating Trader App designed to provide an interactive and engaging experience for users. It includes the following main features:
-
-- **Bit Chatbot**: An intelligent assistant for user queries.
-- **Portfolio Page**: A dedicated section to manage and track your investments.
-- **Explore Page**: A feature-rich page to discover and analyze stocks.
+This project is a stock trading system built in Java, featuring Firebase for authentication and Alpha Vantage for real-time stock data. It follows clean architecture principles and uses Java Swing for an interactive GUI. The system enables users to analyze, trade, and manage stocks efficiently.
 
 Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFlow).
 
@@ -23,6 +20,7 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
    - [Software and Package Management](#software-and-package-management)
    - [Common Issues & Solutions](#common-issues--solutions)
 5. [Usage Guide](#usage-guide)
+6. [Feedback](#feedback)
 
 ---
 
