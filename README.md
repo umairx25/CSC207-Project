@@ -97,11 +97,11 @@ Check out the app in action!
 
 ---
 
-## Installation Instructions 🚀
+## Installation Instructions 
 
 Follow these detailed steps to set up and run the **StockFlow** application. Ensure you meet the necessary requirements and configure all dependencies properly.
 
-### 🔧 Prerequisites
+### Prerequisites
 
 1. **Java Development Kit (JDK)**:  
    - Install **OpenJDK 22 or higher**.
@@ -115,7 +115,7 @@ Follow these detailed steps to set up and run the **StockFlow** application. Ens
 
 ---
 
-### 🔑 Configuration Files
+### Configuration Files
 
 #### 1. **Firebase Configuration**
    - Create a new Firebase project by visiting [Firebase Console](https://console.firebase.google.com).
@@ -137,7 +137,7 @@ Follow these detailed steps to set up and run the **StockFlow** application. Ens
 
 ---
 
-### 📄 Environment Variables
+### Environment Variables
 
 Create a `.env` file in the project directory and include the following keys:
 
@@ -150,7 +150,7 @@ POLYGON_API_KEY=your_polygon_api_key
 GPT_API_KEY=your_gpt_api_key
 GPT_BASE_URL=https://api.openai.com/v1/chat/completions
 ```
-## 🛠️ Installation Steps
+## Installation Steps
 
 1. **Fork and Clone the Repository**:
    - Fork the repository from GitHub: [StockFlow Repository](https://github.com/umairx25/StockFlow).
@@ -175,7 +175,7 @@ bash
 
 ---
 
-### 🌐 Software and Package Management
+### Software and Package Management
 
 - **Dependencies**: All required libraries and their versions are listed in the pom.xml. Key dependencies include:
   - **Firebase Admin SDK**: 9.4.1
@@ -186,7 +186,7 @@ bash
 
 ---
 
-### ⚠️ Common Issues & Solutions
+### Common Issues & Solutions
 
 1. **Missing Firebase Configuration**:
    - Ensure config.json is correctly placed under the specified directory. Check the path in the .env file matches.
