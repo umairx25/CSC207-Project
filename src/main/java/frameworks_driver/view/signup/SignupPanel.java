@@ -2,7 +2,7 @@ package frameworks_driver.view.signup;
 
 import app.Builder;
 import com.google.firebase.auth.FirebaseAuthException;
-import frameworks_driver.view.login.UIHelper;
+import frameworks_driver.view.style_helpers.UIHelper;
 import frameworks_driver.view.style_helpers.*;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
@@ -89,4 +89,5 @@ public class SignupPanel extends JPanel {
 
         backButton.addActionListener(e -> builder.showView("login"));
     }
+
 }

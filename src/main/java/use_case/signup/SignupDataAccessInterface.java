@@ -12,4 +12,5 @@ public interface SignupDataAccessInterface {
     public static void initialize_firebase(String file) throws IOException{}
     public static void initialize_database(User user, Firestore db) throws IOException, ExecutionException, InterruptedException {}
 
+
 }

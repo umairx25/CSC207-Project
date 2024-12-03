@@ -43,4 +43,5 @@ public class SignupInteractor implements SignupInputBoundary {
             signupPresenter.prepareFailView("Invalid credentials.");
         }
     }
+
 }

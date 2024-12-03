@@ -36,4 +36,5 @@ public class SignupInputData {
     private String username;
 
 
+
 }
