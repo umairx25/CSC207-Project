@@ -215,6 +215,13 @@ Once you have successfully installed the application, follow these steps to star
 
 ---
 
+### 📸 Example Walkthrough
+
+To help you get started, here are some visuals:
+
+   [![Watch the video](assets/login_example.png)](assets/Logging_In_View.mov)
+
+
 Feel free to explore the app’s features such as the **Explore Page**, **Portfolio Page**, and the **AI Chatbot** for an interactive and educational trading experience. 🚀
 
 ## Feedback
