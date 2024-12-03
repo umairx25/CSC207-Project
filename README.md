@@ -215,19 +215,6 @@ Once you have successfully installed the application, follow these steps to star
 
 ---
 
-### 📸 Example Walkthrough
-
-To help you get started, here are some visuals:
-
-1. **Logging In**  
-   [![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)
-
-2. **Exploring the Stocks Page**  
-   ![Explore Page](assets/explore_example.png)
-
-3. **Interacting with the AI Chatbot**  
-   ![AI Chatbot](assets/chatbot_example.png)
-
 Feel free to explore the app’s features such as the **Explore Page**, **Portfolio Page**, and the **AI Chatbot** for an interactive and educational trading experience. 🚀
 
 ## Feedback
