@@ -14,7 +14,7 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
 
 1. [Creators](#creators)
 2. [Summary](#summary)
-3. [Features](#features-🌟)
+3. [Features](#features)
 4. [Installation Instructions](#installation-instructions-🚀)
    - [Prerequisites](#🔧-prerequisites)
    - [Configuration Files](#🔑-configuration-files)
@@ -50,7 +50,7 @@ Unlike many trading apps that require real money and involve real-world risks, S
 
 ---
 
-## Features 🌟
+## Features
 
 StockFlow is packed with cutting-edge features designed to deliver a seamless and educational stock trading experience. Here’s what makes StockFlow truly stand out:
 
