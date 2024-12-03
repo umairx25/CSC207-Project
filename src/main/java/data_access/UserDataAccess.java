@@ -8,12 +8,9 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
 
-import com.google.firebase.cloud.FirestoreClient;
-import entity.User;
 import io.github.cdimascio.dotenv.Dotenv;
 import use_case.signup.SignupDataAccessInterface;
 
-import javax.swing.*;
 import java.io.IOException;
 
 import java.util.ArrayList;

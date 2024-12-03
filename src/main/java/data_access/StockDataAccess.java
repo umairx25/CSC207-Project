@@ -14,7 +14,6 @@ import com.google.gson.GsonBuilder;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import use_case.chart.ChartDataAccessInterface;
 
 
 public class StockDataAccess implements ChartDataAccessInterface {

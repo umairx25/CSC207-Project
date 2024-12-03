@@ -25,7 +25,6 @@ import com.google.firebase.FirebaseOptions;
 //import interface_adapter.signup.SignupPresenter;
 //import interface_adapter.signup.SignupState;
 //import interface_adapter.signup.SignupViewModel;
-import com.google.firebase.cloud.FirestoreClient;
 import data_access.InMemoryPortfolioUserDataAccess;
 import io.github.cdimascio.dotenv.Dotenv;
 //import use_case.explore.ExploreInputBoundary;
@@ -35,7 +34,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 // Chart
 import data_access.StockDataAccess;
 //import frameworks_driver.view.chart.ChartView;
-import interface_adapter.ViewManagerModel;
 //import interface_adapter.chart.ChartController;
 //import interface_adapter.chart.ChartPresenter;
 //import interface_adapter.chart.ChartViewModel;
@@ -55,17 +53,9 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.portfolio.PortfolioViewModel;
 import interface_adapter.portfolio.PortfolioController;
 import interface_adapter.portfolio.PortfolioPresenter;
-import use_case.portfolio.PortfolioDataAccessInterface;
 import use_case.portfolio.PortfolioInputBoundary;
 import use_case.portfolio.PortfolioInteractor;
 import frameworks_driver.view.Portfolio.PortfolioView;
-import frameworks_driver.view.Portfolio.BuyButton;
-import frameworks_driver.view.Portfolio.CompanyTextField;
-import frameworks_driver.view.Portfolio.HistoryPanel;
-import frameworks_driver.view.Portfolio.PortfolioPanel;
-import frameworks_driver.view.Portfolio.QuantityTextField;
-import frameworks_driver.view.Portfolio.RefreshButton;
-import frameworks_driver.view.Portfolio.SellButton;
 import use_case.portfolio.PortfolioOutputBoundary;
 
 /**
