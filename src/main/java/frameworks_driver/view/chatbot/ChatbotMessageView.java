@@ -18,7 +18,6 @@ import java.util.Date;
  */
 public class ChatbotMessageView extends JPanel {
     private final JPanel messagePanel;
-    private final JScrollPane scrollPane;
 
     /**
      * Constructs the ChatbotMessageView with a scrollable message area.
@@ -31,13 +30,10 @@ public class ChatbotMessageView extends JPanel {
         messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
         messagePanel.setBackground(Color.WHITE);
 
-        scrollPane = new JScrollPane(messagePanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(null);
-
-        add(scrollPane, BorderLayout.CENTER);
+        // Directly add messagePanel
+        add(messagePanel, BorderLayout.CENTER);
     }
+
 
     /**
      * Adds a message to the view in a styled bubble format.
@@ -83,8 +79,6 @@ public class ChatbotMessageView extends JPanel {
 
         messagePanel.revalidate();
         messagePanel.repaint();
-
-        SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum()));
     }
 
     /**

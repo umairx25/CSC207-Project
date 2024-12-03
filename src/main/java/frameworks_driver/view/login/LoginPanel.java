@@ -12,6 +12,7 @@ import interface_adapter.login.LoginState;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Represents the login panel of the application, connecting the front-end view
@@ -68,6 +69,18 @@ public class LoginPanel extends JPanel {
                     loginController.execute(email, password);
                     builder.showView("home");
                 } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                } catch (UnsupportedLookAndFeelException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InstantiationException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IllegalAccessException ex) {
                     throw new RuntimeException(ex);
                 }
             }

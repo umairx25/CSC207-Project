@@ -47,6 +47,7 @@ public class Stock {
         this.webpage = webpage;
     }
 
+
     /**
      * @return the stock ticker symbol
      */

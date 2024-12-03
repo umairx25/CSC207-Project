@@ -24,9 +24,6 @@ public class ExploreDataAccess implements ExploreDataAccessInterface {
     static final Dotenv dotenv = Dotenv.load();
     private static final String API_KEY = dotenv.get("POLYGON_API_KEY");
 
-    public static void main(String[] args) throws Exception {
-        // Main method for testing API functionality
-    }
 
     /**
      * Retrieves aggregate data for a given stock ticker.

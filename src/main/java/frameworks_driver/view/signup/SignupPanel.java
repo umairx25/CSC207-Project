@@ -11,6 +11,7 @@ import interface_adapter.signup.SignupViewModel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Represents the signup panel in the application, allowing users to register
@@ -78,6 +79,10 @@ public class SignupPanel extends JPanel {
                 } catch (FirebaseAuthException | IOException ex) {
                     UIHelper.showErrorMessage(this, "Error, Try Again", "signup");
                     System.out.println("Signup failed: " + ex.getMessage());
+                } catch (ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });

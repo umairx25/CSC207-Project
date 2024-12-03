@@ -6,18 +6,18 @@ import java.io.IOException;
 import javax.swing.*;
 
 import data_access.*;
-import frameworks_driver.view.home.HomeView;
+import frameworks_driver.view.Portfolio.PortfolioView;
 import frameworks_driver.view.login.LoginPanel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.portfolio.PortfolioController;
+import interface_adapter.portfolio.PortfolioPresenter;
+import interface_adapter.portfolio.PortfolioViewModel;
 import io.github.cdimascio.dotenv.Dotenv;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-
-// Common
-import interface_adapter.ViewManagerModel;
 
 // Chatbot
 import org.jetbrains.annotations.NotNull;
@@ -46,17 +46,16 @@ import use_case.chart.ChartInteractor;
 import use_case.chart.ChartOutputBoundary;
 
 // Home
-//import interface_adapter.home.HomeController;
-//import use_case.home.HomeInteractor;
-//import interface_adapter.home.HomePresenter;
-//import interface_adapter.home.HomeViewModel;
-//import frameworks_driver.view.home.HomeView;
+import frameworks_driver.view.home.HomeView;
 
 // SignUp
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupState;
 import use_case.login.LoginInteractor;
+import use_case.portfolio.PortfolioInputBoundary;
+import use_case.portfolio.PortfolioInteractor;
+import use_case.portfolio.PortfolioOutputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
 import interface_adapter.signup.SignupViewModel;
@@ -65,6 +64,15 @@ import frameworks_driver.view.signup.SignupPanel;
 
 import use_case.login.LoginOutputBoundary;
 
+// Portfolio
+import interface_adapter.portfolio.PortfolioViewModel;
+import interface_adapter.portfolio.PortfolioController;
+import interface_adapter.portfolio.PortfolioPresenter;
+import use_case.portfolio.PortfolioInputBoundary;
+import use_case.portfolio.PortfolioInteractor;
+import frameworks_driver.view.Portfolio.PortfolioView;
+import use_case.portfolio.PortfolioOutputBoundary;
+
 /**
  * Builder class for assembling the application's components and views
  * in accordance with the Clean Architecture principles.
@@ -72,7 +80,6 @@ import use_case.login.LoginOutputBoundary;
 public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
-    private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     private final ChartViewModel chartViewModel = new ChartViewModel();
     private final StockDataAccess stockDataAccess = new StockDataAccess();
@@ -92,6 +99,15 @@ public class Builder {
 
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
+    }
+
+    /**
+     * Switches the current view displayed in the card panel.
+     *
+     * @param viewName Name of the view to display.
+     */
+    public void showView(String viewName) {
+        cardLayout.show(cardPanel, viewName);
     }
 
     /**
@@ -143,15 +159,6 @@ public class Builder {
         ChatbotContainerView containerView = new ChatbotContainerView(controller, viewModel, this);
         cardPanel.add(containerView, "chatbot");
         return this;
-    }
-
-    /**
-     * Switches the current view displayed in the card panel.
-     *
-     * @param viewName Name of the view to display.
-     */
-    public void showView(String viewName) {
-        cardLayout.show(cardPanel, viewName);
     }
 
     /**
@@ -208,9 +215,30 @@ public class Builder {
      * @return Builder instance for chaining.
      */
     public Builder addHomeView() {
-//        HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
         HomeView homeView = new HomeView("User", 12345.67, this);
         cardPanel.add(homeView, "home");
+        return this;
+    }
+
+    public Builder addPortfolioView() {
+        PortfolioViewModel portfolioViewModel = new PortfolioViewModel();
+
+        InMemoryPortfolioUserDataAccess portfolioDataAccess = new InMemoryPortfolioUserDataAccess("11@gmail.com");
+
+        final PortfolioOutputBoundary portfolioOutputBoundary = new PortfolioPresenter(portfolioViewModel);
+
+        final PortfolioInputBoundary portfolioInteractor = new PortfolioInteractor(
+                portfolioDataAccess, portfolioOutputBoundary
+        );
+
+        final PortfolioController controller = new PortfolioController(portfolioInteractor, portfolioViewModel);
+
+        PortfolioView portfolioView = new PortfolioView(
+                portfolioViewModel, controller, this
+        );
+
+        cardPanel.add(portfolioView, "portfolio");
+
         return this;
     }
 
@@ -221,18 +249,16 @@ public class Builder {
      */
     public JFrame build() {
         final JFrame application = new JFrame("Stock Flow");
-        Image icon = Toolkit.getDefaultToolkit().getImage("images/icon.png");
+        Image icon = Toolkit.getDefaultToolkit().getImage("assets/icon.png");
         application.setIconImage(icon);
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        application.setMinimumSize(new Dimension(1500, 1000));
         application.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        application.pack();
         application.add(cardPanel);
 
-        viewManagerModel.setState(chartView.getViewName());
-        viewManagerModel.firePropertyChanged();
+        application.setVisible(true);
 
         return application;
     }
+
 }
