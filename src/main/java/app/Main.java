@@ -8,13 +8,12 @@ public class Main {
         builder.initialize_firebase("config.json");
         builder.addSignupView()
                 .addHomeView()
-                .addExploreView()
                 .addLoginView()
+                .addExploreView()
                 .addChatbotView();
 
         JFrame application = builder.build();
         application.setVisible(true);
         builder.showView("login");
-
     }
 }
