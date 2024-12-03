@@ -27,8 +27,8 @@ public class ExploreStatsPanel extends JPanel {
         setBackground(ColourManager.INNER_BOX_BLUE);
         setLayout(new BorderLayout());
 
-        // Add the graph panel on top
-        add(chartView, BorderLayout.NORTH);
+        // Add the chart panel on top
+        add(chartView, BorderLayout.CENTER);
 
         // Create bottom panel with GridBagLayout
         JPanel bottomPanel = new JPanel(new GridBagLayout());
@@ -47,9 +47,9 @@ public class ExploreStatsPanel extends JPanel {
         leftPanel.add(descriptionLabel);
 
         gbc.gridx = 0;
-        gbc.weightx = 0;
+        gbc.weightx = 2.0;  // Make the left panel take more space horizontally
         gbc.gridheight = GridBagConstraints.REMAINDER;
-        gbc.insets = new Insets(0, 130, 0, 0);
+        gbc.insets = new Insets(0, 50, 0, 0);
         bottomPanel.add(leftPanel, gbc);
 
         // Right panel for other stats
@@ -68,6 +68,8 @@ public class ExploreStatsPanel extends JPanel {
                 "Webpage: "
         };
 
+        gbc.weighty = 1.0;  // Allow right panel to stretch vertically
+
         statsLabels = new JLabel[labelsText.length];
         for (int i = 0; i < labelsText.length; i++) {
             JLabel label = createLabel(labelsText[i]);
@@ -77,11 +79,16 @@ public class ExploreStatsPanel extends JPanel {
         }
 
         gbc.gridx = 1;
-        gbc.weightx = 1.0;
+        gbc.weightx = 1.0;  // Set weight of right panel to 1.0 for equal distribution
         gbc.gridheight = GridBagConstraints.REMAINDER;
         bottomPanel.add(rightPanel, gbc);
 
-        add(bottomPanel, BorderLayout.CENTER);
+        // Add bottomPanel to main panel
+        bottomPanel.setPreferredSize(new Dimension(this.getWidth(), 250));  // Set height limit
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        // Make sure the chart view panel has room to grow in the center
+        chartView.setPreferredSize(new Dimension(this.getWidth(), 500)); // Adjust based on your desired chart size
     }
 
     /**
@@ -107,7 +114,7 @@ public class ExploreStatsPanel extends JPanel {
         chartView.inputTicker(company.getTicker());
 
         // Update description
-        descriptionLabel.setText("<html><div style='width:800px; padding-bottom:10px;'>" +
+        descriptionLabel.setText("<html><div style='width:500px; padding-bottom:10px;'>" +
                 company.getDescription() + "</div></html>");
 
         // Update stats labels

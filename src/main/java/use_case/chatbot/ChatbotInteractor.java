@@ -66,8 +66,12 @@ public class ChatbotInteractor implements ChatbotInputBoundary {
         String userMessage = inputData.message();
         return "Analyze the following question and provide the appropriate response:\n"
                 + "Question: \"" + userMessage + "\"\n"
-                + "If it is a greeting or asking who you are, respond with something along the lines of that your name is Bullbot and you're here to help with finance questions.\n"
-                + "If the question is not finance-related or requires real-time data, respond with the word FALSE.\n"
-                + "Else: answer the question efficiently and briefly.";
+                + "Instructions:\n"
+                + "- You are 'Bullbot', a finance chatbot. If the input is a greeting or asks who you are, respond warmly.\n"
+                + "- If the question is not finance-related or requires real-time data, respond with the word 'FALSE.'\n"
+                + "- Otherwise, answer the question efficiently and briefly.\n"
+                + "- Do NOT include labels like 'Response:', 'Answer:', or similar in your reply.\n"
+                + "- Keep the response professional and concise.";
     }
+
 }

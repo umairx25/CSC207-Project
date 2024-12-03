@@ -55,7 +55,7 @@ public class ChatbotHeaderView extends JPanel {
         JButton backButton = new JButton("Back");
         backButton.setFont(FontManager.OUTFIT_BOLD_16);
         backButton.setForeground(ColourManager.WHITE);
-        backButton.setBackground(ColourManager.DARK_BLUE);
+        backButton.setBackground(ColourManager.DARKER_GRAY);
         backButton.setFocusPainted(false);
         backButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         backButton.addActionListener(e -> builder.showView("home")); // Navigate to Home view

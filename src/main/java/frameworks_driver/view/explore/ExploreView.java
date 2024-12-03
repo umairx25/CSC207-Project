@@ -40,10 +40,10 @@ public class ExploreView extends JPanel {
         ExploreSearchPanel searchPanel = new ExploreSearchPanel(controller, viewModel, companyList);
         SwingUtilities.invokeLater(() -> scrollPane.requestFocusInWindow());
 
-        // Create split pane for company list and stats panel
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, statsPanel);
         splitPane.setDividerLocation(200);
         splitPane.setResizeWeight(0.2);
+        add(splitPane, BorderLayout.CENTER);
 
         // Customize split pane divider
         splitPane.setUI(new BasicSplitPaneUI() {

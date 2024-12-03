@@ -24,7 +24,6 @@ public class ChatbotInputView extends JPanel {
     public ChatbotInputView(ActionListener sendAction, String placeholderText) {
         setLayout(new BorderLayout());
         setBackground(ColourManager.NAVY_BLUE);
-        setPreferredSize(GridBagManager.INPUT_SIZE);
 
         messageField = new JTextField();
         messageField.setForeground(ColourManager.WHITE);
