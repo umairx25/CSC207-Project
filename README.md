@@ -15,13 +15,13 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
 1. [Creators](#creators)
 2. [Summary](#summary)
 3. [Features](#features)
-4. [Installation Instructions](#installation-instructions-🚀)
-   - [Prerequisites](#🔧-prerequisites)
-   - [Configuration Files](#🔑-configuration-files)
-   - [Environment Variables](#📄-environment-variables)
-   - [Installation Steps](#🛠️-installation-steps)
-   - [Software and Package Management](#🌐-software-and-package-management)
-   - [Common Issues & Solutions](#⚠️-common-issues--solutions)
+4. [Installation Instructions](#installation-instructions)
+   - [Prerequisites](#prerequisites)
+   - [Configuration Files](#configuration-files)
+   - [Environment Variables](#environment-variables)
+   - [Installation Steps](#installation-steps)
+   - [Software and Package Management](#software-and-package-management)
+   - [Common Issues & Solutions](#common-issues--solutions)
 
 ---
 
