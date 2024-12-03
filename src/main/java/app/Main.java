@@ -10,10 +10,11 @@ public class Main {
                 .addHomeView()
                 .addLoginView()
                 .addExploreView()
+                .addPortfolioView()
                 .addChatbotView();
 
         JFrame application = builder.build();
         application.setVisible(true);
-        builder.showView("login");
+        builder.showView("portfolio");
     }
 }
