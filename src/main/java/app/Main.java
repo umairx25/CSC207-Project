@@ -8,8 +8,8 @@ public class Main {
         builder.initialize_firebase("config.json");
         builder.addSignupView()
                 .addHomeView()
-                .addExploreView()
                 .addLoginView()
+                .addExploreView()
                 .addChatbotView();
 
         JFrame application = builder.build();
@@ -17,6 +17,5 @@ public class Main {
 
         // Example: Start with the Signup view
         builder.showView("login");
-
     }
 }

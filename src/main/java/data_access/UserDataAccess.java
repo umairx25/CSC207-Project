@@ -1,22 +1,17 @@
 package data_access;
 
-import app.Builder;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
-import com.google.firebase.cloud.FirestoreClient;
 import entity.User;
 import use_case.signup.SignupDataAccessInterface;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -89,7 +84,7 @@ public class UserDataAccess implements SignupDataAccessInterface {
     }
 
     /**
-     * Initializes the user's data in the Firestore database.
+     * Initializes the user's data in the Firestore database. Called only when the user first signs up.
      *
      * @param user the user entity to initialize
      * @param db   the Firestore database instance
@@ -100,14 +95,17 @@ public class UserDataAccess implements SignupDataAccessInterface {
     public void initialize_database(User user, Firestore db) throws IOException, ExecutionException, InterruptedException {
         DocumentReference docRef = db.collection("users").document(user.getEmail());
         Map<String, Object> data = new HashMap<>();
+        ArrayList<String> initialHistory = new ArrayList<>();
+        initialHistory.add("");
+        ArrayList<Map<String, ArrayList<String>>> initialPortfolio = new ArrayList<>();
+        initialPortfolio.add(new HashMap<>());
 
         data.put("email", user.getEmail());
         data.put("username", user.getUsername());
-        data.put("balance", 0.0);
+        data.put("balance", 5000.0);
         data.put("portfolio_value", 0.0);
-        data.put("history", new ArrayList<>());
-        data.put("portfolio", new ArrayList<>());
-
+        data.put("transactionHistory", initialHistory);
+        data.put("portfolioHoldings", initialPortfolio);
         ApiFuture<WriteResult> result = docRef.set(data);
         System.out.println("Document created at: " + result.get().getUpdateTime());
     }
@@ -128,8 +126,8 @@ public class UserDataAccess implements SignupDataAccessInterface {
         data.put("username", user.getUsername());
         data.put("balance", user.getBalance());
         data.put("portfolio_value", user.getPortfolioValue());
-        data.put("history", user.getTransactions());
-        data.put("portfolio", user.getPortfolio());
+        data.put("transactionHistory", user.getTransactionHistory());
+        data.put("portfolioHoldings", user.getPortfolioHoldings());
 
         ApiFuture<WriteResult> result = docRef.set(data);
         System.out.println("Document updated at: " + result.get().getUpdateTime());
@@ -141,21 +139,24 @@ public class UserDataAccess implements SignupDataAccessInterface {
      * @param email the email of the user
      * @param db    the Firestore database instance
      * @return the User object containing the retrieved data
-     * @throws ExecutionException   if there are execution issues with Firestore operations
-     * @throws InterruptedException if the Firestore operation is interrupted
      */
-    public static User retreive_user_data(String email, Firestore db) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = db.collection("users").document(email);
-        ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
+    public User retreive_user_data(String email, Firestore db) throws ExecutionException, InterruptedException {
+        try {
+            DocumentReference docRef = db.collection("users").document(email);
+            ApiFuture<DocumentSnapshot> future = docRef.get();
+            DocumentSnapshot document = future.get();
 
-        String username = document.getString("username");
-        double balance = document.getDouble("balance");
-        double portfolioValue = document.getDouble("portfolio_value");
-        LinkedHashMap<String, ArrayList<String>> transactions = document.get("history", LinkedHashMap.class);
-        ArrayList<String> portfolio = (ArrayList<String>) document.get("portfolio");
+            String username = document.getString("username");
+            double balance = document.getDouble("balance");
+//            double portfolioValue = document.getDouble("portfolio_value");
+//            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+            List<Map<String, Object>> transactions = (List<Map<String, Object>>) document.get("transactionHistory");
+            Map<String, Double> portfolio = (Map<String, Double>) document.get("portfolioHoldings");
 
-        return new User(email, username, balance, portfolioValue, transactions, portfolio);
+            return new User(email, username, balance, 1, portfolio , transactions);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -191,11 +192,11 @@ public class UserDataAccess implements SignupDataAccessInterface {
      * @throws IllegalAccessException            if access control fails
      * @throws IOException                       if there are issues with database access
      */
-    public static void main(String[] args) throws ExecutionException, InterruptedException,
-            UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
-            IllegalAccessException, IOException {
-        Builder builder = new Builder();
-        builder.initialize_firebase("config.json");
-        retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
-    }
+//    public static void main(String[] args) throws ExecutionException, InterruptedException,
+//            UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
+//            IllegalAccessException, IOException {
+//        Builder builder = new Builder();
+//        builder.initialize_firebase("config.json");
+//        retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
+//    }
 }

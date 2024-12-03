@@ -11,5 +11,6 @@ public interface SignupDataAccessInterface {
     public static void signup(User user, String password, Firestore db) throws FirebaseAuthException{}
     public static void initialize_firebase(String file) throws IOException{}
     public static void initialize_database(User user, Firestore db) throws IOException, ExecutionException, InterruptedException {}
+    public User retreive_user_data(String email, Firestore db) throws ExecutionException, InterruptedException;
 
 }

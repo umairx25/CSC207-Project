@@ -89,6 +89,8 @@ public class Builder {
     private final LoginViewModel loginViewModel = new LoginViewModel();
     private final LoginUserDataAccess loginUserDataAccess = new LoginUserDataAccess();
 
+    private HomeView homeView;
+
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
     }
@@ -164,6 +166,7 @@ public class Builder {
         final SignupPanel signupPanel = new SignupPanel(signupController, signupViewModel, this);
         final RightPanel rightPanel = new RightPanel();
 
+
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(signupPanel, BorderLayout.WEST);
         mainPanel.add(rightPanel, BorderLayout.CENTER);
@@ -176,9 +179,8 @@ public class Builder {
      * Adds the Login view to the card panel.
      *
      * @return Builder instance for chaining.
-     * @throws IOException If an error occurs while loading the view.
      */
-    public Builder addLoginView() throws IOException {
+    public Builder addLoginView(){
         final LoginPanel loginPanel = getLoginPanel();
         final RightPanel rightPanel = new RightPanel();
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -198,6 +200,7 @@ public class Builder {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(loginViewModel);
         final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, loginOutputBoundary);
         final LoginController loginController = new LoginController(loginInteractor);
+
         return new LoginPanel(loginController, loginViewModel, this);
     }
 
@@ -208,10 +211,16 @@ public class Builder {
      */
     public Builder addHomeView() {
         HomeController controller = new HomeController(new HomeInteractor(new HomePresenter(new HomeViewModel())));
-        HomeView homeView = new HomeView("User", 12345.67, controller, this);
-        cardPanel.add(homeView.getContentPane(), "home");
+
+        homeView = new HomeView("", 0, controller, this);
+
+        System.out.println("Username is:(Builder) " );
+
+        cardPanel.add(homeView, "home");
         return this;
     }
+
+
 
     /**
      * Builds the main application frame and sets initial configurations.

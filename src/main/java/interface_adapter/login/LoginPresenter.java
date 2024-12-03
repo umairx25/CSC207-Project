@@ -17,8 +17,6 @@ public class LoginPresenter implements LoginOutputBoundary {
     public void prepareSuccessView(LoginOutputData outputData) {
         LoginState state = loginViewModel.getState();
         state.setEmail(outputData.getEmail());
-        state.setLoginError(false);
-        System.out.println("presenter success");
         loginViewModel.setState(state);
     }
 
@@ -27,7 +25,6 @@ public class LoginPresenter implements LoginOutputBoundary {
         LoginState state = loginViewModel.getState();
         System.out.println(state.getEmail());
         state.setLoginError(true);
-        System.out.println("presenter error");
         loginViewModel.setState(state);
     }
 }

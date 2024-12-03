@@ -7,6 +7,7 @@ import use_case.signup.SignupInputData;
 import use_case.signup.SignupInteractor;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Controller for the Signup Use Case.
@@ -18,9 +19,8 @@ public class SignupController {
         this.signupInteractor = signupInteractor;
     }
 
-    public void execute(String email, String password, String username) throws IOException, FirebaseAuthException {
+    public void execute(String email, String password, String username) throws IOException, FirebaseAuthException, ExecutionException, InterruptedException {
         SignupInputData inputData = new SignupInputData(email, password, username);
-        System.out.println(password);
         signupInteractor.execute(inputData);
     }
 }
