@@ -1,5 +1,6 @@
 package use_case.explore;
 
+import data_access.ExploreDataAccess;
 import entity.Stock;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * The interactor for the Explore feature, implementing the business logic
  * and coordinating between data access and presentation layers.
  */
-public class ExploreInteractor implements ExploreInputBoundary {
+public class ExploreInteractor extends ExploreDataAccess implements ExploreInputBoundary {
 
     private final ExploreDataAccessInterface dataAccess;
     private final ExploreOutputBoundary presenter;

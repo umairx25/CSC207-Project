@@ -1,6 +1,7 @@
 package interface_adapter.explore;
 
 import app.Builder;
+import entity.Stock;
 import use_case.explore.CompanyOutputData;
 import use_case.explore.ExploreOutputBoundary;
 import use_case.explore.SearchOutputData;
@@ -10,7 +11,7 @@ import use_case.explore.SearchOutputData;
  * into a form suitable for the Explore ViewModel and facilitating
  * navigation to other views.
  */
-public class ExplorePresenter implements ExploreOutputBoundary {
+public class ExplorePresenter extends Stock implements ExploreOutputBoundary {
 
     private final ExploreViewModel exploreViewModel;
     private final Builder builder;
