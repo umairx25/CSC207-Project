@@ -13,9 +13,22 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Installation](#installation)
-4. [Usage Guide](#usage-guide)
-5. [License](#license)
-6. [Feedback](#feedback)
-7. [Contributions](#contributions)
+2. [Creators](#creators)
+3. [Features](#features)
+4. [Installation](#installation)
+5. [Usage Guide](#usage-guide)
+6. [License](#license)
+7. [Feedback](#feedback)
+8. [Contributions](#contributions)
+
+---
+
+## Creators
+
+The project was created by the following contributors:
+
+- [YaseenSadat](https://github.com/YaseenSadat)
+- [aneeqmuh](https://github.com/aneeqmuh)
+- [umairx25](https://github.com/umairx25)
+- [zarifali](https://github.com/zarifali)
+- [SameerShahed71](https://github.com/SameerShahed71)
