@@ -12,14 +12,16 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Creators](#creators)
-3. [Features](#features)
-4. [Installation](#installation)
-5. [Usage Guide](#usage-guide)
-6. [License](#license)
-7. [Feedback](#feedback)
-8. [Contributions](#contributions)
+1. [Creators](#creators)
+2. [Summary](#summary)
+3. [Features](#features-🌟)
+4. [Installation Instructions](#installation-instructions-🚀)
+   - [Prerequisites](#🔧-prerequisites)
+   - [Configuration Files](#🔑-configuration-files)
+   - [Environment Variables](#📄-environment-variables)
+   - [Installation Steps](#🛠️-installation-steps)
+   - [Software and Package Management](#🌐-software-and-package-management)
+   - [Common Issues & Solutions](#⚠️-common-issues--solutions)
 
 ---
 
@@ -78,8 +80,7 @@ Dive deep into the world of stocks with unparalleled data insights:
 - Generate **customized charts** for every stock to visualize performance.
 - Get a comprehensive **company summary** with vital details, helping you make informed decisions.
 
-**📸 Explore Page in Action** 
-
+**📸 Explore Page in Action**  
 ![Explore Page](assets/explore_example.png)
 
 ### 📈 Portfolio  
@@ -90,22 +91,15 @@ Your personalized portfolio management system:
 - Tailored insights to help you grow your portfolio and make smarter decisions.
 
 ### 🎥 Experience StockFlow  
-Check out the app in action! 
-
+Check out the app in action!  
 [![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)  
 *Logging in and starting your journey with StockFlow has never been easier!*
 
 ---
 
-These features make StockFlow a one-of-a-kind platform for beginners and enthusiasts alike. Whether you're just starting out or looking to refine your trading strategies, **StockFlow gives you the tools and confidence to master the market—all without the risks!** 🚀💡
-
-___
-
 ## Installation Instructions 🚀
 
 Follow these detailed steps to set up and run the **StockFlow** application. Ensure you meet the necessary requirements and configure all dependencies properly.
-
----
 
 ### 🔧 Prerequisites
 
@@ -114,7 +108,7 @@ Follow these detailed steps to set up and run the **StockFlow** application. Ens
    - Ensure your IDE is configured with the correct SDK version.
 
 2. **Maven**:  
-   - The project uses Maven to manage dependencies. All required versions and packages are already included in the `pom.xml`.
+   - The project uses Maven to manage dependencies. Ensure Maven is installed.
 
 3. **Git**:  
    - Make sure Git is installed for cloning the repository.
@@ -129,7 +123,7 @@ Follow these detailed steps to set up and run the **StockFlow** application. Ens
      - Copy the **Web API Key** and store it in the `.env` file under `WEB_API_KEY` (explained below).
    - Go to **Service Accounts** -> **Generate New Private Key**:
      - Download the JSON file and rename it as `config.json`.
-     - Place this file in the project directory under the project directory.
+     - Place this file in the project directory.
 
 #### 2. **Polygon API Key**
    - Visit [Polygon.io](https://polygon.io/) and sign up for an account.
@@ -145,7 +139,7 @@ Follow these detailed steps to set up and run the **StockFlow** application. Ens
 
 ### 📄 Environment Variables
 
-Create a `.env` file in the project directory and include the following keys (put in the keys you get):
+Create a `.env` file in the project directory and include the following keys:
 
 ```plaintext
 PROJECT_ID=your_project_id
@@ -156,57 +150,60 @@ POLYGON_API_KEY=your_polygon_api_key
 GPT_API_KEY=your_gpt_api_key
 GPT_BASE_URL=https://api.openai.com/v1/chat/completions
 ```
-
 ## 🛠️ Installation Steps
 
 1. **Fork and Clone the Repository**:
    - Fork the repository from GitHub: [StockFlow Repository](https://github.com/umairx25/StockFlow).
    - Clone it locally:
-     ```bash
+     
+bash
      git clone https://github.com/your-username/StockFlow.git
      cd StockFlow
-     ```
+
 
 2. **Set Up Dependencies**:
    - Ensure Maven is installed and run:
-     ```bash
+     
+bash
      mvn clean install
-     ```
+
 
 3. **Run the Application**:
    - Open the project in your preferred IDE (e.g., IntelliJ IDEA or Eclipse).
-   - Navigate to the `Main` class located in the app subfolder of `src`.
+   - Navigate to the Main class located in the app subfolder of src.
    - Click **Run** to start the application.
 
 ---
 
 ### 🌐 Software and Package Management
 
-- **Dependencies**: All required libraries and their versions are listed in the `pom.xml`. Key dependencies include:
-  - **Firebase Admin SDK**: `9.4.1`
-  - **OpenAI GPT Integration**: `3.0.2`
-  - **JSON Processing**: `20240303`
-  - **JFreeChart**: `1.5.3`
-  - **JUnit (for testing)**: `4.13.1` and `5.8.1`
+- **Dependencies**: All required libraries and their versions are listed in the pom.xml. Key dependencies include:
+  - **Firebase Admin SDK**: 9.4.1
+  - **OpenAI GPT Integration**: 3.0.2
+  - **JSON Processing**: 20240303
+  - **JFreeChart**: 1.5.3
+  - **JUnit (for testing)**: 4.13.1 and 5.8.1
 
 ---
 
 ### ⚠️ Common Issues & Solutions
 
 1. **Missing Firebase Configuration**:
-   - Ensure `config.json` is correctly placed under the specified directory. Check the path in the `.env` file matches.
+   - Ensure config.json is correctly placed under the specified directory. Check the path in the .env file matches.
 
 2. **Maven Dependency Errors**:
    - Run the following command to clean and rebuild:
-     ```bash
+     
+bash
      mvn clean install
-     ```
+
 
 3. **Java Version Compatibility**:
-   - Ensure your JDK version matches or exceeds `OpenJDK 22`. You can check this by running:
-     ```bash
+   - Ensure your JDK version matches or exceeds OpenJDK 22. You can check this by running:
+     
+bash
      java -version
-     ```
+
 
 4. **Environment Variables Not Loaded**:
-   - Confirm the `.env` file exists in the project root and is correctly formatted.
+   - Confirm the .env file exists in the project root and is correctly formatted.
