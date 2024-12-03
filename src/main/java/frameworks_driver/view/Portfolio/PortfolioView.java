@@ -1,5 +1,6 @@
 package frameworks_driver.view.Portfolio;
 
+import app.Builder;
 import interface_adapter.portfolio.PortfolioController;
 import interface_adapter.portfolio.PortfolioViewModel;
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class PortfolioView extends JPanel {
     private final PortfolioPanel portfolioPanel; // Reference to PortfolioPanel
     private final HistoryPanel historyPanel;     // Reference to HistoryPanel
 
-    public PortfolioView(PortfolioViewModel viewModel, PortfolioController controller) {
+    public PortfolioView(PortfolioViewModel viewModel, PortfolioController controller, Builder builder) {
         this.viewModel = viewModel;
         this.controller = controller;
 
@@ -33,6 +34,7 @@ public class PortfolioView extends JPanel {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(ColourManager.DARK_BLUE);  // Set text to white
         HomeButton homeButton = new HomeButton();
+        homeButton.addHomeButtonListener(e -> builder.showView("home"));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(titleLabel, BorderLayout.WEST);
