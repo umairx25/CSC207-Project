@@ -45,6 +45,7 @@ public class HomeView extends JPanel{
         gradientPanel.add(currentView, BorderLayout.CENTER);
         gradientPanel.add(bottomPanel, BorderLayout.SOUTH);
 
+        setLayout(new BorderLayout());
         add(gradientPanel);
         setVisible(true);
     }

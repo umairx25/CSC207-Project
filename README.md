@@ -1,181 +1,304 @@
-# Lab 5: Logout
+# StockFlow
 
-## Preamble
+**StockFlow** is a Stock Simulating Trader App designed to provide an interactive and engaging experience for users. It includes the following main features:
+This project is a stock trading system built in Java, featuring Firebase for authentication and Alpha Vantage for real-time stock data. It follows clean architecture principles and uses Java Swing for an interactive GUI. The system enables users to analyze, trade, and manage stocks efficiently.
 
-In the current homework, you added code to the login use case to save the currently-logged-in
-user by saving the user in the Data Access Layer. You also added a unit test for this.
+Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFlow).
 
-In this lab, you will complete a logout use case as a team. You will also begin to discuss your project
-and the use cases that need to be implemented. 
+---
 
-We have created all the Clean Architecture classes necessary for the logout use case.
+## Table of Contents
 
-By Friday, your team will submit:
-- your completed lab code [for credit]
-- a draft of your project blueprint proposal. [required, but not for credit]
+1. [Creators](#creators)
+2. [Summary](#summary)
+3. [Features](#features)
+4. [Installation Instructions](#installation-instructions)
+   - [Prerequisites](#prerequisites)
+   - [Configuration Files](#configuration-files)
+   - [Environment Variables](#environment-variables)
+   - [Installation Steps](#installation-steps)
+   - [Software and Package Management](#software-and-package-management)
+   - [Common Issues & Solutions](#common-issues--solutions)
+5. [Usage Guide](#usage-guide)
+6. [Feedback](#feedback)
+7. [Contributions](#contributions)
 
-# Phase 2 [for credit]
-_(recall, Phase 1 was your solo task of adding the storage of the currently-logged-in user)_
+---
+## Creators
 
-## Task 0: Fork this repo on GitHub
-**To get started, one team member should fork this repo on GitHub and share it with the team. 
-All of you should then clone it.**
+The project was created by the following contributors:
 
-* * *
+- [YaseenSadat](https://github.com/YaseenSadat)
+- [aneeqmuh](https://github.com/aneeqmuh)
+- [umairx25](https://github.com/umairx25)
+- [zarifali](https://github.com/zarifali)
+- [SameerShahed71](https://github.com/SameerShahed71)
 
-Suggested logistics: One of you should invite the others to collaborate on their fork of the
-original repo on GitHub. You can do this in your repo on GitHub under `Settings -> Collaborators`.
-This will allow you to push branches to a common repo and then use pull requests to contribute
-your code and review. To prevent others from pushing directly to the main branch,
-we recommend you set branch protection rules on GitHub. Below are how the settings might look if you
-add branch protection rules:
+---
 
-![image of branch protection rules for main with the
-requirement of two approvers to merge in pull requests.
-](images/branch_protection_rules.png)
+## Summary
 
-* * *
+🌟 **What StockFlow Does**  
+StockFlow is a cutting-edge trading app designed to empower users with a seamless and risk-free stock trading experience. With features that let users explore diverse stocks, view historical data, and engage in simulated buying and selling, StockFlow brings the world of trading right to your fingertips. At its core is an AI-powered chatbot 🤖, your personal financial assistant, ready to answer your finance-related questions and guide you on your trading journey.
 
-Open the project in IntelliJ and make sure you can successfully run `app/Main.java`.
-Note: you may need to set the Project SDK in the `Project Structure...` menu, and possibly
-also manually link the Maven project, as you did in Phase 1.
+🌟 **Why We Built StockFlow**  
+Born from the shared vision of five passionate University of Toronto students 🧑‍💻, StockFlow was crafted as a learning tool for beginner traders and finance enthusiasts alike. We set out to create an educational platform that combines innovation and accessibility, promoting financial literacy and trading skills in a zero-risk environment. By simulating real-world trading scenarios through paper trading, StockFlow bridges the gap between theory and practice, making finance fun and approachable 🌍.
 
-## Task 1: Understanding the Program
+🌟 **Why StockFlow is Unique**  
+Unlike many trading apps that require real money and involve real-world risks, StockFlow provides a *no-risk* alternative without compromising on the excitement and realism of the trading experience. Whether you're testing strategies or honing your trading instincts, StockFlow lets you learn, grow, and trade without the fear of financial loss—your gateway to mastering the stock market without a single dollar spent! 💹✨
 
-You may notice that we have refactored the CA engine code _slightly_ since Phase 1, but the
-way we build the engine is drastically different: we have switched from using Factories to
-using the Builder design pattern, which we'll be discussing in lecture soon. 
+---
 
-Open up `app.Main` and read it as a team.
-- What are the Views and what are the current Use Cases?
-- Which Uses Cases are triggered from each View?
-- Which version of the DAO is `app.Main` using?
+## Features
 
-The major change since Phase 1 is that we have added the `app.AppBuilder` class which makes
-it easier to understand how our CA engine is being constructed — it also makes `app.Main` nice and concise!
-- Why do all those `addX` methods end in `return this;`? 
+StockFlow is packed with cutting-edge features designed to deliver a seamless and educational stock trading experience. Here’s what makes StockFlow truly stand out:
 
-Run the program and make sure the signup and login Use Cases work.
+### ✨ Account Management
+Effortlessly create, manage, and secure your account:
+- **Log In, Sign Up, and Log Out** functionalities ensure a smooth and secure user experience.
+- Start your journey with ease and pick up right where you left off.
 
-Currently, you'll notice that the "Log Out" button still doesn't actually log you out. It's time to fix
-that button, which is part of the `LoggedInView`.
-We have created all the classes for you, but some of the code is missing.
-As a team, your task is to fill in the missing code so that the Logout Use Case is implemented.
-**The next part of the readme describes how your team will do this.**
+### 🏠 Home Page  
+The central hub of StockFlow, where users can seamlessly navigate across the app:
+- Intuitive layout to explore every feature with just a few clicks.
+- Your gateway to managing stocks and learning finance like a pro.
 
-* * *
+### 🤖 AI Chatbot  
+Meet your **personal finance mentor** powered by cutting-edge AI:
+- A fully interactive chatbot that educates users on **finance-related topics**.
+- From explaining technical indicators to answering your questions about stocks, this chatbot is your trusted guide to the stock market.
 
-**Your team will know when you are done when:**
+**📸 Sneak Peek**  
+![AI Chatbot](assets/chatbot_example.png)
 
-- Clicking the "Log Out" button takes the user back to the Login View when you use the program.
-- The provided `LogoutInteractorTest` test passes.
+### 🔍 Explore Page  
+Dive deep into the world of stocks with unparalleled data insights:
+- Access over **50,000+ stocks** and several technical indicators.
+- **Historical and Current Data**: Stay updated with the latest and past trends of your favorite stocks.
+- Compare key indicators like **EMA**, **SMA**, and **RSI**, with real-time updates.
+- Generate **customized charts** for every stock to visualize performance.
+- Get a comprehensive **company summary** with vital details, helping you make informed decisions.
 
-The "Log Out" button is an instance variable in class `LoggedInVew`. Go find it.
-Also look at the `interface_adapter.change_password.LoggedInViewModel`, which contains any
-data showing on the `LoggedInVew`.
+**📸 Explore Page in Action**  
+![Explore Page](assets/explore_example.png)
 
-* * *
+### 📈 Portfolio  
+Your personalized portfolio management system:
+- **Buy/Sell Stocks**: Seamlessly trade stocks with just a few clicks.
+- **Transaction History**: Keep track of all your past trades for full transparency.
+- **Personalized Dashboard**: View your **current holdings**, track performance, and manage your investments with ease.
+- Tailored insights to help you grow your portfolio and make smarter decisions.
 
-## Task 2: Dividing up the work
+**📸 Snapshot of Portfolio** 
+![Portfolio](assets/portfolio_example.png)
 
-There are `TODO` comments left in the files
-Recall that you can use the TODO tool window to conveniently pull up a complete list.
+---
 
-Once the TODOs are all complete, the "Log Out" button _should_ work!
+## Installation Instructions 
 
-As a team, split up the TODOs (see below) between the members of your team.
+Follow these detailed steps to set up and run the **StockFlow** application. Ensure you meet the necessary requirements and configure all dependencies properly.
 
-There are TODOs in seven of the files.
-Make sure each member has at least one TODO which they will be responsible for completing.
-If your team prefers to work in pairs, that is fine too. Your individual branches
-will not be graded for this — only the final, working version.
+### Prerequisites
 
-The TODOs are summarized below (by file) to help your team decide how to split them up:
+1. **Java Development Kit (JDK)**:  
+   - Install **OpenJDK 22 or higher**.
+   - Ensure your IDE is configured with the correct SDK version.
 
-* * *
+2. **Maven**:  
+   - The project uses Maven to manage dependencies. Ensure Maven is installed.
 
-- `Main.java`
+3. **Git**:  
+   - Make sure Git is installed for cloning the repository.
 
-  - [ ] TODO: add the Logout Use Case to the app using the appBuilder
+---
 
-* * *
+### Configuration Files
 
-- `LoggedInView.java` (tip: refer to the other views for similar code)
+#### 1. **Firebase Configuration**
+   - Create a new Firebase project by visiting [Firebase Console](https://console.firebase.google.com).
+   - Navigate to **Project Settings** -> **General**:
+     - Copy the **Web API Key** and store it in the `.env` file under `WEB_API_KEY` (explained below).
+   - Go to **Service Accounts** -> **Generate New Private Key**:
+     - Download the JSON file and rename it as `config.json`.
+     - Place this file in the project directory.
 
-  - [ ] TODO: save the logout controller in the instance variable.
-  - [ ] TODO: execute the logout use case through the Controller
+#### 2. **Polygon API Key**
+   - Visit [Polygon.io](https://polygon.io/) and sign up for an account.
+   - Generate a new API Key from your dashboard.
+   - Save this key in the `.env` file under `POLYGON_API_KEY`.
 
-* * *
+#### 3. **GPT-Powered API Key (Version GPT-4o Mini)**
+   - Sign up for OpenAI's API at [OpenAI Platform](https://platform.openai.com/).
+   - Generate an API Key for GPT-4.
+   - Save this key in the `.env` file under `GPT_API_KEY`.
 
-- `LogoutController.java` (tip: refer to the other controllers for similar code)
+---
 
-  - [ ] TODO: Save the interactor in the instance variable.
-  - [ ] TODO: run the use case interactor for the logout use case
+### Environment Variables
 
-* * *
+Create a `.env` file in the project directory and include the following keys:
 
-- `LogoutInputData.java` (should be done with the LogoutInteractor TODOs below)
-
-  - [ ] TODO: save the current username in an instance variable and add a getter.
-
-- `LogoutInteractor.java` (tip: refer to `ChangePasswordInteractor.java` for similar code)
-
-  - [ ] TODO: save the DAO and Presenter in the instance variables.
-  - [ ] TODO: implement the logic of the Logout Use Case
-
-* * *
-
-- `LogoutOutputData.java`
-
-  - [ ] TODO: save the parameters in the instance variables.
-
-* * *
-
-- `LogoutPresenter.java` (tip: refer to `SignupPresenter.java` for similar code)
-
-  - [ ] TODO: assign to the three instance variables.
-  - [ ] TODO: have prepareSuccessView update the LoggedInState
-  - [ ] TODO: have prepareSuccessView update the LoginState
-
-* * *
-
-1. Make a branch named the first part of your UofT email address, everything before the `@`.
-For example, if your email address is `paul.gries@mail.utoronto.ca`, then the branch name would
-be `paul.gries`.
-
-Make sure you switch to the new branch.
-
-In the terminal, this would look like below, but replaced with your own information:
+```plaintext
+PROJECT_ID=your_project_id
+WEB_API_KEY=your_web_api_key
+FIREBASE_INFO=src/main/java/frameworks_driver/firebase_info.json
+FIREBASE_AUTH_URL=https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword
+POLYGON_API_KEY=your_polygon_api_key
+GPT_API_KEY=your_gpt_api_key
+GPT_BASE_URL=https://api.openai.com/v1/chat/completions
 ```
-git branch paul.gries
-git switch paul.gries
-```
+## Installation Steps
 
-2. Complete your assigned TODOs and make a pull request on GitHub. In your pull request,
-   briefly describe what your TODOs were and how you implemented them. If you aren't sure
-   about part of it, include this in your pull request so everyone knows what to look
-   for when reviewing — or you can of course discuss with your team before making your
-   pull request since you are physically working in the same space.
-   - **Important: don't push any changes to the `.idea` folder, as that
-     may cause issues for your other teammates, as some files contain
-     configurations specific to your individual IntelliJ projects.**
+1. **Fork and Clone the Repository**:
+   - Fork the repository from GitHub: [StockFlow Repository](https://github.com/umairx25/StockFlow).
+   - Clone it locally:
+     
+bash
+     git clone https://github.com/your-username/StockFlow.git
+     cd StockFlow
 
-3. Review each other's pull requests to ensure each TODO is correctly implemented and that
-   there are no Checkstyle issues in the files that were modified.
 
-4. Once all TODOs are completed, your team should debug as needed to ensure the
-   correctness of the code. Setting a breakpoint where the log-out use case
-   interactor starts its work will likely be a great place to start when debugging.
+2. **Set Up Dependencies**:
+   - Ensure Maven is installed and run:
+     
+bash
+     mvn clean install
 
-And that's it; you now have a working Logout Use Case! Instructions for
-how to submit your work on MarkUs will be posted later.
 
-Your team should spend the rest of the lab working on your project blueprint.
+3. **Run the Application**:
+   - Open the project in your preferred IDE (e.g., IntelliJ IDEA or Eclipse).
+   - Navigate to the Main class located in the app subfolder of src.
+   - Click **Run** to start the application.
 
-* * *
+---
 
-# Project Blueprint
+### Software and Package Management
 
-See Quercus for details about the project blueprint! By the end of the week,
-the goal is for your team to have a fully drafted blueprint so that your team
-will be ready to get started on your project after Reading Week.
+- **Dependencies**: All required libraries and their versions are listed in the pom.xml. Key dependencies include:
+  - **Firebase Admin SDK**: 9.4.1
+  - **OpenAI GPT Integration**: 3.0.2
+  - **JSON Processing**: 20240303
+  - **JFreeChart**: 1.5.3
+  - **JUnit (for testing)**: 4.13.1 and 5.8.1
+
+---
+
+### Common Issues & Solutions
+
+1. **Missing Firebase Configuration**:
+   - Ensure config.json is correctly placed under the specified directory. Check the path in the .env file matches.
+
+2. **Maven Dependency Errors**:
+   - Run the following command to clean and rebuild:
+     
+bash
+     mvn clean install
+
+
+3. **Java Version Compatibility**:
+   - Ensure your JDK version matches or exceeds OpenJDK 22. You can check this by running:
+     
+bash
+     java -version
+
+
+4. **Environment Variables Not Loaded**:
+   - Confirm the .env file exists in the project root and is correctly formatted.
+
+## Usage Guide
+
+Once you have successfully installed the application, follow these steps to start using **StockFlow**:
+
+1. Open your preferred IDE (e.g., IntelliJ IDEA or Eclipse).
+2. Navigate to the following path in the project directory: `src/main/java/app/Main.java`.
+3. Run the `Main.java` file to launch the application.
+
+---
+
+### 📸 Example Walkthrough
+
+To help you get started, here are some visuals:
+
+   [![Watch the video](assets/login_example.png)](assets/Logging_In_View.mov)
+
+
+Feel free to explore the app’s features such as the **Explore Page**, **Portfolio Page**, and the **AI Chatbot** for an interactive and educational trading experience. 🚀
+
+## Feedback
+
+We value your input and encourage you to share your thoughts on **StockFlow**. Feedback helps us improve and create a better experience for all users. Here's how you can provide feedback:
+
+1. **How to Submit Feedback**  
+   - Fill out our [Google Form](https://forms.gle/a9m8UvACvpv2ZzBn6). It's quick and easy to use.
+
+2. **What Counts as Valid Feedback**  
+   - Suggestions for new features or enhancements.
+   - Reports on bugs or issues you encounter.
+   - Comments on usability or user experience.
+
+3. **What to Expect When Submitting Feedback**  
+   - Your feedback will be reviewed by the development team.
+   - We will prioritize critical bugs and evaluate suggestions for future updates.
+   - While we cannot guarantee every suggestion will be implemented, we value and appreciate your effort in helping us improve.
+
+Thank you for taking the time to share your feedback and help make **StockFlow** better!
+
+## Contributions
+
+We welcome contributions to **StockFlow**! Whether you're fixing bugs, adding features, or improving documentation, your help is greatly appreciated. Follow the steps below to get started:
+
+### How to Contribute
+
+1. **Fork the Repository**  
+   - Navigate to the [StockFlow Repository](https://github.com/umairx25/StockFlow) on GitHub.  
+   - Click the **Fork** button in the top-right corner to create your own copy of the repository.
+
+2. **Clone Your Fork**  
+   - Clone your forked repository to your local machine:
+     ```bash
+     git clone https://github.com/your-username/StockFlow.git
+     cd StockFlow
+     ```
+
+3. **Create a New Branch**  
+   - Use a descriptive name for your branch based on the feature or fix:
+     ```bash
+     git checkout -b feature/new-feature
+     ```
+
+4. **Make Your Changes**  
+   - Implement your changes and commit them with clear and concise messages:
+     ```bash
+     git add .
+     git commit -m "Add detailed description of your changes"
+     ```
+
+5. **Push Your Changes**  
+   - Push your branch to your forked repository:
+     ```bash
+     git push origin feature/new-feature
+     ```
+
+6. **Submit a Pull Request (PR)**  
+   - Go to your forked repository on GitHub and click **Compare & pull request**.  
+   - Provide a detailed description of your changes, including what issue it resolves or what feature it adds.
+
+---
+
+### Guidelines for a Good Merge Request
+
+- Ensure your code follows the project's coding standards.
+- Write clear and descriptive commit messages.
+- Include comments and documentation where necessary.
+- If applicable, include tests to validate your changes.
+
+---
+
+### Contribution Review Process
+
+1. All pull requests will be reviewed by the project maintainers.
+2. You may be asked to make revisions based on feedback.
+3. Once approved, your contribution will be merged into the main repository.
+
+Thank you for your interest in contributing to **StockFlow**! Together, we can make this project even better.
+

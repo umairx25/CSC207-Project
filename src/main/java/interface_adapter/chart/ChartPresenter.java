@@ -3,14 +3,26 @@ package interface_adapter.chart;
 import use_case.chart.ChartOutputBoundary;
 import use_case.chart.ChartOutputData;
 
-public class
-ChartPresenter implements ChartOutputBoundary {
+/**
+ * Presenter that formats and updates chart data in the ViewModel.
+ */
+public class ChartPresenter implements ChartOutputBoundary {
     private final ChartViewModel viewModel;
 
+    /**
+     * Constructs a ChartPresenter with the specified ViewModel.
+     *
+     * @param viewModel the ViewModel to be updated with chart data
+     */
     public ChartPresenter(ChartViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
+    /**
+     * Formats and updates the chart data in the ViewModel.
+     *
+     * @param outputData the chart data to be presented
+     */
     @Override
     public void presentChartData(ChartOutputData outputData) {
         try {
@@ -22,6 +34,7 @@ ChartPresenter implements ChartOutputBoundary {
 
             String pointIncrease = outputData.getPointIncrease().toString();
             String percentIncrease = outputData.getPercentIncrease().toString();
+
             if (outputData.getPercentIncrease() > 0) {
                 pointIncrease = "+" + pointIncrease;
                 percentIncrease = "+" + percentIncrease;
@@ -29,11 +42,8 @@ ChartPresenter implements ChartOutputBoundary {
 
             viewModel.updatePointIncrease(pointIncrease);
             viewModel.updatePercentIncrease(percentIncrease);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error retrieving and updating data");
         }
     }
-
 }
