@@ -90,6 +90,9 @@ Your personalized portfolio management system:
 - **Personalized Dashboard**: View your **current holdings**, track performance, and manage your investments with ease.
 - Tailored insights to help you grow your portfolio and make smarter decisions.
 
+**📸 Snapshot of Portfolio** 
+![Portfolio](assets/portfolio_example.png)
+
 ### 🎥 Experience StockFlow  
 Check out the app in action!  
 [![Watch the video](path/to/thumbnail-image.png)](path/to/your-video.mp4)  
