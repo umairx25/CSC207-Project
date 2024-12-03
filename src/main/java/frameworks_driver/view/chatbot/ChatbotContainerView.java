@@ -31,7 +31,7 @@ public class ChatbotContainerView extends JPanel {
         messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(messageScrollPane, BorderLayout.CENTER);
 
-        inputPanel = new ChatbotInputView(e -> sendMessage(), "Type your message here...");
+        inputPanel = new ChatbotInputView(_ -> sendMessage(), "Type your message here...");
         add(inputPanel, BorderLayout.SOUTH);
 
         viewModel.setResponseHandler(response -> messagePanel.addMessage(response, false));
@@ -56,7 +56,7 @@ public class ChatbotContainerView extends JPanel {
         inputPanel.resetField(placeholderText);
         inputPanel.setEnabled(false);
 
-        ChatbotHeaderView headerPanel = (ChatbotHeaderView) getComponent(0); // Assuming it's the first component
+        ChatbotHeaderView headerPanel = (ChatbotHeaderView) getComponent(0);
         headerPanel.setTypingIndicatorVisible(true);
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
