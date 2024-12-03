@@ -95,7 +95,9 @@ public class ExploreSearchPanel extends JPanel {
     private Button createStyledButton(String text) {
         Button button = new Button(text);
         button.setBackground(ColourManager.MEDIUM_GRAY);
-        button.setForeground(Color.WHITE);
+//        button.setForeground(Color.WHITE); // Uncomment for Windows
+        button.setForeground(Color.BLACK); // For Mac
+
         return button;
     }
 

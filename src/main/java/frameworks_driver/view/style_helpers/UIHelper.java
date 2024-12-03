@@ -1,8 +1,4 @@
-package frameworks_driver.view.login;
-
-import frameworks_driver.view.style_helpers.ColourManager;
-import frameworks_driver.view.style_helpers.FontManager;
-import frameworks_driver.view.style_helpers.GridBagManager;
+package frameworks_driver.view.style_helpers;
 
 import javax.swing.*;
 import javax.swing.border.Border;

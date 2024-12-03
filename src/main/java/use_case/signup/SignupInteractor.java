@@ -58,4 +58,5 @@ public class SignupInteractor implements SignupInputBoundary {
             signupPresenter.prepareFailView("Account already exists or signup failed.");
         }
     }
+
 }
