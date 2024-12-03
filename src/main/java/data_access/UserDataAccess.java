@@ -1,17 +1,24 @@
 package data_access;
 
+import app.Builder;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 
+import com.google.firebase.cloud.FirestoreClient;
 import entity.User;
 import use_case.signup.SignupDataAccessInterface;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import javax.swing.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -19,9 +26,10 @@ import java.util.concurrent.ExecutionException;
  * validating existing users, and interacting with the Firestore database.
  */
 public class UserDataAccess implements SignupDataAccessInterface {
-    private final String email;
-    private final String password;
-    private final String username;
+    String email;
+    String password;
+    String username;
+    final Dotenv dotenv = Dotenv.load();
 
     /**
      * Constructs a UserDataAccess object with user credentials.
@@ -61,9 +69,12 @@ public class UserDataAccess implements SignupDataAccessInterface {
 
             UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
             System.out.println("Successfully created new user: " + userRecord.getUid());
-            initialize_database(user, db);
+
+            PortfolioFirestoreAccess firestoreAccess = new PortfolioFirestoreAccess();
+            firestoreAccess.initializeUser(user.getEmail(), 10000.0);  // Initialize with zero balance
+
             return true;
-        } catch (FirebaseAuthException | IOException | ExecutionException | InterruptedException e) {
+        } catch (FirebaseAuthException | ExecutionException | InterruptedException e) {
             return false;
         }
     }
@@ -84,98 +95,107 @@ public class UserDataAccess implements SignupDataAccessInterface {
     }
 
     /**
-     * Initializes the user's data in the Firestore database. Called only when the user first signs up.
+     * Initializes the user's data in the Firestore database.
      *
      * @param user the user entity to initialize
      * @param db   the Firestore database instance
-     * @throws IOException              if there are issues with database access
-     * @throws ExecutionException       if there are execution issues with Firestore operations
-     * @throws InterruptedException     if the Firestore operation is interrupted
+     * @throws IOException          if there are issues with database access
+     * @throws ExecutionException   if there are execution issues with Firestore operations
+     * @throws InterruptedException if the Firestore operation is interrupted
      */
     public void initialize_database(User user, Firestore db) throws IOException, ExecutionException, InterruptedException {
         DocumentReference docRef = db.collection("users").document(user.getEmail());
         Map<String, Object> data = new HashMap<>();
-        ArrayList<String> initialHistory = new ArrayList<>();
-        initialHistory.add("");
-        ArrayList<Map<String, ArrayList<String>>> initialPortfolio = new ArrayList<>();
-        initialPortfolio.add(new HashMap<>());
 
         data.put("email", user.getEmail());
         data.put("username", user.getUsername());
-        data.put("balance", 5000.0);
+        data.put("balance", 0.0);
         data.put("portfolio_value", 0.0);
-        data.put("transactionHistory", initialHistory);
-        data.put("portfolioHoldings", initialPortfolio);
+        data.put("history", new ArrayList<>());
+        data.put("portfolio", new ArrayList<>());
+
         ApiFuture<WriteResult> result = docRef.set(data);
         System.out.println("Document created at: " + result.get().getUpdateTime());
     }
 
-    /**
-     * Updates the user's data in the Firestore database.
-     *
-     * @param user the user entity with updated data
-     * @param db   the Firestore database instance
-     * @throws ExecutionException   if there are execution issues with Firestore operations
-     * @throws InterruptedException if the Firestore operation is interrupted
-     */
-    public void update_database(User user, Firestore db) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = db.collection("users").document(user.getEmail());
-        Map<String, Object> data = new HashMap<>();
+        public void update_database (User user, Firestore db) throws ExecutionException, InterruptedException {
+            DocumentReference docRef = db.collection("users").document(user.getEmail());
+            Map<String, Object> data = new HashMap<>();
 
-        data.put("email", user.getEmail());
-        data.put("username", user.getUsername());
-        data.put("balance", user.getBalance());
-        data.put("portfolio_value", user.getPortfolioValue());
-        data.put("transactionHistory", user.getTransactionHistory());
-        data.put("portfolioHoldings", user.getPortfolioHoldings());
+            data.put("email", user.getEmail());
+            data.put("username", user.getUsername());
+            data.put("balance", user.getBalance());
+            data.put("portfolio_value", user.getPortfolioValue());
+            data.put("history", user.getTransactions());
+            data.put("portfolio", user.getPortfolio());
 
-        ApiFuture<WriteResult> result = docRef.set(data);
-        System.out.println("Document updated at: " + result.get().getUpdateTime());
-    }
+            ApiFuture<WriteResult> result = docRef.set(data);
+            System.out.println("Document created at: " + result.get().getUpdateTime());
+        }
 
-    /**
-     * Retrieves user data from the Firestore database.
-     *
-     * @param email the email of the user
-     * @param db    the Firestore database instance
-     * @return the User object containing the retrieved data
-     */
-    public User retreive_user_data(String email, Firestore db) throws ExecutionException, InterruptedException {
-        try {
+        /**
+         * Retrieves user data from the Firestore database.
+         *
+         * @param email the email of the user
+         * @param db    the Firestore database instance
+         * @return the User object containing the retrieved data
+         * @throws ExecutionException   if there are execution issues with Firestore operations
+         * @throws InterruptedException if the Firestore operation is interrupted
+         */
+        public static User retreive_user_data(String email, Firestore db) throws ExecutionException, InterruptedException {
             DocumentReference docRef = db.collection("users").document(email);
             ApiFuture<DocumentSnapshot> future = docRef.get();
             DocumentSnapshot document = future.get();
 
             String username = document.getString("username");
             double balance = document.getDouble("balance");
-            List<Map<String, Object>> transactions = (List<Map<String, Object>>) document.get("transactionHistory");
-            Map<String, Double> portfolio = (Map<String, Double>) document.get("portfolioHoldings");
+            double portfolioValue = document.getDouble("portfolio_value");
+            LinkedHashMap<String, ArrayList<String>> transactions = document.get("history", LinkedHashMap.class);
+            ArrayList<String> portfolio = (ArrayList<String>) document.get("portfolio");
 
-            return new User(email, username, balance, 1, portfolio , transactions);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return new User(email, username, balance, portfolioValue, transactions, portfolio);
+        }
+
+
+        /**
+         * @return the email of the user
+         */
+        public String getEmail () {
+            return email;
+        }
+
+        /**
+         * @return the password of the user
+         */
+        public String getPassword () {
+            return password;
+        }
+
+        /**
+         * @return the username of the user
+         */
+        public String getUsername () {
+            return username;
+        }
+
+        /**
+         * Main method for testing user data access functionality.
+         *
+         * @param args command-line arguments
+         * @throws ExecutionException                if there are execution issues with Firestore operations
+         * @throws InterruptedException              if the Firestore operation is interrupted
+         * @throws UnsupportedLookAndFeelException   if look-and-feel setup fails
+         * @throws ClassNotFoundException            if a required class is not found
+         * @throws InstantiationException            if instantiation fails
+         * @throws IllegalAccessException            if access control fails
+         * @throws IOException                       if there are issues with database access
+         */
+        public static void main (String[]args) throws ExecutionException, InterruptedException,
+                UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException,
+                IllegalAccessException, IOException {
+            Builder builder = new Builder();
+            builder.initialize_firebase("config.json");
+            retreive_user_data("aaa@gmail.com", FirestoreClient.getFirestore());
         }
     }
 
-    /**
-     * @return the email of the user
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @return the password of the user
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @return the username of the user
-     */
-    public String getUsername() {
-        return username;
-    }
-
-}

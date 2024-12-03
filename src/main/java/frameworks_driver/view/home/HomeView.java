@@ -27,7 +27,7 @@ public class HomeView extends JPanel{
         setLayout(new BorderLayout());
 
         PortfolioButton portfolioButton = new PortfolioButton();
-        portfolioButton.addActionListener(e -> builder.showView("signup"));
+        portfolioButton.addActionListener(e -> builder.showView("portfolio"));
         ExploreButton exploreButton = new ExploreButton();
         exploreButton.addActionListener(e -> builder.showView("explore"));
         ChatBotButton chatbotButton = new ChatBotButton();

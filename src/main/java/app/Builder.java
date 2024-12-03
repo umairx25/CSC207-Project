@@ -6,10 +6,14 @@ import java.io.IOException;
 import javax.swing.*;
 
 import data_access.*;
+import frameworks_driver.view.Portfolio.PortfolioView;
 import frameworks_driver.view.login.LoginPanel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.portfolio.PortfolioController;
+import interface_adapter.portfolio.PortfolioPresenter;
+import interface_adapter.portfolio.PortfolioViewModel;
 import io.github.cdimascio.dotenv.Dotenv;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -49,6 +53,9 @@ import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupState;
 import use_case.login.LoginInteractor;
+import use_case.portfolio.PortfolioInputBoundary;
+import use_case.portfolio.PortfolioInteractor;
+import use_case.portfolio.PortfolioOutputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
 import interface_adapter.signup.SignupViewModel;
@@ -56,6 +63,15 @@ import frameworks_driver.view.signup.RightPanel;
 import frameworks_driver.view.signup.SignupPanel;
 
 import use_case.login.LoginOutputBoundary;
+
+// Portfolio
+import interface_adapter.portfolio.PortfolioViewModel;
+import interface_adapter.portfolio.PortfolioController;
+import interface_adapter.portfolio.PortfolioPresenter;
+import use_case.portfolio.PortfolioInputBoundary;
+import use_case.portfolio.PortfolioInteractor;
+import frameworks_driver.view.Portfolio.PortfolioView;
+import use_case.portfolio.PortfolioOutputBoundary;
 
 /**
  * Builder class for assembling the application's components and views
@@ -201,6 +217,28 @@ public class Builder {
     public Builder addHomeView() {
         HomeView homeView = new HomeView("User", 12345.67, this);
         cardPanel.add(homeView, "home");
+        return this;
+    }
+
+    public Builder addPortfolioView() {
+        PortfolioViewModel portfolioViewModel = new PortfolioViewModel();
+
+        InMemoryPortfolioUserDataAccess portfolioDataAccess = new InMemoryPortfolioUserDataAccess("11@gmail.com");
+
+        final PortfolioOutputBoundary portfolioOutputBoundary = new PortfolioPresenter(portfolioViewModel);
+
+        final PortfolioInputBoundary portfolioInteractor = new PortfolioInteractor(
+                portfolioDataAccess, portfolioOutputBoundary
+        );
+
+        final PortfolioController controller = new PortfolioController(portfolioInteractor, portfolioViewModel);
+
+        PortfolioView portfolioView = new PortfolioView(
+                portfolioViewModel, controller, this
+        );
+
+        cardPanel.add(portfolioView, "portfolio");
+
         return this;
     }
 
