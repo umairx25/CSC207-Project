@@ -6,7 +6,8 @@ import java.io.IOException;
 import javax.swing.*;
 
 import data_access.*;
-import frameworks_driver.view.Portfolio.PortfolioView;
+import entity.CurrentUser;
+import frameworks_driver.view.portfolio.PortfolioView;
 import frameworks_driver.view.login.LoginPanel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -65,13 +66,7 @@ import frameworks_driver.view.signup.SignupPanel;
 import use_case.login.LoginOutputBoundary;
 
 // Portfolio
-import interface_adapter.portfolio.PortfolioViewModel;
-import interface_adapter.portfolio.PortfolioController;
-import interface_adapter.portfolio.PortfolioPresenter;
-import use_case.portfolio.PortfolioInputBoundary;
-import use_case.portfolio.PortfolioInteractor;
-import frameworks_driver.view.Portfolio.PortfolioView;
-import use_case.portfolio.PortfolioOutputBoundary;
+
 
 /**
  * Builder class for assembling the application's components and views
@@ -80,6 +75,7 @@ import use_case.portfolio.PortfolioOutputBoundary;
 public class Builder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
+    private final CurrentUser currentUser = new CurrentUser();
 
     private final ChartViewModel chartViewModel = new ChartViewModel();
     private final StockDataAccess stockDataAccess = new StockDataAccess();
@@ -90,12 +86,13 @@ public class Builder {
 
     private final SignupViewModel signupViewModel = new SignupViewModel();
     private final SignupState signupState = new SignupState();
-    private final UserDataAccess userDataAccess = new UserDataAccess(signupState.getEmail(), signupState.getPassword(), signupState.getUsername());
+    private final UserDataAccess userDataAccess = new UserDataAccess(signupState.getEmail(), signupState.getPassword());
     final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(signupViewModel);
-    final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess, signupOutputBoundary);
+    final SignupInteractor signupInteractor = new SignupInteractor(userDataAccess, signupOutputBoundary, currentUser);
 
     private final LoginViewModel loginViewModel = new LoginViewModel();
     private final LoginUserDataAccess loginUserDataAccess = new LoginUserDataAccess();
+
 
     public Builder() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         cardPanel.setLayout(cardLayout);
@@ -204,7 +201,7 @@ public class Builder {
     @NotNull
     private LoginPanel getLoginPanel() {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(loginViewModel);
-        final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, loginOutputBoundary);
+        final LoginInteractor loginInteractor = new LoginInteractor(loginUserDataAccess, loginOutputBoundary, currentUser);
         final LoginController loginController = new LoginController(loginInteractor);
         return new LoginPanel(loginController, loginViewModel, this);
     }
@@ -215,7 +212,7 @@ public class Builder {
      * @return Builder instance for chaining.
      */
     public Builder addHomeView() {
-        HomeView homeView = new HomeView("User", 12345.67, this);
+        HomeView homeView = new HomeView(this);
         cardPanel.add(homeView, "home");
         return this;
     }
@@ -223,7 +220,7 @@ public class Builder {
     public Builder addPortfolioView() {
         PortfolioViewModel portfolioViewModel = new PortfolioViewModel();
 
-        InMemoryPortfolioUserDataAccess portfolioDataAccess = new InMemoryPortfolioUserDataAccess("11@gmail.com");
+        InMemoryPortfolioUserDataAccess portfolioDataAccess = new InMemoryPortfolioUserDataAccess();
 
         final PortfolioOutputBoundary portfolioOutputBoundary = new PortfolioPresenter(portfolioViewModel);
 

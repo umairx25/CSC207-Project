@@ -71,7 +71,7 @@ Meet your **personal finance mentor** powered by cutting-edge AI:
 **📸 Sneak Peek**  
 ![AI Chatbot](assets/chatbot_example.png)
 
-### 🔍 Explore Page  
+### 🔍 Explore Page
 Dive deep into the world of stocks with unparalleled data insights:
 - Access over **50,000+ stocks** and several technical indicators.
 - Easily **search stocks** by **ticker**, **exchange**, or **keyword** for quick and precise results.

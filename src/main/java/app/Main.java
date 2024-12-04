@@ -15,6 +15,6 @@ public class Main {
 
         JFrame application = builder.build();
         application.setVisible(true);
-        builder.showView("portfolio");
+        builder.showView("login");
     }
 }

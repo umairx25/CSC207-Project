@@ -93,7 +93,6 @@ public class PortfolioFirestoreAccess {
 
 
 
-
     public List<Map<String, Object>> getTransactionHistory(String userEmail) {
         try {
             DocumentReference userDoc = db.collection("users").document(userEmail);
@@ -130,11 +129,21 @@ public class PortfolioFirestoreAccess {
 
     public void initializeUser(String email, double balance) throws ExecutionException, InterruptedException {
         DocumentReference docRef = db.collection("users").document(email);
+        ArrayList<Map<String, Object>> transactionHistory = new ArrayList<>();
+        Map<String, Object> transaction = new HashMap<>();
+        transaction.put("company", "AAPL");
+        transaction.put("price", 0);
+        transaction.put("quantity", 1);
+        transaction.put("type", "BUY");
+        transactionHistory.add(transaction);
+        HashMap<String, Integer> portfolioHoldings = new HashMap<>();
+        portfolioHoldings.put("AAPL", 0);
+
         Map<String, Object> userData = new HashMap<>();
         userData.put("email", email);
         userData.put("balance", balance);
-        userData.put("transactionHistory", new ArrayList<Map<String, Object>>());
-        userData.put("portfolioHoldings", new HashMap<String, Integer>());
+        userData.put("transactionHistory", transactionHistory);
+        userData.put("portfolioHoldings", portfolioHoldings);
 
         ApiFuture<WriteResult> result = docRef.set(userData);
         System.out.println("User initialized at: " + result.get().getUpdateTime());
