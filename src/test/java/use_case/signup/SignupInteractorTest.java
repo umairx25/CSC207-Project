@@ -1,16 +1,16 @@
+
 package use_case.signup;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.cloud.FirestoreClient;
 import com.google.cloud.firestore.Firestore;
 import data_access.UserDataAccess;
+import entity.CurrentUser;
 import entity.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import use_case.signup.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,10 +33,10 @@ class SignupInteractorTest {
 
     @Test
     void successTest() throws FirebaseAuthException {
-        // Set up dependencies
-        UserDataAccess userDataAccess = new UserDataAccess("", "", "") {
+        // Mock dependencies
+        UserDataAccess userDataAccess = new UserDataAccess("", "      ") {
             @Override
-            public boolean signup(User user, String password, Firestore db) {
+            public boolean signup(String password, Firestore db) {
                 return true; // Simulate successful signup
             }
 
@@ -59,7 +59,9 @@ class SignupInteractorTest {
             }
         };
 
-        SignupInteractor interactor = new SignupInteractor(userDataAccess, presenter);
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setEmail("test@example.com");
+        SignupInteractor interactor = new SignupInteractor(userDataAccess, presenter, currentUser);
         SignupInputData inputData = new SignupInputData("test@example.com", "securePassword123", "testuser");
 
         // Execute interactor
@@ -68,10 +70,10 @@ class SignupInteractorTest {
 
     @Test
     void failureUserExistsTest() throws FirebaseAuthException {
-        // Set up dependencies
-        UserDataAccess userDataAccess = new UserDataAccess("", "", "") {
+        // Mock dependencies
+        UserDataAccess userDataAccess = new UserDataAccess("", "      ") {
             @Override
-            public boolean signup(User user, String password, Firestore db) {
+            public boolean signup(String password, Firestore db) {
                 return false; // Simulate failure due to existing user
             }
 
@@ -89,11 +91,13 @@ class SignupInteractorTest {
 
             @Override
             public void prepareFailView(String errorMessage) {
-                assertEquals("Invalid credentials.", errorMessage);
+                assertEquals("Account already exists or signup failed.", errorMessage);
             }
         };
 
-        SignupInteractor interactor = new SignupInteractor(userDataAccess, presenter);
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setEmail("existing@example.com");
+        SignupInteractor interactor = new SignupInteractor(userDataAccess, presenter, currentUser);
         SignupInputData inputData = new SignupInputData("existing@example.com", "securePassword123", "existinguser");
 
         // Execute interactor
@@ -102,10 +106,10 @@ class SignupInteractorTest {
 
     @Test
     void failureInvalidEmailFormatTest() {
-        // Set up dependencies
-        UserDataAccess userDataAccess = new UserDataAccess("", "", "") {
+        // Mock dependencies
+        UserDataAccess userDataAccess = new UserDataAccess("", "      ") {
             @Override
-            public boolean signup(User user, String password, Firestore db) {
+            public boolean signup(String password, Firestore db) {
                 throw new IllegalArgumentException("Invalid email format");
             }
 
@@ -127,7 +131,9 @@ class SignupInteractorTest {
             }
         };
 
-        SignupInteractor interactor = new SignupInteractor(userDataAccess, presenter);
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setEmail("invalid-email");
+        SignupInteractor interactor = new SignupInteractor(userDataAccess, presenter, currentUser);
         SignupInputData inputData = new SignupInputData("invalid-email", "securePassword123", "invaliduser");
 
         // Execute interactor
