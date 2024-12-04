@@ -68,6 +68,14 @@ Meet your **personal finance mentor** powered by cutting-edge AI:
 - A fully interactive chatbot that educates users on **finance-related topics**.
 - From explaining technical indicators to answering your questions about stocks, this chatbot is your trusted guide to the stock market.
 
+### 📹 YouTube Feature Display
+
+Discover the powerful features of **StockFlow**
+
+### 🎥 Watch the YouTube Video
+[Click here to watch the StockFlow Feature Display on YouTube!]([https://www.youtube.com/watch?v=your-video-link](https://youtu.be/ANHe6UrRnsY))
+
+
 **📸 Sneak Peek**  
 ![AI Chatbot](assets/chatbot_example.png)
 
