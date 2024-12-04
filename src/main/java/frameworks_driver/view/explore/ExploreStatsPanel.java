@@ -11,6 +11,7 @@ import java.awt.*;
 
 /**
  * Represents the panel displaying detailed statistics and charts for a selected company.
+ * This panel includes a chart view at the top and various statistics such as market cap, location, exchange, etc.
  */
 public class ExploreStatsPanel extends JPanel {
     private final ChartView chartView;
@@ -19,6 +20,8 @@ public class ExploreStatsPanel extends JPanel {
 
     /**
      * Constructs a new ExploreStatsPanel object.
+     * Initializes the chart view, description label, and the panel layout, which includes
+     * a bottom section for displaying various company statistics.
      *
      * @param chartView the chart view to be displayed at the top of the panel
      */
@@ -93,6 +96,7 @@ public class ExploreStatsPanel extends JPanel {
 
     /**
      * Updates the statistics panel with details of the given company.
+     * This method updates the description, chart, and various statistics for the selected company.
      *
      * @param company the Stock object containing company details
      */
@@ -131,6 +135,12 @@ public class ExploreStatsPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * Creates and returns a JLabel with the specified text, formatted in a consistent font.
+     *
+     * @param text the text to be displayed in the label
+     * @return a JLabel with the specified text and a predefined font
+     */
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         Font font = new Font("Verdana", Font.BOLD, 14);
