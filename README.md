@@ -12,16 +12,17 @@ Check out the project on GitHub: [StockFlow](https://github.com/umairx25/StockFl
 1. [Creators](#creators)
 2. [Summary](#summary)
 3. [Features](#features)
-4. [Installation Instructions](#installation-instructions)
+4. [Youtube Feature Display](#youtube-feature-display)
+5. [Installation Instructions](#installation-instructions)
    - [Prerequisites](#prerequisites)
    - [Configuration Files](#configuration-files)
    - [Environment Variables](#environment-variables)
    - [Installation Steps](#installation-steps)
    - [Software and Package Management](#software-and-package-management)
    - [Common Issues & Solutions](#common-issues--solutions)
-5. [Usage Guide](#usage-guide)
-6. [Feedback](#feedback)
-7. [Contributions](#contributions)
+6. [Usage Guide](#usage-guide)
+7. [Feedback](#feedback)
+8. [Contributions](#contributions)
 
 ---
 ## Creators
@@ -68,12 +69,15 @@ Meet your **personal finance mentor** powered by cutting-edge AI:
 - A fully interactive chatbot that educates users on **finance-related topics**.
 - From explaining technical indicators to answering your questions about stocks, this chatbot is your trusted guide to the stock market.
 
-### 📹 YouTube Feature Display
 
-Discover the powerful features of **StockFlow**
+## YouTube Feature Display
+
+Discover the powerful features of **StockFlow**, including the **AI Chatbot**, your personal finance mentor. Watch how our school project combines cutting-edge technology and financial education with an interactive and intuitive UI built in **Java Swing**.
+
 
 ### 🎥 Watch the YouTube Video
-[Click here to watch the StockFlow Feature Display on YouTube!]([https://www.youtube.com/watch?v=your-video-link](https://youtu.be/ANHe6UrRnsY))
+[Click here to watch the StockFlow Feature Display on YouTube!](https://youtu.be/ANHe6UrRnsY)
+
 
 
 **📸 Sneak Peek**  
